@@ -75,7 +75,7 @@ export function FieldTestReadiness({ results: r, itemKey, sceneId, kind }: { res
         alter the FAILED pre-registered verdict. No mobility, traction, battery or drilling estimate is computed.
       </p>
 
-      <div className="mt-5 grid gap-4 lg:grid-cols-3">
+      <div className="mt-5 grid gap-4">
         <Tier tone="measured" title="Measured" note="Computed from real elevation and land-cover data.">
           <Row
             k="Terrain-shape fingerprint (pre-registered)"

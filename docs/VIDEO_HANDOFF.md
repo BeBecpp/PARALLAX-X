@@ -45,5 +45,5 @@ did **not** create a video, narration, voice track or slides.
 - **Links and rights.** See [`VISUAL_ASSETS.md`](VISUAL_ASSETS.md).
 - **Use them sparingly.** Use concept footage sparingly, and label it on screen as AI-generated concept media. Keep
   the existing watermarks.
-- **Rights first.** Confirm the soundtrack and voice rights and the creator's permission before reusing any of their
-  audio.
+- **Rights.** Khuslen has approved use of the films in PARALLAX X. Record the soundtrack and voice sources before
+  reusing their audio in the competition video.

@@ -33,8 +33,8 @@ runtime.
 - **What they are.** Five concept and motion films were created and provided by team member **Khuslen (V01D-404)**.
   They are AI-generated creative media, and several carry on-screen watermarks such as "AI-generated concept trailer"
   or "AI-generated video & voice".
-- **Who made them.** The exact generation tools, voice and music sources, and editing steps are **to be confirmed by
-  the creator**.
+- **Who made them.** The films were made by Khuslen, who approved their use in PARALLAX X. The exact generation tools,
+  voice and music sources, and editing steps are not yet documented.
 - **How they appear.** In the website they appear only in the optional **Films & concepts** gallery and behind
   "Watch the brand film" buttons. Each is labelled as an AI-generated concept, not app footage and not a scientific
   simulation.

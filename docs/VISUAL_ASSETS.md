@@ -35,19 +35,17 @@ AI-generated voice-over.
 - **The app's own visuals.** The official interface keeps the canonical vector logo and the NASA/JPL rover model. The
   cartoon rover is concept art only.
 
-## Rights status (open — needs team confirmation)
+## Rights status
 
 | Question | Status |
 |---|---|
-| Khuslen authorises PARALLAX X to link, stream and show poster stills of the five films | **To confirm** (assumed for this team project, not verified in writing) |
-| Generation tool(s) and their terms permit redistribution and public display | **Unknown**: tools not yet named by the creator |
-| Music and sound-effect sources and licences | **Unknown**: check before any further redistribution |
-| AI voice in Film 01: tool and terms | **Unknown** |
-| Licence of the V01D-404 repository | None declared. Public visibility on GitHub is not a redistribution licence |
+| Khuslen authorises PARALLAX X to link, stream and show poster stills of the five films | **Approved** by Khuslen (confirmed by the team, 2026-11-14) |
+| Licence of the films | The films are **not** covered by the repository's MIT licence (that covers the team's code and docs only). They remain Khuslen's work, used with permission |
+| Generation tool(s) and their terms | Not yet documented: the creator should name the tools |
+| Music, sound effects and the AI voice in Film 01 | Sources not yet documented: check before any reuse outside PARALLAX X |
 
-Until these are confirmed, PARALLAX X does **not** copy the film files into this repository. It links and streams the
-originals, and keeps only poster stills. If the team decides otherwise, the stills can be removed and the README links
-kept.
+PARALLAX X streams the films from the creator's repository and keeps only poster stills. If the team wants a mirrored
+copy for reliability, the creator's permission now allows it. The tool and audio sources should be recorded here first.
 
 ## Other visual assets
 - **Logo.** PARALLAX X wordmark, mark and app icon: vector, generated from `lib/brand.ts`.

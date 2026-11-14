@@ -4,14 +4,10 @@ PARALLAX X combines the team's original code with third-party data, models, medi
 terms. Nothing here implies endorsement by NASA, JPL, USGS, ESA or any other provider.
 
 ## Licence status
-- **The team's original code** (application, science pipeline, tests and documentation) has **no open-source licence
-  yet**. Licensing it (for example under MIT) needs the agreement of every contributor who owns rights in it. That
-  agreement has not been confirmed, so no `LICENSE` file is included.
-- **To license it, the team must:**
-  1. agree on a licence;
-  2. add a `LICENSE` file with the copyright line (for example `Copyright (c) 2026 PARALLAX X team`);
-  3. update this section.
-- **What the code licence will not cover:** the data, the rover model, the concept films or the dependencies below.
+- **The team's original code and documentation** are released under the **MIT License** (see [`LICENSE`](LICENSE)),
+  `Copyright (c) 2026 PARALLAX X team`. The team approved this on 2026-11-14.
+- **What the MIT licence does not cover:** the data, the rover model, the concept films, fonts or the dependencies
+  below. Each keeps its own terms.
 
 ## Data
 | Item | Source | Terms / credit |
@@ -39,8 +35,9 @@ Details: [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
 - **What.** Five AI-generated concept films by team member Khuslen (V01D-404), at
   https://github.com/V01D-404/All-demo-and-loading. They are streamed from that repository, and only poster stills are
   stored here.
-- **Rights.** The redistribution licence, the generation-tool terms and the soundtrack and voice rights are **not yet
-  confirmed**. See [`docs/VISUAL_ASSETS.md`](docs/VISUAL_ASSETS.md#rights-status-open--needs-team-confirmation).
+- **Rights.** Khuslen approved their use in PARALLAX X (2026-11-14). The films are not covered by the MIT licence.
+  The terms of the AI generation tools and the soundtrack and voice sources have not been documented. See
+  [`docs/VISUAL_ASSETS.md`](docs/VISUAL_ASSETS.md#rights-status).
 
 ## Audio
 - All interface sounds are synthesized in the browser. No recordings are used. See

@@ -175,6 +175,6 @@ Browser checks were done on the deployed site. Known limitations are listed in [
   - **The deployed site makes no AI or LLM API calls.**
 - **Rover model.** NASA/JPL-Caltech *Mars 2020 Perseverance* (NASA 3D Resources), with the insignia removed. See [`docs/ROVER_MODEL.md`](docs/ROVER_MODEL.md).
 - **Third-party data, assets and dependencies.** See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). Audio credits: [`docs/AUDIO_CREDITS.md`](docs/AUDIO_CREDITS.md). Prior art: [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md).
-- **Licence.** The open-source licence for the team's original code is **pending team approval**, so no `LICENSE` file is included yet. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md#licence-status). Data, the rover model and the concept films keep their own terms.
+- **Licence.** The team's original code and documentation are released under the [MIT License](LICENSE), with the team's approval. Data, the rover model, the concept films, fonts and dependencies keep their own terms; see [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md#licence-status).
 
 Not affiliated with or endorsed by NASA.

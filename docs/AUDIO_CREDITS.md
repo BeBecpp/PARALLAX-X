@@ -40,5 +40,6 @@ The rover motor loop is not a recording of any real rover.
   AI voice in Film 01.
 - **How it plays.** That audio plays only when a visitor presses play in the Films & concepts gallery. It is streamed
   from the creator's repository and not stored here.
-- **Rights.** Its sources and licences are still to be confirmed.
+- **Rights.** Khuslen approved the films' use in PARALLAX X. The underlying music, sound and voice sources are not yet
+  documented.
 

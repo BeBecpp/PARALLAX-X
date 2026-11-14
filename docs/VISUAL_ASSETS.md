@@ -47,6 +47,14 @@ AI-generated voice-over.
 PARALLAX X streams the films from the creator's repository and keeps only poster stills. If the team wants a mirrored
 copy for reliability, the creator's permission now allows it. The tool and audio sources should be recorded here first.
 
+## README preview (derived copy)
+- **File.** `docs/media/brand-film-05.gif` (5.8 MB) is a full-length silent GIF transcode of Film 05, made with
+  Khuslen's approval so the README can play it inline. It is not a new edit.
+- **How it was made.** It is 560 px wide at 10 fps, uses a 200-colour palette, covers all 22 s and keeps the
+  "AI-GENERATED CONCEPT TRAILER" watermark.
+- **What is not changed.** The original MP4 with sound remains in the creator's repository and is linked under the
+  GIF. The website does not load this GIF.
+
 ## Other visual assets
 - **Logo.** PARALLAX X wordmark, mark and app icon: vector, generated from `lib/brand.ts`.
 - **Rover.** The 3D rover is the NASA/JPL-Caltech Perseverance model, modified. See [`ROVER_MODEL.md`](ROVER_MODEL.md).

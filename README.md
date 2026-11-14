@@ -19,12 +19,10 @@
 
 <p align="center">
   <a href="https://github.com/V01D-404/All-demo-and-loading/blob/main/sp-MA0PXF2Ej67IDvi0kpA.mp4">
-    <img src="public/media/films/brand-film-05-poster.jpg" alt="PARALLAX X brand film poster: the logo with the line 'Find the right Earth experiment for Mars'" width="720" />
+    <img src="docs/media/brand-film-05.gif" alt="PARALLAX X brand film (AI-generated concept): a small rover crosses Mars, arrives on Earth, and the PARALLAX X logo appears with 'Find the right Earth experiment for Mars'" width="720" />
   </a>
   <br />
-  <a href="https://github.com/V01D-404/All-demo-and-loading/blob/main/sp-MA0PXF2Ej67IDvi0kpA.mp4"><strong>Watch the brand film (22 s)</strong></a>
-  <br />
-  <sub>AI-generated concept brand film by team member Khuslen (V01D-404). It is not live app footage or a scientific simulation. The other four concept films are listed under <a href="#motion--concept-films">Motion &amp; concept films</a>.</sub>
+  <sub><b>Brand film 05</b>, 22 s, plays inline, no sound. <a href="https://github.com/V01D-404/All-demo-and-loading/blob/main/sp-MA0PXF2Ej67IDvi0kpA.mp4">Watch the original with sound</a> · AI-generated concept film by team member Khuslen (V01D-404), used with permission. It is not live app footage or a scientific simulation. More films are listed under <a href="#motion--concept-films">Motion &amp; concept films</a>.</sub>
 </p>
 
 ## What is PARALLAX X?
@@ -115,6 +113,127 @@ In **Compare**, select a Gobi candidate, then press **Plan a field experiment**.
 
 Details: [`docs/METHOD.md`](docs/METHOD.md) · [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md) · [`science/prereg.md`](science/prereg.md).
 
+## Under the hood: the math, the code, the log
+
+Everything below runs in this repository. The formulas are the ones implemented, and the numbers come from
+[`public/data/results.json`](public/data/results.json).
+
+```text
+PARALLAX-X // PIPELINE SUMMARY            (values from results.json, laid out as a log)
+[grid]      common analysis grid ............... 30 m · Gaussian σ = 1 px on both planets
+[mars]      CTX DTM P16_007460 · MFF yardangs .. fingerprint = 5 features × 199 quantiles
+[earth]     NASADEM · 43 tiles ................. 1,915 declared null windows (Gobi 1,073 · Lut 842)
+[metric]    ECDF-normalised Wasserstein-1 ...... D = mean(W1_F1..F5) · baseline B0 = W1_F2
+[rank]      percentile vs null ................. G-1 99.97 · G-2 99.92 · G-3 99.87 · G-4 99.82 · G-5 99.77
+[test]      known yardangs ≥ 90th pct (need 2/3)  Lut 64.6 · Qaidam 17.4 · Puna 85.7  -> 0/3
+[test]      full fingerprint > slope-only ...... 55.9 vs 63.0                          -> NO
+[test]      yardangs > look-alikes ............. Namib dunes 85.1 above two yardang fields -> NO
+[robust]    6 km windows ....................... FAIL
+[robust]    Copernicus GLO-30 rerun ............ FAIL · Spearman ρ = 0.968 over 2,125 windows
+[why]       180 m slope keeps of a 250 m ridge .. 26 % of its gradient
+[scale]     HiRISE steep area (>15°) ........... 13.9 % at 4 m  ->  1.6 % at 180 m
+[verdict]   PRE-REGISTERED VALIDATION .......... FAIL
+[next]      Expedition Lab ..................... traction · sinkage · soil strength = NOT MEASURED
+```
+
+### 1 · Five terrain features on a 30 m grid
+- **Slope at a fixed baseline.** Central differences with half-offset $h$ cells, so the baseline is
+  $L = 2h\Delta$. $F_2$ uses $L = 180$ m and $F_3$ uses $L = 600$ m:
+
+$$
+\theta_L = \arctan\sqrt{\left(\frac{z_{x+h}-z_{x-h}}{2h\Delta}\right)^2+\left(\frac{z_{y+h}-z_{y-h}}{2h\Delta}\right)^2}
+$$
+
+- **Local relief.** $F_1 = P_{95}-P_{5}$ of plane-detrended elevation in 1.98 km cells.
+- **Topographic position.** $F_4 = z - \bar z_{\text{disk}}$, with a disk of radius ≈ 500 m (17 cells). This follows
+  Weiss (2001).
+- **Ridge elongation.** $F_5$ is the structure-tensor coherence. $J$ is smoothed by a Gaussian with σ = 300 m, and
+  the method follows Bigün & Granlund:
+
+$$
+F_5=\frac{\sqrt{(J_{xx}-J_{yy})^2+4J_{xy}^2}}{J_{xx}+J_{yy}}=\frac{\lambda_1-\lambda_2}{\lambda_1+\lambda_2}\in[0,1]
+$$
+
+### 2 · Make the units comparable: the empirical CDF
+Each feature value is mapped through the mid-rank ECDF of the pooled null samples, so metres, degrees and 0–1 scores
+live on the same scale:
+
+$$
+u(v)=\frac{\#\{p<v\}+\#\{p\le v\}}{2N}
+$$
+
+```python
+# science/pipeline/search.py
+def to_norm(vals, pooled):
+    lo = np.searchsorted(pooled, vals, side="left")
+    hi = np.searchsorted(pooled, vals, side="right")
+    return (lo + hi) / (2.0 * pooled.size)
+```
+
+### 3 · Compare whole distributions: Wasserstein-1
+In one dimension, optimal transport reduces to the area between the two quantile functions. It is evaluated at 199
+quantile levels $p_i=(i+\tfrac12)/199$:
+
+$$
+W_1^{(k)}=\frac{1}{199}\sum_{i=0}^{198}\bigl|u_E\!\left(Q_E^{(k)}(p_i)\right)-u_M\!\left(Q_M^{(k)}(p_i)\right)\bigr|,
+\qquad D=\frac15\sum_{k=1}^{5}W_1^{(k)}
+$$
+
+```python
+# science/pipeline/search.py
+w1 = {k: float(np.mean(np.abs(to_norm(w.q[k], maps[k]) - mars_n[k]))) for k in FEATS}
+w.D  = float(np.mean([w1[k] for k in FEATS]))   # full fingerprint
+w.B0 = w1["F2"]                                  # slope-only baseline
+```
+
+The **Watch the math** chart in the app shades exactly this area for real windows. The exported curves are re-checked
+against the stored run, and the maximum difference is 0.0.
+
+### 4 · Rank, then try to break it
+- **Ranking.** Every window gets a percentile among the 1,915 null windows. This is an empirical rank, not a
+  probability.
+- **The test.** The pass rule was frozen in [`science/prereg.md`](science/prereg.md) before any distance existed. It
+  then **failed**. Sampling explains part of why: the yardang ridges repeat every ~250–480 m, and a 180 m slope
+  operator keeps only 26 % of a 250 m ridge's gradient. A 30 m grid acts as a low-pass filter on exactly the relief
+  that makes yardangs distinctive.
+
+### 5 · Post-hoc texture: detrended RMS roughness
+Fit a plane in each 330 m (11×11) or 990 m (33×33) cell, then take the RMS of the residuals. Only complete cells
+with ≥ 90 % valid data count:
+
+$$
+R_{\text{rms}}=\sqrt{\frac1n\sum_{i=1}^{n}\bigl(z_i-(a+bx_i+cy_i)\bigr)^2}
+$$
+
+```python
+# science/pipeline/fieldtest_posthoc.py
+coef, *_ = np.linalg.lstsq(A, blk[v], rcond=None)   # A = [x, y, 1]
+res = blk[v] - A @ coef
+out.append(float(np.sqrt(np.mean(res ** 2))))       # metres
+```
+
+Results: Mars CTX median 2.63 m; Gobi clusters 1.54–3.35 m. This layer is descriptive only and never enters the
+ranking.
+
+### 6 · What a rover field test must measure (proposed, not computed)
+Expedition Lab writes these into each protocol as **not measured**. They are evaluated only once real field data
+exist:
+
+$$
+s = 1-\frac{v_{\text{ground}}}{r\,\omega}\qquad
+\frac{E}{d}=\frac{\int V\,I\,dt}{d_{\text{measured}}}\qquad
+z_{\text{sink}}=h_{\text{ref}}-h_{\text{rut}}
+$$
+
+```ts
+// lib/expedition.ts: unknowns stay unknown, they are never zero
+{ label: "Traction",       value: "Not measured",              cls: "not-measured" },
+{ label: "Wheel sinkage",  value: "Not measured",              cls: "not-measured" },
+{ label: "Rover mobility", value: "Requires physical testing", cls: "field-required" },
+```
+
+> Similarity is not proof. Evidence comes first.
+
 ## In the app
 
 - **Welcome intro.** Skippable, once per session, reduced-motion safe. It offers an optional **Watch the brand film** button.
@@ -134,7 +253,7 @@ These are five AI-generated concept films by **Khuslen (V01D-404)**. The origina
 
 | Film | Role | Length | Where it is used |
 |---|---|---|---|
-| [05 · Brand film](https://github.com/V01D-404/All-demo-and-loading/blob/main/sp-MA0PXF2Ej67IDvi0kpA.mp4) | Brand identity | 22 s | Top of this README; *Watch the brand film* in the intro, the Select header and the About dialog |
+| [05 · Brand film](https://github.com/V01D-404/All-demo-and-loading/blob/main/sp-MA0PXF2Ej67IDvi0kpA.mp4) | Brand identity | 22 s | Inline GIF at the top of this README; *Watch the brand film* in the intro, the Select header and the About dialog |
 | [01 · Mission concept](https://github.com/V01D-404/All-demo-and-loading/blob/main/9pI2U-Trq3OJg750Em2SOA.mp4) | AI storyboard (video and voice) | 29 s | Films & concepts gallery |
 | [02 · Boot sequence concept](https://github.com/V01D-404/All-demo-and-loading/blob/main/BhQdikMpZvAtfHuSe7zAGA.mp4) | Motion reference | 17 s | Films & concepts gallery. It is not used as a loading screen. |
 | [04 · Expedition Lab interface concept](https://github.com/V01D-404/All-demo-and-loading/blob/main/XMBeQxLFT_O4OuPIsVrD5w.mp4) | Early interface concept | 28 s | Films & concepts gallery. It is labelled as not the implemented workflow (it shows Jezero, C1–C3 and rover slope limits). |

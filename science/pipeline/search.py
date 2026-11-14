@@ -151,6 +151,7 @@ def earth_windows(win_px: int, rng: np.random.Generator):
     mongolia = load_mongolia()
     site_polys = {k: prep(Polygon(v["poly"])) for k, v in SITES.items()}
     wins: list[Win] = []
+    pending: list = []
     for group, boxes in cfg.TILE_GROUPS.items():
         tiles = [t for b in boxes for t in tiles_from_box(*b)]
         for tile in tiles:
@@ -185,15 +186,37 @@ def earth_windows(win_px: int, rng: np.random.Generator):
                     in_null = group in SEARCH_GROUPS and site != "P1"
                     w = Win(id=f"{tile}_{gi}_{gj}", group=group, domain=domain, site=site, in_null=in_null,
                             lon=float(lon), lat=float(lat), tile=tile, r=r, c=c, gi=gi, gj=gj, valid=vf)
-                    f = all_features(blk.astype(np.float64), cfg.GRID_M, cfg)
+                    pending.append((w, blk.astype(np.float64)))
+                    n_kept += 1
+            if POOL is None:
+                for w, blk in pending:
+                    f = all_features(blk, cfg.GRID_M, cfg)
                     for k in FEATS:
                         v = f[k]
                         w.q[k] = quantiles(v, NQ)
                         w.sample[k] = rng.choice(v, size=min(500, v.size), replace=False) if v.size else np.array([])
-                    wins.append(w)
-                    n_kept += 1
+            else:
+                res = POOL.map(feat_job, [(blk, w.id) for w, blk in pending], chunksize=4)
+                for (w, _), (q, smp) in zip(pending, res):
+                    w.q, w.sample = q, smp
+            wins += [w for w, _ in pending]
+            pending.clear()
             print(f"  {group:10s} {tile}: {n_kept:4d} windows ({time.time()-t0:.1f}s)", flush=True)
     return wins
+
+
+POOL = None  # multiprocessing pool for secondary runs (--workers > 1)
+
+
+def feat_job(args):
+    """Worker: features for one window; ECDF sample seeded by 42 + crc32(window id) (parallel runs only)."""
+    import zlib
+    blk, wid = args
+    f = all_features(blk, cfg.GRID_M, cfg)
+    g = np.random.default_rng(42 + zlib.crc32(wid.encode()))
+    q = {k: quantiles(f[k], NQ) for k in FEATS}
+    smp = {k: (g.choice(f[k], size=min(500, f[k].size), replace=False) if f[k].size else np.array([])) for k in FEATS}
+    return q, smp
 
 
 # ------------------------------------------------------------------------------------- scoring
@@ -311,9 +334,14 @@ def main():
     ap.add_argument("--window-px", type=int, default=333)
     ap.add_argument("--tag", default="primary")
     ap.add_argument("--dem", default="nasadem", choices=["nasadem", "glo30"])
+    ap.add_argument("--workers", type=int, default=1)
     a = ap.parse_args()
-    global DEM
+    ap2 = a
+    global DEM, POOL
     DEM = a.dem
+    if getattr(ap2, "workers", 1) > 1:
+        import multiprocessing as mp
+        POOL = mp.Pool(ap2.workers)
     t0 = time.time()
     rng = np.random.default_rng(42)
     print("Mars fingerprint ...", flush=True)

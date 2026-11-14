@@ -160,7 +160,33 @@ def main():
         sens_block = {"window_km": S6["window_km"], "decision_pass": S6["decision"]["pass"],
                       "sites": [{"id": s["id"], "median_pct_full": s["median_pct_full"], "median_pct_b0": s["median_pct_b0"], "n_windows": s["n_windows"]} for s in S6["sites"]],
                       "criteria": S6["decision"]["criteria"]}
-    glo = OUT / "glo30_check.json"
+    def glo30_block():
+        p = OUT / "search_glo30.json"
+        if not p.exists():
+            return None
+        G = json.loads(p.read_text())
+        # rank agreement between DEMs on windows present in both runs
+        a = {w["id"]: w["pct"] for w in S["windows"]}
+        b = {w["id"]: w["pct"] for w in G["windows"]}
+        common = sorted(set(a) & set(b))
+        rho = float(np.corrcoef(np.argsort(np.argsort([a[i] for i in common])), np.argsort(np.argsort([b[i] for i in common])))[0, 1]) if common else None
+        return {"dem": "Copernicus GLO-30", "decision_pass": G["decision"]["pass"], "criteria": G["decision"]["criteria"],
+                "sites": [{"id": s["id"], "median_pct_full": s["median_pct_full"], "median_pct_b0": s["median_pct_b0"], "n_windows": s["n_windows"]} for s in G["sites"]],
+                "candidates": [{"id": c["id"], "centroid": c["centroid"], "best_pct": c["best_pct"]} for c in G["candidates"]],
+                "spearman_rank_corr_with_nasadem": rho, "n_common_windows": len(common),
+                "status": "sensitivity only (logged in science/DEVIATIONS.md before primary results were viewed)"}
+
+    dpath = OUT / "diagnostics.json"
+    diag = json.loads(dpath.read_text()) if dpath.exists() else None
+    if diag:
+        c = diag["ctx_ridge_spectrum"]
+        pk = sorted(round(x) for x in c["compensated_peak_wavelengths_m"][:3])
+        breakdown.insert(0, {"id": "resolution_limit", "title": "The Mars yardangs here are near the analysis limit",
+            "text": (f"Post-hoc diagnostic: the CTX yardang ridges repeat every ~{pk[0]}–{pk[-1]} m across-wind. At the pre-registered 180 m slope "
+                     f"baseline and 30 m smoothing, a 250 m ridge keeps only ~{c['f2_gradient_attenuation_at']['250']*100:.0f}% of its gradient "
+                     f"(~{c['f2_gradient_attenuation_at']['1000']*100:.0f}% for km-scale ridges such as the Lut Kaluts). This plausibly explains why the fingerprint "
+                     "under-represents MFF elongation and failed validation; it does not change the result."),
+            "source": "computed: science/out/diagnostics.json (post-hoc, descriptive)"})
     results = {
         "run": {"prereg_commit": "32b5c48c70da69360dd5676dd0779cae065ef1e2", "prereg_file_sha256": sha_file(prereg),
                 "run_utc": S["run_utc"], "exported_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -181,7 +207,8 @@ def main():
         "hirise": {k: H[k] for k in ("short_wavelength_variance_fraction_lt150m", "frac_area_slope_gt15_baseline_4m", "frac_area_slope_gt30_baseline_4m",
                                      "frac_area_slope_gt15_baseline_180m", "frac_area_slope_gt30_baseline_180m", "note")},
         "sensitivity_6km": sens_block,
-        "glo30_check": json.loads(glo.read_text()) if glo.exists() else None,
+        "glo30_check": glo30_block(),
+        "diagnostics": diag,
         "breakdown": breakdown,
     }
     PUBLIC_DATA.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,27 @@
+{
+  "id": "cmp_p3",
+  "file": "/data/terrain/cmp_p3.bin",
+  "width": 333,
+  "height": 333,
+  "posting_m": 30.0,
+  "extent_m": [
+    9990.0,
+    9990.0
+  ],
+  "z_min_m": -129.65770397703545,
+  "z_max_m": 443.0753731841205,
+  "encoding": "uint16 LE row-major (north row first); 0 = no data; z = z_min_m + (v-1)/65534*(z_max_m-z_min_m)",
+  "valid_fraction": 1.0,
+  "sha256": "24eaa4bb7c4d2de7a7add8bbc2afae532a2feebbe11d4c7194c30e96682d7664",
+  "planet": "Earth",
+  "source_id": "NASADEM_HGT v001 tile NASADEM_HGT_s27w068",
+  "source_url": "https://doi.org/10.5067/MEaSUREs/NASADEM/NASADEM_HGT.001",
+  "provider": "NASA JPL / LP DAAC NASADEM (retrieved from Microsoft Planetary Computer mirror)",
+  "crs": "azimuthal equidistant centred on the 1\u00b0 tile, WGS84",
+  "vertical_datum": "EGM96 geoid; plane-detrended (relative heights)",
+  "terrain_description": "Puna ignimbrite yardangs, Argentina (low-confidence location) \u2014 representative (median-rank) window",
+  "display_note": "NASADEM 1\u2033 resampled (average) to 30 m + common Gaussian \u03c3=30 m",
+  "source_posting_m": 30.0,
+  "vertical_exaggeration_default": 2.0,
+  "window_id": "NASADEM_HGT_s27w068_6_5"
+}

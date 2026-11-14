@@ -1,0 +1,35 @@
+{
+  "source_id": "DTEEC_009609_1675_010453_1675_A01",
+  "crop_px": [
+    8576,
+    1984,
+    3957
+  ],
+  "posting_m": 1.0108370780499,
+  "short_wavelength_variance_fraction_lt150m": 0.0053795426724099924,
+  "slope_deg_baseline_4m_on_1m_posts": {
+    "5": 1.42928550126552,
+    "25": 3.729983792435933,
+    "50": 6.6839782533039145,
+    "75": 11.21451376931058,
+    "95": 22.262443230750453,
+    "99": 36.1681354596059
+  },
+  "slope_deg_baseline_180m_on_30m_aggregate": {
+    "5": 0.4927962558935975,
+    "25": 1.509598425568063,
+    "50": 3.2198405715330236,
+    "75": 5.72696741153676,
+    "95": 11.578403681955495,
+    "99": 16.375894853388584
+  },
+  "frac_area_slope_gt15_baseline_4m": 0.13891117160918556,
+  "frac_area_slope_gt30_baseline_4m": 0.02069791847785986,
+  "frac_area_slope_gt15_baseline_180m": 0.016128,
+  "frac_area_slope_gt30_baseline_180m": 0.0,
+  "note": "HiRISE stereo DTM effective resolution is coarser than its 1 m posting (Kirk et al. 2021: ~10-20 image pixels); 4 m baseline slopes are near that limit and are reported as a fine-scale proxy only.",
+  "heightfields": [
+    "mars_hirise_hero",
+    "mars_hirise_hero_30m"
+  ]
+}

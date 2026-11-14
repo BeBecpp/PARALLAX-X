@@ -1,0 +1,27 @@
+{
+  "id": "cmp_n1",
+  "file": "/data/terrain/cmp_n1.bin",
+  "width": 333,
+  "height": 333,
+  "posting_m": 30.0,
+  "extent_m": [
+    9990.0,
+    9990.0
+  ],
+  "z_min_m": -57.072420197242025,
+  "z_max_m": 67.60888802462546,
+  "encoding": "uint16 LE row-major (north row first); 0 = no data; z = z_min_m + (v-1)/65534*(z_max_m-z_min_m)",
+  "valid_fraction": 0.9744880015150286,
+  "sha256": "8d61a5db859da66945ba18b2c04e2f494077a8590967ee4966b1e31110f67448",
+  "planet": "Earth",
+  "source_id": "NASADEM_HGT v001 tile NASADEM_HGT_s25e015",
+  "source_url": "https://doi.org/10.5067/MEaSUREs/NASADEM/NASADEM_HGT.001",
+  "provider": "NASA JPL / LP DAAC NASADEM (retrieved from Microsoft Planetary Computer mirror)",
+  "crs": "azimuthal equidistant centred on the 1\u00b0 tile, WGS84",
+  "vertical_datum": "EGM96 geoid; plane-detrended (relative heights)",
+  "terrain_description": "Namib Sand Sea linear dunes (control) \u2014 representative (median-rank) window",
+  "display_note": "NASADEM 1\u2033 resampled (average) to 30 m + common Gaussian \u03c3=30 m",
+  "source_posting_m": 30.0,
+  "vertical_exaggeration_default": 2.0,
+  "window_id": "NASADEM_HGT_s25e015_7_0"
+}

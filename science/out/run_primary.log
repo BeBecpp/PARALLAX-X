@@ -1,0 +1,155 @@
+Mars fingerprint ...
+  Mars samples: {'F1': 28, 'F2': 204171, 'F3': 202184, 'F4': 198921, 'F5': 187339}
+Earth windows ...
+  D1_gobi    NASADEM_HGT_n42e095:    0 windows (5.0s)
+  D1_gobi    NASADEM_HGT_n42e096:   16 windows (40.9s)
+  D1_gobi    NASADEM_HGT_n42e097:   19 windows (7.2s)
+  D1_gobi    NASADEM_HGT_n42e098:   28 windows (11.4s)
+  D1_gobi    NASADEM_HGT_n42e099:   34 windows (15.5s)
+  D1_gobi    NASADEM_HGT_n42e100:   32 windows (12.6s)
+  D1_gobi    NASADEM_HGT_n43e095:   19 windows (7.1s)
+  D1_gobi    NASADEM_HGT_n43e096:   84 windows (22.3s)
+  D1_gobi    NASADEM_HGT_n43e097:   85 windows (14.7s)
+  D1_gobi    NASADEM_HGT_n43e098:   85 windows (32.0s)
+  D1_gobi    NASADEM_HGT_n43e099:   85 windows (32.9s)
+  D1_gobi    NASADEM_HGT_n43e100:   85 windows (34.2s)
+  D1_gobi    NASADEM_HGT_n44e095:   76 windows (24.7s)
+  D1_gobi    NASADEM_HGT_n44e096:   85 windows (30.0s)
+  D1_gobi    NASADEM_HGT_n44e097:   85 windows (31.9s)
+  D1_gobi    NASADEM_HGT_n44e098:   85 windows (37.1s)
+  D1_gobi    NASADEM_HGT_n44e099:   85 windows (46.9s)
+  D1_gobi    NASADEM_HGT_n44e100:   85 windows (36.8s)
+  D2_lut     NASADEM_HGT_n29e057:   99 windows (33.8s)
+  D2_lut     NASADEM_HGT_n29e058:   99 windows (24.5s)
+  D2_lut     NASADEM_HGT_n29e059:   99 windows (22.1s)
+  D2_lut     NASADEM_HGT_n30e057:   99 windows (22.2s)
+  D2_lut     NASADEM_HGT_n30e058:   99 windows (24.3s)
+  D2_lut     NASADEM_HGT_n30e059:   99 windows (20.6s)
+  D2_lut     NASADEM_HGT_n31e057:   99 windows (22.7s)
+  D2_lut     NASADEM_HGT_n31e058:   99 windows (30.0s)
+  D2_lut     NASADEM_HGT_n31e059:   99 windows (25.6s)
+  P2_qaidam  NASADEM_HGT_n37e091:    0 windows (35.8s)
+  P2_qaidam  NASADEM_HGT_n37e092:    0 windows (39.0s)
+  P2_qaidam  NASADEM_HGT_n37e093:    0 windows (23.5s)
+  P2_qaidam  NASADEM_HGT_n38e091:    0 windows (15.8s)
+  P2_qaidam  NASADEM_HGT_n38e092:   40 windows (37.7s)
+  P2_qaidam  NASADEM_HGT_n38e093:    0 windows (27.5s)
+  P3_puna    NASADEM_HGT_s27w068:    6 windows (28.5s)
+  P3_puna    NASADEM_HGT_s27w067:    0 windows (9.3s)
+  P3_puna    NASADEM_HGT_s26w068:    0 windows (18.4s)
+  P3_puna    NASADEM_HGT_s26w067:    0 windows (24.1s)
+  N1_namib   NASADEM_HGT_s26e015:   30 windows (37.5s)
+  N1_namib   NASADEM_HGT_s25e015:   30 windows (23.9s)
+  N2_kalpin  NASADEM_HGT_n39e078:    0 windows (26.2s)
+  N2_kalpin  NASADEM_HGT_n39e079:    0 windows (12.1s)
+  N2_kalpin  NASADEM_HGT_n40e078:   47 windows (17.8s)
+  N2_kalpin  NASADEM_HGT_n40e079:    8 windows (9.2s)
+{
+ "n_null": 1915,
+ "decision": {
+  "pass": false,
+  "criteria": [
+   {
+    "id": "a",
+    "description": "At least 2 of 3 published yardang sites have median window percentile >= 90",
+    "value": "0 of 3 (P1 64.6, P2 17.4, P3 85.7)",
+    "pass": false
+   },
+   {
+    "id": "b",
+    "description": "Mean positive percentile with the full fingerprint exceeds the slope-only baseline (B0)",
+    "value": "full 55.9 vs B0 63.0",
+    "pass": false
+   },
+   {
+    "id": "c",
+    "description": "Mean positive percentile exceeds both process-different controls (linear dunes, thrust ridges)",
+    "value": "positives 55.9 vs dunes 85.1, ridges 45.4",
+    "pass": false
+   }
+  ],
+  "missing_sites": [],
+  "mean_pos_full": 55.92689295039165,
+  "mean_pos_b0": 62.993907745865975
+ },
+ "sites": [
+  [
+   "P1",
+   49,
+   64.64751958224544,
+   83.9686684073107
+  ],
+  [
+   "P2",
+   40,
+   17.441253263707573,
+   13.968668407310705
+  ],
+  [
+   "P3",
+   6,
+   85.69190600522194,
+   91.0443864229765
+  ],
+  [
+   "N1",
+   60,
+   85.09138381201043,
+   87.44125326370758
+  ],
+  [
+   "N2",
+   55,
+   45.43080939947781,
+   66.78851174934726
+  ]
+ ],
+ "candidates": [
+  [
+   "G-1",
+   [
+    97.58548563621132,
+    44.27291935204845
+   ],
+   5,
+   99.97
+  ],
+  [
+   "G-2",
+   [
+    98.37267490188029,
+    44.326830690804904
+   ],
+   4,
+   99.92
+  ],
+  [
+   "G-3",
+   [
+    100.06038508662053,
+    44.2362350370488
+   ],
+   1,
+   99.87
+  ],
+  [
+   "G-4",
+   [
+    98.68748811157889,
+    44.814783721636445
+   ],
+   7,
+   99.82
+  ],
+  [
+   "G-5",
+   [
+    97.18240928441604,
+    43.23646202033251
+   ],
+   3,
+   99.77
+  ]
+ ]
+}
+runtime 1415s

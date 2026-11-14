@@ -1,0 +1,30 @@
+{
+  "id": "cmp_mars",
+  "file": "/data/terrain/cmp_mars.bin",
+  "width": 333,
+  "height": 333,
+  "posting_m": 30.0,
+  "extent_m": [
+    9990.0,
+    9990.0
+  ],
+  "z_min_m": -78.59319460212669,
+  "z_max_m": 96.12035220335429,
+  "encoding": "uint16 LE row-major (north row first); 0 = no data; z = z_min_m + (v-1)/65534*(z_max_m-z_min_m)",
+  "valid_fraction": 0.975380786191597,
+  "sha256": "0519b9f1f8ff51dccb59f8b5016045b145a6de6211ec7c7e45644f8c3fa312d3",
+  "planet": "Mars",
+  "source_id": "CTX DTM P16_007460_1688_XI_11S182W__K17_060021_1670_XN_13S182W",
+  "source_url": "https://stac.astrogeology.usgs.gov/docs/data/mars/ctxdtms",
+  "provider": "USGS Astrogeology (from NASA MRO CTX images archived in PDS)",
+  "crs": "local equidistant cylindrical, Mars sphere R=3396190 m, true scale at -12.42\u00b0",
+  "vertical_datum": "areoid; plane-detrended (relative heights)",
+  "terrain_description": "Medusae Fossae Formation yardangs \u2014 10 km window centred on the fingerprint area",
+  "display_note": "CTX 20 m posts resampled (average) to 30 m + common Gaussian \u03c3=30 m \u2014 identical processing to Earth windows",
+  "source_posting_m": 20.2,
+  "vertical_exaggeration_default": 2.0,
+  "window_origin_px": [
+    40,
+    314
+  ]
+}

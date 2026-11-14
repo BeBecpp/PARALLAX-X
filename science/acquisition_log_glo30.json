@@ -1,0 +1,435 @@
+{
+  "source": "Copernicus GLO-30 DEM, AWS open data (copernicus-dem-30m)",
+  "records": [
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N42_00_E095_00_DEM/Copernicus_DSM_COG_10_N42_00_E095_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n42e095.tif",
+      "status": "downloaded",
+      "bytes": 36675181,
+      "sha256": "ccd7e996811a6b7e8b96f5d17efdaea73cd34803e0fd7e1932a1521e2cb3138c",
+      "retrieved_utc": "2026-11-14T03:40:09+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N42_00_E095_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N42_00_E096_00_DEM/Copernicus_DSM_COG_10_N42_00_E096_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n42e096.tif",
+      "status": "downloaded",
+      "bytes": 37132875,
+      "sha256": "d60ef0376a50e157ecbe1a310c1c857bd06136ba6cff1d819dcb792c23f7a72d",
+      "retrieved_utc": "2026-11-14T03:40:13+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N42_00_E096_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N42_00_E097_00_DEM/Copernicus_DSM_COG_10_N42_00_E097_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n42e097.tif",
+      "status": "downloaded",
+      "bytes": 36157730,
+      "sha256": "2b28a703b79edd949f7893d708b7ebb0ebadcf1929734578aad89a45b079c8df",
+      "retrieved_utc": "2026-11-14T03:40:08+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N42_00_E097_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N42_00_E098_00_DEM/Copernicus_DSM_COG_10_N42_00_E098_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n42e098.tif",
+      "status": "downloaded",
+      "bytes": 36568146,
+      "sha256": "dce81922b98a2763a4a1524b5d542c07890241a51090f04b366f1b0dec63cd1a",
+      "retrieved_utc": "2026-11-14T03:39:57+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N42_00_E098_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N42_00_E099_00_DEM/Copernicus_DSM_COG_10_N42_00_E099_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n42e099.tif",
+      "status": "downloaded",
+      "bytes": 37195435,
+      "sha256": "196872ac44f0e3ce36d7aff495842fa08e0b868b97c779783fca3f231d51a269",
+      "retrieved_utc": "2026-11-14T03:40:11+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N42_00_E099_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N42_00_E100_00_DEM/Copernicus_DSM_COG_10_N42_00_E100_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n42e100.tif",
+      "status": "downloaded",
+      "bytes": 35222728,
+      "sha256": "43cafc31f7dcbf3627efd1e43be7b4d6dffe24ab67ed898ba86e24c685279c00",
+      "retrieved_utc": "2026-11-14T03:40:06+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N42_00_E100_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E095_00_DEM/Copernicus_DSM_COG_10_N43_00_E095_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n43e095.tif",
+      "status": "downloaded",
+      "bytes": 38411081,
+      "sha256": "50fca610dacce889a16dc6b5dbdb91d62057edbc9e6d89516a2a47382108b179",
+      "retrieved_utc": "2026-11-14T03:40:18+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N43_00_E095_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E096_00_DEM/Copernicus_DSM_COG_10_N43_00_E096_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n43e096.tif",
+      "status": "downloaded",
+      "bytes": 37423706,
+      "sha256": "3bbf8846c03be55ec5135f257e2389c029f595657c8aae04f819445c68636cb1",
+      "retrieved_utc": "2026-11-14T03:40:47+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N43_00_E096_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E097_00_DEM/Copernicus_DSM_COG_10_N43_00_E097_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n43e097.tif",
+      "status": "downloaded",
+      "bytes": 37681505,
+      "sha256": "efb282f4d953dc418ae1942cbb179bcbe132a023ccad38f7b1b5c5b1b0dd9283",
+      "retrieved_utc": "2026-11-14T03:41:03+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N43_00_E097_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E098_00_DEM/Copernicus_DSM_COG_10_N43_00_E098_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n43e098.tif",
+      "status": "downloaded",
+      "bytes": 37251116,
+      "sha256": "fa40b0db43764adc4dff9ba895b9efa1c4e866651e631a7ea9303407ff088501",
+      "retrieved_utc": "2026-11-14T03:40:30+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N43_00_E098_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E099_00_DEM/Copernicus_DSM_COG_10_N43_00_E099_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n43e099.tif",
+      "status": "downloaded",
+      "bytes": 36785018,
+      "sha256": "022d4a3733587eed5fe41ce99cd3f947a784896b697dd19357b6d898c3042b05",
+      "retrieved_utc": "2026-11-14T03:41:07+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N43_00_E099_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N43_00_E100_00_DEM/Copernicus_DSM_COG_10_N43_00_E100_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n43e100.tif",
+      "status": "downloaded",
+      "bytes": 36822636,
+      "sha256": "29685da359c5725a91badc5311aaf133e27d8f628f0d95e515195c635e94493c",
+      "retrieved_utc": "2026-11-14T03:41:08+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N43_00_E100_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N44_00_E095_00_DEM/Copernicus_DSM_COG_10_N44_00_E095_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n44e095.tif",
+      "status": "downloaded",
+      "bytes": 37305675,
+      "sha256": "91fba4f9c9393cf0f366107558a2f6a95e8a86554d02ca203df724c24ed49410",
+      "retrieved_utc": "2026-11-14T03:40:53+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N44_00_E095_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N44_00_E096_00_DEM/Copernicus_DSM_COG_10_N44_00_E096_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n44e096.tif",
+      "status": "downloaded",
+      "bytes": 36182318,
+      "sha256": "c57242c6ed9366e2f91e8372a8f81ff7821c9c857ab6411382a4d37951f3b99c",
+      "retrieved_utc": "2026-11-14T03:41:00+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N44_00_E096_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N44_00_E097_00_DEM/Copernicus_DSM_COG_10_N44_00_E097_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n44e097.tif",
+      "status": "downloaded",
+      "bytes": 36795951,
+      "sha256": "040d1fb8038f72da9ffe947b2e5c5ce891da988ff0bf7cf481b30230c035d81f",
+      "retrieved_utc": "2026-11-14T03:41:13+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N44_00_E097_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N44_00_E098_00_DEM/Copernicus_DSM_COG_10_N44_00_E098_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n44e098.tif",
+      "status": "downloaded",
+      "bytes": 36187541,
+      "sha256": "d1247c22e32febaeb04ed575b7bd54e65fda378c500e94b4a20261eb8801a756",
+      "retrieved_utc": "2026-11-14T03:41:45+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N44_00_E098_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N44_00_E099_00_DEM/Copernicus_DSM_COG_10_N44_00_E099_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n44e099.tif",
+      "status": "downloaded",
+      "bytes": 36279019,
+      "sha256": "63574e7105bc472f062737a008508a84c6e516bdd144a14b5a61d7989b5df170",
+      "retrieved_utc": "2026-11-14T03:41:17+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N44_00_E099_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N44_00_E100_00_DEM/Copernicus_DSM_COG_10_N44_00_E100_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n44e100.tif",
+      "status": "downloaded",
+      "bytes": 37028366,
+      "sha256": "ff35ee2d93ae88f79737dfc2159cc8970d775c3c184282d5e996e1496fbaa357",
+      "retrieved_utc": "2026-11-14T03:41:37+00:00",
+      "group": "D1_gobi",
+      "glo30_name": "Copernicus_DSM_COG_10_N44_00_E100_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N29_00_E057_00_DEM/Copernicus_DSM_COG_10_N29_00_E057_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n29e057.tif",
+      "status": "downloaded",
+      "bytes": 39677574,
+      "sha256": "0f8587f2df3947f6120356c3b97b2a9f7000449fbbeb950a90d35e88a3ca15c4",
+      "retrieved_utc": "2026-11-14T03:41:35+00:00",
+      "group": "D2_lut",
+      "glo30_name": "Copernicus_DSM_COG_10_N29_00_E057_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N29_00_E058_00_DEM/Copernicus_DSM_COG_10_N29_00_E058_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n29e058.tif",
+      "status": "downloaded",
+      "bytes": 38814795,
+      "sha256": "b9d36c54e001e27847d338f783f33e8c27f916dcccfbde0e58ab04db40256178",
+      "retrieved_utc": "2026-11-14T03:41:46+00:00",
+      "group": "D2_lut",
+      "glo30_name": "Copernicus_DSM_COG_10_N29_00_E058_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N29_00_E059_00_DEM/Copernicus_DSM_COG_10_N29_00_E059_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n29e059.tif",
+      "status": "downloaded",
+      "bytes": 40180582,
+      "sha256": "ae9aebe1d2c2359bdbde8213e90a97368a8c8a737851e2c42f8df2643c75c87a",
+      "retrieved_utc": "2026-11-14T03:41:58+00:00",
+      "group": "D2_lut",
+      "glo30_name": "Copernicus_DSM_COG_10_N29_00_E059_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N30_00_E057_00_DEM/Copernicus_DSM_COG_10_N30_00_E057_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n30e057.tif",
+      "status": "downloaded",
+      "bytes": 40931659,
+      "sha256": "ebec6cf35708f4bc4fe95881899cf2775bbba5b2a320b1d57c1238c035ddb67a",
+      "retrieved_utc": "2026-11-14T03:42:07+00:00",
+      "group": "D2_lut",
+      "glo30_name": "Copernicus_DSM_COG_10_N30_00_E057_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N30_00_E058_00_DEM/Copernicus_DSM_COG_10_N30_00_E058_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n30e058.tif",
+      "status": "downloaded",
+      "bytes": 43034939,
+      "sha256": "b9bf2289be6140ca32c83503c02f25f84892fc09886bffbb0b545c84ca572f89",
+      "retrieved_utc": "2026-11-14T03:41:58+00:00",
+      "group": "D2_lut",
+      "glo30_name": "Copernicus_DSM_COG_10_N30_00_E058_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N30_00_E059_00_DEM/Copernicus_DSM_COG_10_N30_00_E059_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n30e059.tif",
+      "status": "downloaded",
+      "bytes": 40829786,
+      "sha256": "372ce0d5c635e201fc8431f2baccd591c5d93b1e4d884bce29888cd9b52aa0e2",
+      "retrieved_utc": "2026-11-14T03:42:29+00:00",
+      "group": "D2_lut",
+      "glo30_name": "Copernicus_DSM_COG_10_N30_00_E059_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N31_00_E057_00_DEM/Copernicus_DSM_COG_10_N31_00_E057_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n31e057.tif",
+      "status": "downloaded",
+      "bytes": 38626081,
+      "sha256": "9bdca7c4492fb6cea20887c32701398801b18a4b58956d52265434dbc2c1dd1a",
+      "retrieved_utc": "2026-11-14T03:42:24+00:00",
+      "group": "D2_lut",
+      "glo30_name": "Copernicus_DSM_COG_10_N31_00_E057_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N31_00_E058_00_DEM/Copernicus_DSM_COG_10_N31_00_E058_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n31e058.tif",
+      "status": "downloaded",
+      "bytes": 36738990,
+      "sha256": "6a40945b846e8a6f03859fd893581da00a07aa7a5a9d4cee194122876724f882",
+      "retrieved_utc": "2026-11-14T03:42:34+00:00",
+      "group": "D2_lut",
+      "glo30_name": "Copernicus_DSM_COG_10_N31_00_E058_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N31_00_E059_00_DEM/Copernicus_DSM_COG_10_N31_00_E059_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n31e059.tif",
+      "status": "downloaded",
+      "bytes": 37866736,
+      "sha256": "cc9c5370565967b5efa454adfb1018290695aca8c477fce175b31de462bf8a3b",
+      "retrieved_utc": "2026-11-14T03:42:18+00:00",
+      "group": "D2_lut",
+      "glo30_name": "Copernicus_DSM_COG_10_N31_00_E059_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N37_00_E091_00_DEM/Copernicus_DSM_COG_10_N37_00_E091_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n37e091.tif",
+      "status": "downloaded",
+      "bytes": 36529724,
+      "sha256": "86fffc854f232f76cc5074ce08727ba2f3c6258e41a4d036d52f081f346ebc3b",
+      "retrieved_utc": "2026-11-14T03:42:52+00:00",
+      "group": "P2_qaidam",
+      "glo30_name": "Copernicus_DSM_COG_10_N37_00_E091_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N37_00_E092_00_DEM/Copernicus_DSM_COG_10_N37_00_E092_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n37e092.tif",
+      "status": "downloaded",
+      "bytes": 33713891,
+      "sha256": "3450157d164e8dad5183c2ac3e6f8714c8d9c7a9864a6f93b2debde0737ce617",
+      "retrieved_utc": "2026-11-14T03:42:27+00:00",
+      "group": "P2_qaidam",
+      "glo30_name": "Copernicus_DSM_COG_10_N37_00_E092_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N37_00_E093_00_DEM/Copernicus_DSM_COG_10_N37_00_E093_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n37e093.tif",
+      "status": "downloaded",
+      "bytes": 30352633,
+      "sha256": "d0f639ef6f51a263a6c85e2f9ca71900c0f25c03cee4a252e3f88e876e147043",
+      "retrieved_utc": "2026-11-14T03:42:38+00:00",
+      "group": "P2_qaidam",
+      "glo30_name": "Copernicus_DSM_COG_10_N37_00_E093_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N38_00_E091_00_DEM/Copernicus_DSM_COG_10_N38_00_E091_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n38e091.tif",
+      "status": "downloaded",
+      "bytes": 35967879,
+      "sha256": "a4dce62136f51add7f3a778314a3a29c064ad6f58206e272d17b66767f36451c",
+      "retrieved_utc": "2026-11-14T03:42:52+00:00",
+      "group": "P2_qaidam",
+      "glo30_name": "Copernicus_DSM_COG_10_N38_00_E091_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N38_00_E092_00_DEM/Copernicus_DSM_COG_10_N38_00_E092_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n38e092.tif",
+      "status": "downloaded",
+      "bytes": 33860900,
+      "sha256": "666144392df643e5eb92082d5fae48f0c3fb830c9de834be1d6134f99d141ce0",
+      "retrieved_utc": "2026-11-14T03:42:52+00:00",
+      "group": "P2_qaidam",
+      "glo30_name": "Copernicus_DSM_COG_10_N38_00_E092_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N38_00_E093_00_DEM/Copernicus_DSM_COG_10_N38_00_E093_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n38e093.tif",
+      "status": "downloaded",
+      "bytes": 33672229,
+      "sha256": "87ee086a3aa794ddcb135336571ae1a20cdfd446395fecdf43c83d78c1a53398",
+      "retrieved_utc": "2026-11-14T03:43:10+00:00",
+      "group": "P2_qaidam",
+      "glo30_name": "Copernicus_DSM_COG_10_N38_00_E093_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S26_00_W067_00_DEM/Copernicus_DSM_COG_10_S26_00_W067_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_s26w067.tif",
+      "status": "downloaded",
+      "bytes": 39042822,
+      "sha256": "22c72ce4c12a4e0c24e563096fd842ffb0638256528a3c192e1290efb55a0f07",
+      "retrieved_utc": "2026-11-14T03:43:04+00:00",
+      "group": "P3_puna",
+      "glo30_name": "Copernicus_DSM_COG_10_S26_00_W067_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S26_00_W068_00_DEM/Copernicus_DSM_COG_10_S26_00_W068_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_s26w068.tif",
+      "status": "downloaded",
+      "bytes": 36963817,
+      "sha256": "62f19be66d5ea7ea0010247a957a982d79137971652a9ad062727962507ac5f6",
+      "retrieved_utc": "2026-11-14T03:43:34+00:00",
+      "group": "P3_puna",
+      "glo30_name": "Copernicus_DSM_COG_10_S26_00_W068_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S27_00_W067_00_DEM/Copernicus_DSM_COG_10_S27_00_W067_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_s27w067.tif",
+      "status": "downloaded",
+      "bytes": 38817672,
+      "sha256": "d75192bd9caacea6a7773ad1e796d148efa9ef9fa77fbdfbb85e0b501fdf9879",
+      "retrieved_utc": "2026-11-14T03:43:26+00:00",
+      "group": "P3_puna",
+      "glo30_name": "Copernicus_DSM_COG_10_S27_00_W067_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S27_00_W068_00_DEM/Copernicus_DSM_COG_10_S27_00_W068_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_s27w068.tif",
+      "status": "downloaded",
+      "bytes": 37817618,
+      "sha256": "a88667a61a005339833a759c9acdac47e3d6b82e9e009b017029acd91823a5cc",
+      "retrieved_utc": "2026-11-14T03:43:35+00:00",
+      "group": "P3_puna",
+      "glo30_name": "Copernicus_DSM_COG_10_S27_00_W068_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S25_00_E015_00_DEM/Copernicus_DSM_COG_10_S25_00_E015_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_s25e015.tif",
+      "status": "downloaded",
+      "bytes": 41369886,
+      "sha256": "26f801a166a8f2113208370a0f29d15b308bb842ef7b0822ca7b23ef56a87611",
+      "retrieved_utc": "2026-11-14T03:43:53+00:00",
+      "group": "N1_namib",
+      "glo30_name": "Copernicus_DSM_COG_10_S25_00_E015_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S26_00_E015_00_DEM/Copernicus_DSM_COG_10_S26_00_E015_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_s26e015.tif",
+      "status": "downloaded",
+      "bytes": 40656190,
+      "sha256": "115317097976ef10cb10a51c75019773e203e908f9eda0a60c31b7a2a440c187",
+      "retrieved_utc": "2026-11-14T03:43:34+00:00",
+      "group": "N1_namib",
+      "glo30_name": "Copernicus_DSM_COG_10_S26_00_E015_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N39_00_E078_00_DEM/Copernicus_DSM_COG_10_N39_00_E078_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n39e078.tif",
+      "status": "downloaded",
+      "bytes": 35264407,
+      "sha256": "6b8788b787b506ff002366e16db5611825492a515a4a97f25518143adf1bff28",
+      "retrieved_utc": "2026-11-14T03:44:05+00:00",
+      "group": "N2_kalpin",
+      "glo30_name": "Copernicus_DSM_COG_10_N39_00_E078_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N39_00_E079_00_DEM/Copernicus_DSM_COG_10_N39_00_E079_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n39e079.tif",
+      "status": "downloaded",
+      "bytes": 37714916,
+      "sha256": "101e5cbd1f8efc71da54462a1105a1091352003fee334b1b56954bfd5590915b",
+      "retrieved_utc": "2026-11-14T03:44:00+00:00",
+      "group": "N2_kalpin",
+      "glo30_name": "Copernicus_DSM_COG_10_N39_00_E079_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N40_00_E078_00_DEM/Copernicus_DSM_COG_10_N40_00_E078_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n40e078.tif",
+      "status": "downloaded",
+      "bytes": 38886463,
+      "sha256": "0d42dedee6e2d8f5abbf3105e67cc14f7c8606a66c2ed2868f624a484d6f7e9e",
+      "retrieved_utc": "2026-11-14T03:43:55+00:00",
+      "group": "N2_kalpin",
+      "glo30_name": "Copernicus_DSM_COG_10_N40_00_E078_00_DEM"
+    },
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N40_00_E079_00_DEM/Copernicus_DSM_COG_10_N40_00_E079_00_DEM.tif",
+      "file": "glo30/nasadem_hgt_n40e079.tif",
+      "status": "downloaded",
+      "bytes": 36044091,
+      "sha256": "501f0487882a26592a4f49ece459ea3231657e34b3a302ed6f94ab384c1b4900",
+      "retrieved_utc": "2026-11-14T03:44:00+00:00",
+      "group": "N2_kalpin",
+      "glo30_name": "Copernicus_DSM_COG_10_N40_00_E079_00_DEM"
+    }
+  ]
+}

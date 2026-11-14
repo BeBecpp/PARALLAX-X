@@ -1,0 +1,8 @@
+science/data
+science/.venv
+science/out/run_*.log
+node_modules
+.next
+out
+.claude
+planning

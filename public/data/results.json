@@ -3,8 +3,8 @@
   "prereg_commit": "32b5c48c70da69360dd5676dd0779cae065ef1e2",
   "prereg_file_sha256": "2cbd5965d25819e4006d8d4f02961c06754e09d8086793f191c26906c79514a5",
   "run_utc": "2026-11-14T04:09:57+00:00",
-  "exported_utc": "2026-11-14T04:13:02+00:00",
-  "code_commit": "992759808ecb17de35339f9cbf7c1138716a951c",
+  "exported_utc": "2026-11-14T04:33:38+00:00",
+  "code_commit": "d6e6d4fd17fb8adc1bc645c46d9e3bd3273059e0",
   "status": "complete",
   "parameters": {
    "grid_m": 30.0,
@@ -19688,8 +19688,163 @@
   "frac_area_slope_gt30_baseline_180m": 0.0,
   "note": "HiRISE stereo DTM effective resolution is coarser than its 1 m posting (Kirk et al. 2021: ~10-20 image pixels); 4 m baseline slopes are near that limit and are reported as a fine-scale proxy only."
  },
- "sensitivity_6km": null,
- "glo30_check": null,
+ "sensitivity_6km": {
+  "window_km": 6.0,
+  "decision_pass": false,
+  "sites": [
+   {
+    "id": "P1",
+    "median_pct_full": 65.40019286403086,
+    "median_pct_b0": 83.79942140790743,
+    "n_windows": 128
+   },
+   {
+    "id": "P2",
+    "median_pct_full": 21.67791706846673,
+    "median_pct_b0": 16.036644165863066,
+    "n_windows": 112
+   },
+   {
+    "id": "P3",
+    "median_pct_full": 70.13500482160077,
+    "median_pct_b0": 79.50819672131146,
+    "n_windows": 20
+   },
+   {
+    "id": "N1",
+    "median_pct_full": 81.32111861137898,
+    "median_pct_b0": 85.86306653809064,
+    "n_windows": 164
+   },
+   {
+    "id": "N2",
+    "median_pct_full": 46.248794599807134,
+    "median_pct_b0": 61.697203471552555,
+    "n_windows": 153
+   }
+  ],
+  "criteria": [
+   {
+    "id": "a",
+    "description": "At least 2 of 3 published yardang sites have median window percentile >= 90",
+    "value": "0 of 3 (P1 65.4, P2 21.7, P3 70.1)",
+    "pass": false
+   },
+   {
+    "id": "b",
+    "description": "Mean positive percentile with the full fingerprint exceeds the slope-only baseline (B0)",
+    "value": "full 52.4 vs B0 59.8",
+    "pass": false
+   },
+   {
+    "id": "c",
+    "description": "Mean positive percentile exceeds both process-different controls (linear dunes, thrust ridges)",
+    "value": "positives 52.4 vs dunes 81.3, ridges 46.2",
+    "pass": false
+   }
+  ]
+ },
+ "glo30_check": {
+  "dem": "Copernicus GLO-30",
+  "decision_pass": false,
+  "criteria": [
+   {
+    "id": "a",
+    "description": "At least 2 of 3 published yardang sites have median window percentile >= 90",
+    "value": "0 of 3 (P1 61.3, P2 19.1, P3 82.3)",
+    "pass": false
+   },
+   {
+    "id": "b",
+    "description": "Mean positive percentile with the full fingerprint exceeds the slope-only baseline (B0)",
+    "value": "full 54.2 vs B0 64.8",
+    "pass": false
+   },
+   {
+    "id": "c",
+    "description": "Mean positive percentile exceeds both process-different controls (linear dunes, thrust ridges)",
+    "value": "positives 54.2 vs dunes 65.9, ridges 44.9",
+    "pass": false
+   }
+  ],
+  "sites": [
+   {
+    "id": "P1",
+    "median_pct_full": 61.253263707571804,
+    "median_pct_b0": 83.23759791122716,
+    "n_windows": 49
+   },
+   {
+    "id": "P2",
+    "median_pct_full": 19.06005221932115,
+    "median_pct_b0": 19.791122715404697,
+    "n_windows": 40
+   },
+   {
+    "id": "P3",
+    "median_pct_full": 82.2976501305483,
+    "median_pct_b0": 91.51436031331593,
+    "n_windows": 6
+   },
+   {
+    "id": "N1",
+    "median_pct_full": 65.92689295039165,
+    "median_pct_b0": 85.30026109660574,
+    "n_windows": 60
+   },
+   {
+    "id": "N2",
+    "median_pct_full": 44.90861618798956,
+    "median_pct_b0": 67.98955613577023,
+    "n_windows": 55
+   }
+  ],
+  "candidates": [
+   {
+    "id": "G-1",
+    "centroid": [
+     97.68555179063101,
+     44.20691707698388
+    ],
+    "best_pct": 99.9738903394256
+   },
+   {
+    "id": "G-2",
+    "centroid": [
+     98.37267802067751,
+     44.32683024622632
+    ],
+    "best_pct": 99.92167101827677
+   },
+   {
+    "id": "G-3",
+    "centroid": [
+     99.17723746613254,
+     42.68602524303034
+    ],
+    "best_pct": 99.86945169712794
+   },
+   {
+    "id": "G-4",
+    "centroid": [
+     99.48224806646999,
+     44.48404905583958
+    ],
+    "best_pct": 99.81723237597912
+   },
+   {
+    "id": "G-5",
+    "centroid": [
+     98.68749241954274,
+     44.814782884096886
+    ],
+    "best_pct": 99.71279373368147
+   }
+  ],
+  "spearman_rank_corr_with_nasadem": 0.9681557347399633,
+  "n_common_windows": 2125,
+  "status": "sensitivity only (logged in science/DEVIATIONS.md before primary results were viewed)"
+ },
  "diagnostics": {
   "status": "post-hoc descriptive; does not alter the pre-registered decision",
   "groups": [

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 252 40" width="252" height="40" role="img" aria-label="PARALLAX X">
+  <title>PARALLAX X</title>
+  <ellipse cx="20" cy="20" rx="17.5" ry="7" transform="rotate(-24 20 20)" fill="none" stroke="#C97951" stroke-width="2"/>
+  <path d="M12 12 L28 28 M28 12 L12 28" fill="none" stroke="#C97951" stroke-width="4.5" stroke-linecap="square"/>
+  <text x="50" y="28.5" fill="#EAF0F4" font-family="'Space Grotesk', 'Futura', 'Century Gothic', 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="600" letter-spacing="4.4">PARALLAX</text>
+</svg>

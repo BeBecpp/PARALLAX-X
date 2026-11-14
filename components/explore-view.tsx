@@ -39,13 +39,13 @@ function NavPill({ label, icon, active, onClick }: { label: string; icon: string
       type="button"
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      className={`flex min-h-[44px] items-center gap-2 rounded-[10px] border px-4 text-[14px] font-semibold uppercase tracking-[0.08em] transition-all duration-300 xl:px-5 xl:text-[15px] ${
+      className={`flex min-h-[44px] shrink-0 items-center gap-2 rounded-[10px] border px-3 text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-300 sm:px-4 sm:text-[14px] xl:px-5 xl:text-[15px] ${
         active
           ? "border-copper bg-copper/15 text-ink shadow-[0_0_0_1px_rgba(198,106,75,0.55),0_0_22px_rgba(198,106,75,0.28)]"
           : "border-hairline bg-surface/60 text-muted hover:text-ink"
       }`}
     >
-      <Svg d={icon} className="h-[18px] w-[18px]" />
+      <Svg d={icon} className="hidden h-[18px] w-[18px] sm:block" />
       {label}
     </button>
   );
@@ -550,15 +550,17 @@ export function ExploreView({
   return (
     <div className="fixed inset-0 flex flex-col bg-bg">
       {/* ===== top navigation ===== */}
-      <header className="z-20 flex h-[68px] shrink-0 items-center gap-4 border-b border-hairline bg-bg/95 px-4 xl:px-6">
-        <Wordmark onClick={onHome} height={30} />
-        <nav className="mx-auto flex items-center gap-2" aria-label="Workspace">
+      <header className="z-20 flex h-[68px] shrink-0 items-center gap-2 border-b border-hairline bg-bg/95 px-3 sm:gap-4 sm:px-4 xl:px-6">
+        <span className="shrink-0">
+          <Wordmark onClick={onHome} height={30} />
+        </span>
+        <nav className="mx-auto flex min-w-0 items-center gap-2 overflow-x-auto [scrollbar-width:none]" aria-label="Workspace">
           <NavPill label="Explore" icon={ICONS.globe} active={mode === "explore" && !analysis} onClick={goExplore} />
           <NavPill label="Compare" icon={ICONS.layers} active={mode === "compare" && !analysis} onClick={() => void goCompare()} />
           <NavPill label="Simulate" icon={ICONS.route} active={mode === "simulate" && !analysis} onClick={() => void goSimulate()} />
           <NavPill label="Evidence" icon={ICONS.chart} active={!!analysis} onClick={() => openEvidence("overview")} />
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <button type="button" onClick={() => openEvidence("sources")} className="hidden min-h-[40px] items-center gap-2 rounded-[10px] border border-hairline bg-surface/60 px-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink/90 hover:border-copper lg:flex">
             <Svg d={ICONS.db} className="h-[16px] w-[16px]" /> Data sources
           </button>
@@ -592,7 +594,7 @@ export function ExploreView({
             Analyst
           </button>
           <SoundControl compact />
-          <button type="button" onClick={onOpenAbout} className="min-h-[40px] px-2 text-[13px] text-muted hover:text-ink">
+          <button type="button" onClick={onOpenAbout} className="hidden min-h-[40px] px-2 text-[13px] text-muted hover:text-ink sm:block">
             About
           </button>
         </div>

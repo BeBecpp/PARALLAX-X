@@ -15,13 +15,21 @@
 10. **Mars gravity (0.38 g) and atmosphere (~0.6 kPa)** are not reproduced at any Earth site.
 11. **Candidate checks are pending** unless stated otherwise: optical imagery, geologic maps and field verification of the Gobi candidates have not been carried out by this tool.
 12. **No human expert review.** The planning-stage "advisors" were simulated by AI (see `AI_USAGE.md`).
-13. **PAX is a brand character, not a rover simulation.** In the app, the real PAX glTF model can run a guided tour and a *terrain-following demonstration*: it follows a **hand-drawn loop** over the rendered HiRISE surface, with heights interpolated from the displayed mesh triangles and tilt from the local surface.
-    - **Not modelled:** traction, slip, wheel–soil interaction, obstacles, power, speed or route safety.
+13. **The rover is a visualization, not a rover simulation.** The six-wheel rover is NASA/JPL-Caltech's Perseverance 3D model, with the NASA/JPL insignia removed; see `ROVER_MODEL.md`. It follows a **hand-drawn loop** over the rendered HiRISE surface. Height comes from the displayed mesh, and tilt from a 4-point sample across the displayed wheelbase.
+    - **Animated:**
+      - each wheel spins from the distance travelled;
+      - the mast raises using the model's own rigged clip;
+      - the head pans during surveys;
+      - the throttle is eased.
+    - **Not modelled:**
+      - rocker-bogie articulation;
+      - corner-wheel steering;
+      - traction, slip, wheel–soil interaction, obstacles, power and route safety.
     - **Not computed:** the loop is not a least-cost or safety-optimized path.
     - **Time:** playback is time-lapsed.
-    - **Scale:** "Cinematic" mode enlarges PAX (the factor is shown on screen). "True scale" shows its ~0.5 m model height.
-    - The project owner approved this demonstration on 2026-11-14, replacing the earlier kill-list entry against animating PAX on terrain. It stays labelled as a visualization everywhere it appears.
+    - **Scale:** "Cinematic" mode enlarges the rover (the factor is shown on screen). "True scale" shows its ~3 m body.
+    - **Endorsement:** PARALLAX X is not affiliated with or endorsed by NASA. The model is credited wherever the rover appears.
 14. **Cinematic view vs survey view.** The default 3D view uses a filmic camera, a sky gradient, distance haze and a soft edge dissolve. These are **illustrative atmosphere, not data**: they are drawn on top of, and never change, the measured heightfield. The viewport says "sky & haze: illustrative". The **survey view** (footprint button on the tool rail) removes the haze and fade, frames the whole tile and draws the **exact data-footprint boundary**.
-15. **PAX points of interest.** During the drive PAX pauses at three fixed points on the hand-drawn loop and plays its head-turn clip. These points are evenly spaced positions on the loop, not detected features. Playback speed (0.5×/1×/2×) is time-lapse only.
+15. **Points of interest.** During the drive the rover brakes at three fixed points on the hand-drawn loop and sweeps its mast camera. These points are evenly spaced positions on the loop, not detected features. Playback speed (0.5×/1×/2×) is time-lapse only.
 16. **Performance mode** (HI/LO button) uses about 4× fewer mesh triangles and a lower pixel ratio. The full-resolution normal map, heightfield values and every number shown are unchanged.
 17. **Sound** is synthesized in the browser and illustrative only (see `AUDIO_CREDITS.md`). It is off until the user enables it.

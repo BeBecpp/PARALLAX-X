@@ -55,7 +55,7 @@ function RegionDetail({ footprints, hover, setHover, choice, onPick }: { footpri
   const midLat = (latMin + latMax) / 2;
   const kx = Math.cos((midLat * Math.PI) / 180);
   const aspect = ((lonMax - lonMin) * kx) / (latMax - latMin);
-  const H = typeof window !== "undefined" && window.innerHeight < 860 ? 120 : 200;
+  const H = typeof window !== "undefined" && window.innerHeight < 920 ? 120 : 200;
   const W = Math.round(H * aspect);
   const tx = (lon: number) => ((lon - lonMin) / (lonMax - lonMin)) * W;
   const ty = (lat: number) => ((latMax - lat) / (latMax - latMin)) * H;
@@ -107,7 +107,7 @@ function RegionDetail({ footprints, hover, setHover, choice, onPick }: { footpri
           {barKm} km
         </text>
       </svg>
-      <ul className="mt-2 space-y-1 text-[12px] leading-snug [@media(max-height:860px)]:hidden">
+      <ul className="mt-2 space-y-1 text-[12px] leading-snug [@media(max-height:920px)]:hidden">
         {(["hirise", "fingerprint", "ctx"] as const).map((k) => (
           <li key={k} className="flex items-center gap-2 text-muted">
             <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
@@ -243,9 +243,9 @@ function Navigator({
             <span className="absolute inset-[14px] rounded-full border-2 border-copper-light bg-copper/25 shadow-[0_0_24px_rgba(232,120,61,0.75)]" />
             <span className="absolute left-1/2 top-1/2 h-[5px] w-[5px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#fff2e8]" />
           </button>
-          <div className="pointer-events-none absolute -translate-y-1/2 pl-10" style={{ left: `${mx}%`, top: `${my}%`, opacity: arriving ? 0 : 1, transition: "opacity 300ms" }}>
+          <div className={`pointer-events-none absolute -translate-y-1/2 ${mx > 52 ? "-translate-x-full pr-10 text-right" : "pl-10"}`} style={{ left: `${mx}%`, top: `${my}%`, opacity: arriving ? 0 : 1, transition: "opacity 300ms" }}>
             <p className="whitespace-nowrap font-display text-[19px] font-semibold leading-tight text-ink [text-shadow:0_1px_4px_rgba(0,0,0,0.9)]">Medusae Fossae Formation</p>
-            <p className="num whitespace-nowrap text-[13px] text-ink/85 [text-shadow:0_1px_3px_rgba(0,0,0,0.9)]">
+            <p className="num max-w-[240px] text-[13px] text-ink/85 [text-shadow:0_1px_3px_rgba(0,0,0,0.9)]">
               {formatLat(cLat)} · {formatMarsLon(cLon)} · supported study region
             </p>
           </div>
@@ -264,6 +264,15 @@ function Navigator({
       <div className="pointer-events-none absolute left-4 top-4 rounded-[10px] border border-hairline bg-bg/80 px-3 py-2 backdrop-blur">
         <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-copper-light">Mars region navigator</p>
         <p className="mt-0.5 text-[12px] text-muted">MOLA 463 m shaded relief · {formatLat(L.lat_max)}–{formatLat(L.lat_min)} · {formatMarsLon(L.lon_min)}–{formatMarsLon(L.lon_max)}</p>
+      </div>
+      <div className="pointer-events-none absolute left-4 top-[74px] hidden rounded-[10px] border border-hairline bg-bg/80 px-3 py-2 backdrop-blur md:block">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">Data coverage</p>
+        <p className="mt-1 flex items-center gap-2 text-[12px] text-ink/90">
+          <span className="h-2 w-2 rounded-full bg-[#7FD1A0]" aria-hidden="true" /> Medusae Fossae · 2 verified stereo DTMs
+        </p>
+        <p className="mt-0.5 flex items-center gap-2 text-[12px] text-muted">
+          <span className="h-2 w-2 rounded-full border border-muted/70" aria-hidden="true" /> Rest of Mars · no terrain loaded (not explorable)
+        </p>
       </div>
       <div className="pointer-events-none absolute right-4 top-4 rounded-[10px] border border-hairline bg-bg/80 px-3 py-2 text-right backdrop-blur">
         <p className="text-[12px] uppercase tracking-[0.14em] text-muted">Cursor</p>
@@ -308,25 +317,23 @@ function RoverShowcase({ scanCue, status, defer3D }: { scanCue: number; status: 
       <img
         src={ROVER_POSTER}
         alt={use3D && ready ? "" : "Expedition rover (3D model render)"}
-        className="absolute inset-0 h-full w-full object-contain transition-opacity duration-500"
+        className="absolute inset-y-0 left-[22%] right-0 h-full w-[78%] object-contain transition-opacity duration-500"
         style={{ opacity: use3D && ready ? 0 : 1 }}
         draggable={false}
       />
       {use3D ? (
-        <div className="absolute inset-0 transition-opacity duration-700" style={{ opacity: ready ? 1 : 0 }} role="img" aria-label="Expedition rover, rotating 3D model">
+        <div className="absolute inset-y-0 left-[22%] right-0 transition-opacity duration-700" style={{ opacity: ready ? 1 : 0 }} role="img" aria-label="Expedition rover, rotating 3D model">
           <RoverStage scanCue={scanCue} onReady={() => setReady(true)} onError={() => setFailed(true)} />
         </div>
       ) : null}
-      <div className="pointer-events-none absolute left-3 top-3 w-[min(250px,60%)] rounded-[10px] border border-hairline bg-bg/80 px-3 py-2 backdrop-blur" aria-live="polite">
+      <div className="pointer-events-none absolute left-3 top-3 w-[min(220px,42%)] rounded-[10px] border border-hairline bg-bg/80 px-3 py-2 backdrop-blur" aria-live="polite">
         <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-copper-light">
           <span className="h-1.5 w-1.5 rounded-full bg-copper motion-safe:animate-pulse" aria-hidden="true" /> Expedition status · {status.label}
         </p>
-        <p className="mt-1 text-[13px] leading-snug text-ink/90">{status.text}</p>
+        <p className="mt-1 line-clamp-3 text-[13px] leading-snug text-ink/90">{status.text}</p>
       </div>
-      <figcaption className="pointer-events-none absolute bottom-1.5 right-2 text-right text-[11px] leading-tight text-muted">
-        Visualization rover · 3D model NASA/JPL-Caltech (insignia removed)
-        <br />
-        Not affiliated with or endorsed by NASA
+      <figcaption className="pointer-events-none absolute bottom-1.5 right-2 rounded-[6px] bg-bg/70 px-1.5 py-0.5 text-right text-[11px] leading-tight text-muted">
+        Rover model: NASA/JPL-Caltech, insignia removed · not NASA-endorsed
       </figcaption>
     </figure>
   );
@@ -342,22 +349,25 @@ function SceneCard({ active, onClick, thumb, title, tag, rows, purpose }: { acti
       className={`group flex w-full gap-4 rounded-[12px] border p-3 text-left transition-all duration-200 ${active ? "border-copper bg-copper/10 shadow-[0_0_0_1px_rgba(232,120,61,0.5),0_0_26px_rgba(232,120,61,0.18)]" : "border-hairline bg-surface/70 hover:border-[#3d4a57]"}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={thumb} alt="" className="h-[92px] w-[92px] shrink-0 rounded-[8px] border border-hairline object-cover [@media(max-height:860px)]:h-[72px] [@media(max-height:860px)]:w-[72px]" draggable={false} />
+      <img src={thumb} alt="" className="h-[92px] w-[92px] shrink-0 rounded-[8px] border border-hairline object-cover [@media(max-height:920px)]:h-[72px] [@media(max-height:920px)]:w-[72px]" draggable={false} />
       <span className="min-w-0 flex-1">
         <span className="flex items-center justify-between gap-2">
           <span className="font-display text-[18px] font-semibold leading-tight text-ink">{title}</span>
+          <span className="ml-auto hidden shrink-0 items-center gap-1 rounded-full border sm:inline-flex border-[#7FD1A0]/40 px-1.5 py-px text-[10px] font-semibold uppercase tracking-[0.1em] text-[#a8e3bf]" title="Verified stereo terrain model bundled with the app">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#7FD1A0]" aria-hidden="true" /> Data available
+          </span>
           <span className={`grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border-2 ${active ? "border-copper" : "border-[#55606b]"}`}>{active ? <span className="h-2 w-2 rounded-full bg-copper" /> : null}</span>
         </span>
         <span className="mt-0.5 block text-[13px] font-medium text-copper-light">{tag}</span>
         <span className="mt-1.5 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-[13px]">
           {rows.map(([k, v], i) => (
-            <span key={k} className={i === 2 ? "contents [@media(max-height:860px)]:hidden" : "contents"}>
+            <span key={k} className={i === 2 ? "contents [@media(max-height:920px)]:hidden" : "contents"}>
               <span className="text-muted">{k}</span>
               <span className="num truncate text-ink/90">{v}</span>
             </span>
           ))}
         </span>
-        <span className="mt-1.5 block text-[13px] leading-snug text-muted [@media(max-height:860px)]:hidden">{purpose}</span>
+        <span className="mt-1.5 block text-[13px] leading-snug text-muted [@media(max-height:920px)]:hidden">{purpose}</span>
       </span>
     </button>
   );
@@ -464,7 +474,7 @@ export function SelectView({
               <h1 className="whitespace-nowrap font-display text-[22px] font-semibold uppercase tracking-[0.03em] text-ink">Select location</h1>
               <p className="text-right text-[12px] font-medium uppercase tracking-[0.14em] text-muted">1 region · 2 real scenes</p>
             </div>
-            <p className="mt-1 text-[14px] leading-snug text-muted [@media(max-height:860px)]:hidden">Medusae Fossae Formation, Mars — wind-carved terrain we tested against Earth.</p>
+            <p className="mt-1 text-[14px] leading-snug text-muted [@media(max-height:920px)]:hidden">Medusae Fossae Formation, Mars — wind-carved terrain we tested against Earth.</p>
             <div role="radiogroup" aria-label="Mars scene" className="mt-3 space-y-2">
               <SceneCard
                 active={choice === "hirise"}
@@ -499,7 +509,7 @@ export function SelectView({
               aria-busy={busy}
               className="group mt-3 inline-flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[10px] bg-copper px-6 text-[17px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_0_28px_rgba(232,120,61,0.35)] transition-colors duration-150 hover:bg-[#d4692f] disabled:cursor-wait"
             >
-              {busy ? "Descending…" : choice === "hirise" ? "Begin descent" : "Descend & compare"}
+              {busy ? "Descending…" : choice === "hirise" ? "Explore this region" : "Explore & compare"}
               {busy ? null : <ArrowRight />}
             </button>
             <button
@@ -513,7 +523,7 @@ export function SelectView({
               </svg>
               Play 30-second guided demo
             </button>
-            <p className="mt-2 text-[12px] leading-snug text-muted [@media(max-height:860px)]:hidden">Two different terrain patches ~10 km apart, not one scene at two resolutions. Both are real stereo elevation models.</p>
+            <p className="mt-2 text-[12px] leading-snug text-muted [@media(max-height:920px)]:hidden">Two different terrain patches ~10 km apart, not one scene at two resolutions. Both are real stereo elevation models.</p>
           </div>
         </aside>
       </main>

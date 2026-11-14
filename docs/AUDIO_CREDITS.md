@@ -14,11 +14,11 @@ so there is nothing to license or attribute.
 | Earth reveal chime | an Earth window finishes loading | detuned sine partials (880 / 1320 / 1762 Hz) |
 | Evidence reveal | opening analysis panels | two triangle notes |
 | Neutral acknowledgement | the FAILED validation is shown | low, non-rising triangle + sine (196 / 147 Hz) — deliberately not a fanfare |
-| Rover motor loop | while PAX is actually moving in Simulate | low-passed 46 Hz sawtooth with 7.5 Hz amplitude wobble, 182 Hz whine, band-passed grit |
+| Rover motor loop | while the rover is actually moving in Simulate | low-passed 46 Hz sawtooth with 7.5 Hz amplitude wobble, 182 Hz whine, band-passed grit |
 | Wind bed (optional, off by default) | Settings → "Wind bed" | looping brown noise, low-pass ~420 Hz with slow LFOs |
 
 **None of these sounds is a recording from Mars, from Perseverance, or from any of our study sites.**
-The rover motor loop is not a recording of PAX or of any real rover.
+The rover motor loop is not a recording of any real rover.
 
 ## Behaviour
 - **Off by default; no autoplay.** Nothing plays until the user presses **Enable sound** (or **M**). Browsers also block

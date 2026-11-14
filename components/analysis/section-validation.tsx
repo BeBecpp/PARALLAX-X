@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import type { Criterion, Results, RobustnessCheck } from "@/lib/types";
 import { Card, DataTable, SectionHeader, SubHeader, Verdict, fmt } from "./primitives";
+import { FalsificationReveal } from "./falsification-reveal";
 
 function CriteriaTable({ criteria }: { criteria: Criterion[] | { id: string; description: string; value: string; pass: boolean }[] }) {
   return (
@@ -93,6 +94,10 @@ export function ValidationSection({ results: r }: { results: Results }) {
         <p className="text-[14px] font-medium uppercase tracking-[0.14em] text-muted">Pre-registered decision</p>
         <p className="mt-3 font-display text-[44px] font-semibold leading-none tracking-[-0.01em] text-ink md:text-[52px]">{d.pass ? "PASS" : "FAIL"}</p>
         <p className="mt-5 max-w-[70ch] text-[17px] leading-[1.6] text-[#d6d3ce]">{d.summary}</p>
+      </div>
+
+      <div className="mt-8">
+        <FalsificationReveal results={r} />
       </div>
 
       <div className="mt-14 space-y-14">

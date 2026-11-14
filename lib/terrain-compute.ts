@@ -370,3 +370,84 @@ export function focalCell(hf: Heightfield): [number, number] {
   }
   return [bx, by];
 }
+
+// ---- layer albedos (visual encodings of measured values; geometry unchanged) ----
+
+const HYPSO: Record<Tone, [number, number, number][]> = {
+  mars: [[46, 24, 18], [112, 52, 32], [176, 94, 58], [214, 150, 104], [238, 214, 190]],
+  earth: [[30, 40, 48], [64, 84, 94], [112, 132, 138], [168, 176, 168], [226, 222, 208]],
+};
+
+function ramp(stops: [number, number, number][], t: number): [number, number, number] {
+  const x = Math.min(1, Math.max(0, t)) * (stops.length - 1);
+  const i = Math.min(stops.length - 2, Math.floor(x));
+  const f = x - i;
+  const a = stops[i];
+  const b = stops[i + 1];
+  return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
+}
+
+/** Hypsometric albedo: colour = relative elevation within the tile (2nd–98th percentile stretch). */
+export function elevationRGBA(hf: Heightfield, tone: Tone): Uint8Array {
+  const n = hf.meta.width * hf.meta.height;
+  const vals: number[] = [];
+  for (let i = 0; i < n; i += 7) if (!Number.isNaN(hf.heights[i])) vals.push(hf.heights[i]);
+  vals.sort((a, b) => a - b);
+  const lo = vals[Math.floor(vals.length * 0.02)] ?? hf.minRel;
+  const hi = vals[Math.floor(vals.length * 0.98)] ?? hf.maxRel;
+  const out = new Uint8Array(n * 4);
+  for (let i = 0; i < n; i++) {
+    const v = hf.heights[i];
+    if (Number.isNaN(v)) {
+      out.set([9, 12, 17, 255], i * 4);
+      continue;
+    }
+    const c = ramp(HYPSO[tone], (v - lo) / Math.max(1e-6, hi - lo));
+    out[i * 4] = c[0];
+    out[i * 4 + 1] = c[1];
+    out[i * 4 + 2] = c[2];
+    out[i * 4 + 3] = 255;
+  }
+  return out;
+}
+
+const SLOPE_STOPS: [number, number, number][] = [[34, 38, 44], [92, 70, 56], [178, 96, 62], [226, 150, 96], [246, 226, 196]];
+
+/** Slope-magnitude albedo at a stated baseline (true, unexaggerated slope; 0°→dark, ≥maxDeg→light). */
+export function slopeRampRGBA(hf: Heightfield, baselineM: number, maxDeg: number): Uint8Array {
+  const s = computeSlopeDeg(hf, baselineM);
+  const out = new Uint8Array(s.length * 4);
+  for (let i = 0; i < s.length; i++) {
+    if (Number.isNaN(s[i])) {
+      out.set([9, 12, 17, 255], i * 4);
+      continue;
+    }
+    const c = ramp(SLOPE_STOPS, Math.sqrt(s[i] / maxDeg));
+    out[i * 4] = c[0];
+    out[i * 4 + 1] = c[1];
+    out[i * 4 + 2] = c[2];
+    out[i * 4 + 3] = 255;
+  }
+  return out;
+}
+
+/** Slope-layer baseline for a heightfield: ≥ 6 grid posts (180 m on the 30 m grid; ~24 m on HiRISE display grid). */
+export function slopeLayerBaseline(hf: Heightfield): number {
+  return Math.max(6 * hf.meta.posting_m, 8);
+}
+
+export function getElevationRGBA(hf: Heightfield, tone: Tone): Uint8Array {
+  const m = texCache(hf);
+  const key = `elev|${tone}`;
+  let t = m.get(key);
+  if (!t) m.set(key, (t = elevationRGBA(hf, tone)));
+  return t;
+}
+
+export function getSlopeRampRGBA(hf: Heightfield): Uint8Array {
+  const m = texCache(hf);
+  const key = "sramp";
+  let t = m.get(key);
+  if (!t) m.set(key, (t = slopeRampRGBA(hf, slopeLayerBaseline(hf), 25)));
+  return t;
+}

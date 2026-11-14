@@ -39,7 +39,8 @@ export default function TerrainViewer({ views, exaggeration, onEngine, onCamera,
         onContextLost: () => cbs.current.onFallback?.("webgl"),
         onDrive: (d) => cbs.current.onDrive?.(d),
       });
-    } catch {
+    } catch (err) {
+      console.error("[PARALLAX X] terrain engine failed to start", err);
       cbs.current.onFallback?.("webgl");
       return;
     }

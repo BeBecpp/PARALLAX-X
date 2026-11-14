@@ -84,6 +84,10 @@ export interface CompareScene {
   pct_b0: number | null;
   per_feature_w1: Record<string, number> | null;
   site_id?: string;
+  /** Per-feature medians over the scene window in raw units (see features[].units). */
+  median_raw?: Record<string, number> | null;
+  /** Public path to a hillshade thumbnail (webp) of the scene heightfield. */
+  thumb?: string | null;
 }
 
 export interface BreakdownItem {

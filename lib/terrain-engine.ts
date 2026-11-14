@@ -7,6 +7,8 @@ import {
   chooseStride,
   focalCell,
   getAlbedoRGBA,
+  getElevationRGBA,
+  getSlopeRampRGBA,
   getMeshArrays,
   getNormalMapRGBA,
   getSlopeClassRGBA,
@@ -14,7 +16,9 @@ import {
   type Tone,
 } from "./terrain-compute";
 
-export type Overlay = "hillshade" | "slope";
+/** "hillshade" = lit relief; "elevation" = lit hypsometric ramp; "slopemap" = lit slope-magnitude ramp;
+ *  "slope" = unlit slope-class proxy (rover-scale lens). Geometry is always the measured heightfield. */
+export type Overlay = "hillshade" | "elevation" | "slopemap" | "slope";
 
 export interface ViewSpec {
   hf: Heightfield;
@@ -114,6 +118,8 @@ export class TerrainEngine {
   private paxLoading: Promise<PaxInfo | null> | null = null;
   private paxVisible = false;
   private clock = new THREE.Clock();
+  /** gap between split viewports in CSS px (the UI draws panel frames over it) */
+  viewGap = 2;
   private quality = 2; // 2 = full, 1 = DPR 1, 0 = DPR 1 + no shadows
   private lastShadow = 0;
   private drive = { started: false, playing: false, t: 0, periodS: 48, lastEmit: 0 };
@@ -298,7 +304,15 @@ export class TerrainEngine {
       entry.basic.needsUpdate = true;
       entry.mesh.material = entry.basic;
     } else {
-      entry.lit.map = this.tex(entry, `alb|${spec.tone}`, () => this.dataTexture(getAlbedoRGBA(spec.hf, spec.tone), w, h, true));
+      const key = spec.overlay === "elevation" ? `elev|${spec.tone}` : spec.overlay === "slopemap" ? "sramp" : `alb|${spec.tone}`;
+      entry.lit.map = this.tex(entry, key, () =>
+        this.dataTexture(
+          spec.overlay === "elevation" ? getElevationRGBA(spec.hf, spec.tone) : spec.overlay === "slopemap" ? getSlopeRampRGBA(spec.hf) : getAlbedoRGBA(spec.hf, spec.tone),
+          w,
+          h,
+          true,
+        ),
+      );
       entry.lit.normalMap = this.tex(entry, "nrm", () => this.dataTexture(getNormalMapRGBA(spec.hf), w, h, false));
       entry.lit.needsUpdate = true;
       entry.mesh.material = entry.lit;
@@ -374,10 +388,10 @@ export class TerrainEngine {
     const hfov = 2 * Math.atan(Math.tan(vfov / 2) * aspect);
     // half-width of the rotated square footprint as seen from the camera azimuth
     const halfW = (E / 2) * (Math.abs(Math.cos(AZIMUTH)) + Math.abs(Math.sin(AZIMUTH)));
-    const dW = (halfW * 0.97) / Math.tan(hfov / 2);
+    const dW = (halfW * 0.8) / Math.tan(hfov / 2);
     const halfH = (E / 2) * Math.cos(POLAR) * 1.15 + R * Math.sin(POLAR) * 0.5;
-    const dH = (halfH * 0.95) / Math.tan(vfov / 2);
-    const d = Math.max(dW, dH, E * 0.55);
+    const dH = (halfH * 0.82) / Math.tan(vfov / 2);
+    const d = Math.max(dW, dH, E * 0.5);
     const first = this.specs[0] ? this.meshes.get(this.specs[0].hf.meta.id) : undefined;
     const f = n === 1 && first ? first.focus : [0, 0];
     const blend = 0.3; // stay mostly centred so the whole tile reads, lean toward the focal relief
@@ -659,6 +673,22 @@ export class TerrainEngine {
     });
   }
 
+  /** Points along the demonstration loop in mesh coords (x east, z south, metres) with cumulative distance. */
+  getPathSamples(n = 240): { x: number; z: number; d: number }[] {
+    if (!this.path) this.ensurePath();
+    if (!this.path) return [];
+    const pts = this.path.getSpacedPoints(n);
+    let d = 0;
+    return pts.map((p, i) => {
+      if (i) d += Math.hypot(p.x - pts[i - 1].x, p.z - pts[i - 1].z);
+      return { x: p.x, z: p.z, d };
+    });
+  }
+
+  get periodS(): number {
+    return this.drive.periodS;
+  }
+
   /** Start (or restart) the terrain-following demonstration from the beginning of the loop. */
   startDrive() {
     if (!this.pax) return;
@@ -831,7 +861,7 @@ export class TerrainEngine {
     this.renderer.setViewport(0, 0, W, H);
     this.renderer.setScissor(0, 0, W, H);
     this.renderer.clear();
-    const gap = n > 1 ? 2 : 0;
+    const gap = n > 1 ? this.viewGap : 0;
     const vw = (W - gap * (n - 1)) / n;
     this.camera.aspect = vw / H;
     this.camera.updateProjectionMatrix();

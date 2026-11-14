@@ -52,14 +52,15 @@ export function PaxExpedition({
   onSetRes,
   onCompare,
   drive,
+  tourOnly = false,
 }: {
   engine: () => TerrainEngine | null;
   hero: Heightfield;
   results: Results | null;
-  res: "native" | "30m";
   onSetRes: (r: "native" | "30m") => void;
   onCompare: () => void;
   drive: DriveState | null;
+  tourOnly?: boolean;
 }) {
   const [status, setStatus] = useState<Status>("idle");
   const [open, setOpen] = useState(true);
@@ -178,7 +179,7 @@ export function PaxExpedition({
         </button>
       </div>
 
-      <div className="mt-3 flex gap-2" role="tablist">
+      <div className={`mt-3 flex gap-2 ${tourOnly ? "hidden" : ""}`} role="tablist">
         <Pill active={tab === "tour"} onClick={() => setTab("tour")}>
           Tour
         </Pill>

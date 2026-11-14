@@ -42,7 +42,7 @@ We think an honest failure is a useful contribution. It shows which questions pu
 Every number is read from [`public/data/results.json`](public/data/results.json).
 
 **Screenshots** (real production captures at 1920×1080, 1440×900, 1366×768 and 390×844): [`docs/screenshots/`](docs/screenshots/).
-**Guided demo clip** (real browser capture, animated WebP): [`docs/demo/parallax-x-guided-demo.webp`](docs/demo/parallax-x-guided-demo.webp).
+**Recordings** (real-time browser screencasts of the production site, animated WebP; the frame rate is limited by the capture machine's integrated GPU): [guided demo](docs/demo/parallax-x-guided-demo.webp), [welcome intro](docs/demo/welcome-intro.webp), [rover simulation](docs/demo/rover-simulation.webp).
 
 ## How it works (no AI training)
 Offline Python (GDAL/rasterio, NumPy, SciPy) runs the full chain:

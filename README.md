@@ -28,11 +28,17 @@ The study design, including the pass/fail rule, was **pre-registered and committ
 We think an honest failure is a useful contribution. It shows which questions public 30 m data **can** and **cannot** answer about Mars analogs, and what data would be needed: higher-resolution Earth DEMs and process-aware evidence.
 
 ## What you can do in the app
-1. **Select:** a real MOLA map with the exact supported footprint (one supported Mars region).
-2. **Explore:** HiRISE (NASA PDS) terrain in interactive 3D, with scale bar, posting and source.
-3. **Compare:** Mars and Earth at the same 10 km extent, the same 30 m grid, identical processing and the same vertical exaggeration. Includes Gobi candidates, published yardang controls and process-different controls.
-4. **Scale lens:** a "Landform study (≥150 m)" vs "Rover-scale (~5 m)" question. At rover scale the Earth side says **"Not evaluable — only 30 m public data."**
-5. **Evidence drawer:** results, method, sources, limitations and AI-use disclosure. Every number is read from [`public/data/results.json`](public/data/results.json).
+1. **Select:** a Mars region navigator on the real MOLA map. The exact data footprints are drawn at true size; click anywhere to check coverage ("Not yet available" outside the published study area). Choose one of two real scenes: **HiRISE Scarp Explorer** (fine-scale 3D showcase) or **CTX Yardang Study** (the area used in the Mars–Earth ranking).
+2. **Arrive:** a camera descent from the locator onto the terrain.
+3. **Explore:** HiRISE (NASA PDS) terrain in interactive 3D under a low sun, with PAX parked on the measured surface. Toggle between a cinematic view (illustrative haze, labelled) and a survey view with the exact data-footprint outline. A HI/LO performance mode covers integrated GPUs.
+4. **Simulate:** the real PAX glTF follows a hand-drawn loop over the HiRISE mesh. Controls: play, pause, replay, stop, skip to point of interest, scrub the timeline (the linked terrain profile follows), 0.5×/1×/2× time-lapse, follow / close-up / orbit cameras. It is a visualization, not mobility physics.
+5. **Compare:** Mars and Earth at the same 10 km extent, the same 30 m grid, identical processing and the same declared vertical exaggeration. Includes Gobi candidates, published yardang controls and process-different controls, with live transects and a ranking from `results.json`.
+6. **Evidence:** a question-led journey (what we measured → how we compared fairly → where on Earth → does it work → sources and next steps). It includes **Watch the math**, an animated chart of the exact ECDF-normalised quantile curves behind each W1 (re-computed and checked equal to the stored run).
+7. **Research analyst:** rule-based answers built from `results.json` with the fields cited. Not an AI model.
+8. **Guided demo:** one click runs a deterministic 30-second walkthrough (Select → PAX → Compare → FAILED validation → takeaway). Esc skips it.
+9. **Sound:** synthesized in the browser, off until you enable it (M toggles). See [`docs/AUDIO_CREDITS.md`](docs/AUDIO_CREDITS.md).
+
+Every number is read from [`public/data/results.json`](public/data/results.json).
 
 ## How it works (no AI training)
 Offline Python (GDAL/rasterio, NumPy, SciPy) runs the full chain:

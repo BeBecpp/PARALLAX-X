@@ -14,11 +14,11 @@ export type AnalysisNav = "overview" | "terrain" | "candidates" | "method" | "va
 
 export const ANALYSIS_SECTIONS: { id: AnalysisNav; label: string }[] = [
   { id: "overview", label: "Overview" },
-  { id: "terrain", label: "Terrain analysis" },
-  { id: "candidates", label: "Candidate explorer" },
-  { id: "method", label: "Scientific method" },
-  { id: "validation", label: "Validation & findings" },
-  { id: "sources", label: "Sources & AI use" },
+  { id: "terrain", label: "1 · What did we measure?" },
+  { id: "method", label: "2 · How did we compare fairly?" },
+  { id: "candidates", label: "3 · Where on Earth?" },
+  { id: "validation", label: "4 · Does it work?" },
+  { id: "sources", label: "5 · Sources & what next" },
 ];
 
 export interface AnalysisViewProps {
@@ -217,8 +217,8 @@ export function AnalysisView({ results, sources, onClose, initialSection = "over
           <div className="mx-auto max-w-[920px] space-y-32 px-5 pb-28 pt-12 md:px-10 md:pt-16">
             <OverviewSection results={results} sources={sources} />
             <TerrainSection results={results} />
-            <CandidatesSection results={results} sources={sources} onCompare={onCompare} />
             <MethodSection results={results} sources={sources} />
+            <CandidatesSection results={results} sources={sources} onCompare={onCompare} />
             <ValidationSection results={results} />
             <SourcesSection sources={sources} />
             <footer className="border-t border-hairline pt-6 text-[14px] text-muted">

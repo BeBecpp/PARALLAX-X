@@ -15,3 +15,10 @@
 - To parallelise window feature extraction across processes, each window's 500-value ECDF subsample is drawn with
   `numpy.random.default_rng(42 + crc32(window_id))` instead of one sequential `default_rng(42)` stream.
   It is still fixed, deterministic and seed-42-based. The features, distances and decision rule are unchanged.
+
+## 2026-11-14 15:00 UTC+8 — W1 curve export for visualisation (post-hoc; cannot change any result)
+- `science/pipeline/export_w1_curves.py` re-runs the frozen primary-run stages without changes, then writes the
+  ECDF-normalised 199-quantile functions of Mars and each comparison window to `public/data/w1_curves.json`.
+- It recomputes every per-feature W1 and refuses to export unless they equal the stored primary-run values.
+  Result: max |recomputed − stored| = 0.0. The Mars raw quantiles were also checked against the stored fingerprint.
+- Purpose: the animated "Watch the math" chart in the Evidence view. No decision, rank or percentile is affected.

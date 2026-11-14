@@ -21,3 +21,7 @@
     - **Time:** playback is time-lapsed.
     - **Scale:** "Cinematic" mode enlarges PAX (the factor is shown on screen). "True scale" shows its ~0.5 m model height.
     - The project owner approved this demonstration on 2026-11-14, replacing the earlier kill-list entry against animating PAX on terrain. It stays labelled as a visualization everywhere it appears.
+14. **Cinematic view vs survey view.** The default 3D view uses a filmic camera, a sky gradient, distance haze and a soft edge dissolve. These are **illustrative atmosphere, not data**: they are drawn on top of, and never change, the measured heightfield. The viewport says "sky & haze: illustrative". The **survey view** (footprint button on the tool rail) removes the haze and fade, frames the whole tile and draws the **exact data-footprint boundary**.
+15. **PAX points of interest.** During the drive PAX pauses at three fixed points on the hand-drawn loop and plays its head-turn clip. These points are evenly spaced positions on the loop, not detected features. Playback speed (0.5×/1×/2×) is time-lapse only.
+16. **Performance mode** (HI/LO button) uses about 4× fewer mesh triangles and a lower pixel ratio. The full-resolution normal map, heightfield values and every number shown are unchanged.
+17. **Sound** is synthesized in the browser and illustrative only (see `AUDIO_CREDITS.md`). It is off until the user enables it.

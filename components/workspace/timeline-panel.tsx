@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import type { CameraMode, DriveState } from "@/lib/terrain-engine";
 import type { ProfileData, TimelinePanelProps } from "./types";
 import { Icon, MicroLabel, PillTabs } from "./panels/ui";
@@ -23,7 +23,7 @@ export function TimelinePanel(props: TimelinePanelProps) {
     <section aria-label="Mission simulation and terrain profile" className="@container flex h-full min-h-0 w-full flex-col overflow-hidden border-t border-hairline bg-surface">
       <SimulationRow {...props} />
       <div className="flex min-h-0 flex-1 flex-col gap-3 border-t border-hairline p-3 lg:flex-row">
-        <ProfileCard profile={profile} cursorFrac={cursorFrac} onCursor={onCursor} compare={mode === "compare"} />
+        <ProfileCard profile={profile} cursorFrac={cursorFrac} onCursor={onCursor} compare={mode === "compare"} onPick={mode === "simulate" ? props.onSeek : undefined} />
         <StatsBox profile={profile} />
       </div>
     </section>
@@ -50,6 +50,10 @@ function SimulationRow({
   onResume,
   onReplay,
   onStop,
+  onSeek,
+  onSkip,
+  onSpeed,
+  poiFracs,
   onCamera,
   onOpenSimulate,
 }: TimelinePanelProps) {
@@ -90,11 +94,36 @@ function SimulationRow({
               </svg>
             </RoundButton>
             <PlayButton drive={drive} paxStatus={paxStatus} onStart={onStart} onPause={onPause} onResume={onResume} />
+            <RoundButton label="Skip to next point of interest" onClick={onSkip} disabled={!drive || paxStatus !== "ready"}>
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
+                <rect x="16.8" y="5" width="2.2" height="14" rx="1" />
+                <path d="M5 5.8v12.4a.8.8 0 001.24.67l8.26-5.67a1.4 1.4 0 000-2.4L6.24 5.13A.8.8 0 005 5.8z" />
+              </svg>
+            </RoundButton>
             <RoundButton label="Stop" onClick={onStop} disabled={!drive?.started}>
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
                 <rect x="6" y="6" width="12" height="12" rx="2" />
               </svg>
             </RoundButton>
+          </div>
+          <div role="radiogroup" aria-label="Playback speed (time-lapse)" className="inline-flex overflow-hidden rounded-[8px] border border-hairline bg-[#0d1218]">
+            {[0.5, 1, 2].map((m, i) => {
+              const active = (drive?.speed ?? 1) === m;
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  disabled={!drive}
+                  title="Playback speed (time-lapse, not a rover speed)"
+                  onClick={() => onSpeed(m)}
+                  className={`num px-2.5 py-[6px] text-[13px] font-medium disabled:opacity-50 ${i > 0 ? "border-l border-hairline" : ""} ${active ? "bg-copper/15 text-copper-light" : "text-muted enabled:hover:text-ink"}`}
+                >
+                  {m}×
+                </button>
+              );
+            })}
           </div>
           <div className="flex items-center gap-2">
             <MicroLabel className="hidden @[1100px]:block">Camera</MicroLabel>
@@ -137,23 +166,71 @@ function SimulationRow({
             T+ {mmss(progress * period)} <span className="text-muted">/ {mmss(period)}</span>
           </p>
         </div>
-        <div
-          role="progressbar"
-          aria-label="Demonstration loop progress"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(progress * 100)}
-          className="relative mt-2 h-[6px] rounded-full bg-[#1f2730]"
-        >
-          <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-copper/70 to-copper" style={{ width: `${progress * 100}%` }} />
-          <div
-            className="absolute top-1/2 h-[14px] w-[14px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-copper bg-[#f3f1ed] shadow-[0_0_10px_rgba(198,106,75,0.45)]"
-            style={{ left: `${progress * 100}%` }}
-            aria-hidden
-          />
-        </div>
-        <p className="mt-1.5 text-[11px] text-muted">time-lapsed playback</p>
+        <SeekBar progress={progress} pois={poiFracs} disabled={compare || paxStatus !== "ready"} onSeek={onSeek} />
+        <p className="mt-1.5 truncate text-[12px] text-muted" aria-live="polite">
+          {drive?.poi ? `Point of interest ${drive.poi} — PAX pauses and looks around` : compare ? "time-lapsed playback" : "Drag to scrub · time-lapsed playback of a pre-authored path"}
+        </p>
       </div>
+    </div>
+  );
+}
+
+/** Scrubbable timeline: pointer drag or arrow keys reposition PAX (and the linked profile cursor). */
+function SeekBar({ progress, pois, disabled, onSeek }: { progress: number; pois: number[]; disabled: boolean; onSeek: (f: number) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+  const fracAt = (clientX: number) => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r || r.width <= 0) return 0;
+    return Math.min(0.999, Math.max(0, (clientX - r.left) / r.width));
+  };
+  return (
+    <div
+      ref={ref}
+      role="slider"
+      tabIndex={disabled ? -1 : 0}
+      aria-label="Demonstration loop position"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(progress * 100)}
+      aria-disabled={disabled}
+      onPointerDown={(e) => {
+        if (disabled) return;
+        dragging.current = true;
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+        onSeek(fracAt(e.clientX));
+      }}
+      onPointerMove={(e) => {
+        if (dragging.current && !disabled) onSeek(fracAt(e.clientX));
+      }}
+      onPointerUp={() => (dragging.current = false)}
+      onPointerCancel={() => (dragging.current = false)}
+      onKeyDown={(e) => {
+        if (disabled) return;
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+          e.preventDefault();
+          e.stopPropagation();
+          onSeek(Math.min(0.999, Math.max(0, progress + (e.key === "ArrowRight" ? 0.02 : -0.02))));
+        }
+      }}
+      className={`relative mt-2 h-[18px] touch-none select-none outline-none focus-visible:ring-2 focus-visible:ring-copper/60 rounded-full ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+    >
+      <div className="absolute inset-x-0 top-1/2 h-[6px] -translate-y-1/2 rounded-full bg-[#1f2730]" />
+      <div className="absolute left-0 top-1/2 h-[6px] -translate-y-1/2 rounded-full bg-gradient-to-r from-copper/70 to-copper" style={{ width: `${progress * 100}%` }} />
+      {pois.map((p, i) => (
+        <span
+          key={p}
+          title={`Point of interest ${i + 1}`}
+          className={`absolute top-1/2 h-[12px] w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full ${progress >= p ? "bg-[#f3f1ed]" : "bg-[#55606b]"}`}
+          style={{ left: `${p * 100}%` }}
+          aria-hidden
+        />
+      ))}
+      <div
+        className="absolute top-1/2 h-[16px] w-[16px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-copper bg-[#f3f1ed] shadow-[0_0_10px_rgba(198,106,75,0.45)]"
+        style={{ left: `${progress * 100}%` }}
+        aria-hidden
+      />
     </div>
   );
 }
@@ -239,12 +316,16 @@ function ProfileCard({
   cursorFrac,
   onCursor,
   compare,
+  onPick,
 }: {
   profile: ProfileData | null;
   cursorFrac: number | null;
   onCursor: (f: number | null) => void;
   compare: boolean;
+  /** simulate: click the chart to move PAX to that point of the loop */
+  onPick?: (f: number) => void;
 }) {
+  const hover = useRef<number | null>(null);
   const [tab, setTab] = useState<ChartTab>("elevation");
   const series = profile ? (tab === "elevation" ? profile.elevation : profile.slope) : [];
   const hasData = series.some((s) => s.points.length > 1);
@@ -282,9 +363,24 @@ function ProfileCard({
           ]}
         />
       </div>
-      <div className="mt-1 min-h-0 flex-1">
+      <div
+        className={`mt-1 min-h-0 flex-1 ${onPick ? "cursor-pointer" : ""}`}
+        onClick={() => {
+          if (onPick && hover.current !== null) onPick(Math.min(0.999, Math.max(0, hover.current)));
+        }}
+        title={onPick ? "Click to move PAX to this point of the loop" : undefined}
+      >
         {profile && hasData ? (
-          <ProfileChart series={series} unit={tab === "elevation" ? "m" : "°"} yTitle={yTitle} cursorFrac={cursorFrac} onCursor={onCursor} />
+          <ProfileChart
+            series={series}
+            unit={tab === "elevation" ? "m" : "°"}
+            yTitle={yTitle}
+            cursorFrac={cursorFrac}
+            onCursor={(f) => {
+              hover.current = f;
+              onCursor(f);
+            }}
+          />
         ) : (
           <EmptyChart compare={compare} />
         )}

@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import type { Results, SourceRecord } from "@/lib/types";
 import { DataTable, Expand, SectionHeader, fmt, fmtInt } from "./primitives";
+import { W1Explainer } from "./w1-explainer";
 
 function Step({ n, title, plain, children }: { n: number; title: string; plain: ReactNode; children: ReactNode }) {
   return (
@@ -42,6 +43,9 @@ export function MethodSection({ results: r, sources }: { results: Results; sourc
           </p>
         }
       />
+      <div className="mb-10">
+        <W1Explainer results={r} />
+      </div>
       <ol className="border-b border-hairline">
         <Step n={1} title="Acquire NASA and Earth elevation data" plain="Download public terrain models: a CTX stereo model of the Mars yardangs, a HiRISE model of a nearby scarp, and NASADEM tiles for Earth.">
           <ul className="space-y-2">

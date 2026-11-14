@@ -116,3 +116,22 @@ body {
     animation: none !important;
   }
 }
+
+.slide-in-right {
+  animation: slide-in-right 320ms var(--ease-out-ui) both;
+}
+@keyframes slide-in-right {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide-in-right {
+    animation: none;
+  }
+}

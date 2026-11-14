@@ -51,6 +51,14 @@ export interface TimelinePanelProps {
   onResume: () => void;
   onReplay: () => void;
   onStop: () => void;
+  /** reposition PAX along the loop (0..1); starts it paused if needed */
+  onSeek: (frac: number) => void;
+  /** jump to the next point of interest */
+  onSkip: () => void;
+  /** time-lapse playback multiplier */
+  onSpeed: (m: number) => void;
+  /** positions (0..1) of the points of interest on the loop */
+  poiFracs: number[];
   onCamera: (m: CameraMode) => void;
   /** go to the Simulate mode (from explore/compare) */
   onOpenSimulate: () => void;

@@ -6,7 +6,7 @@ import { fetchHeightfieldMeta, loadHeightfield } from "@/lib/heightfield";
 import { chooseStride, getAlbedoRGBA, getMeshArrays, getNormalMapRGBA } from "@/lib/terrain-compute";
 import { formatBytes } from "@/lib/format";
 import type { Heightfield, HeightfieldMeta, Locator, Results, SourceRecord } from "@/lib/types";
-import { SelectView } from "./select-view";
+import { SelectView, type SceneChoice } from "./select-view";
 import { LoadingView, type LoadStep } from "./loading-view";
 import { ExploreView } from "./explore-view";
 import { StaticFallback } from "./static-fallback";
@@ -35,6 +35,7 @@ export function ParallaxApp() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [retrying, setRetrying] = useState(false); // retry from the error screen: stay on the loading view
   const run = useRef(0);
+  const [entry, setEntry] = useState<{ scene: SceneChoice; demo: boolean; n: number }>({ scene: "hirise", demo: false, n: 0 });
 
   useEffect(() => {
     loadLocator().then(setLocator);
@@ -46,8 +47,11 @@ export function ParallaxApp() {
 
   const patch = (id: string, p: Partial<LoadStep>) => setSteps((s) => s.map((x) => (x.id === id ? { ...x, ...p } : x)));
 
-  const startExplore = useCallback(async () => {
+  const startExplore = useCallback(async (scene: SceneChoice = "hirise", demo = false) => {
     const id = ++run.current;
+    const t0 = performance.now();
+    // the Select screen plays a ~1.9 s camera descent over the real locator; let it finish (skipped under reduced motion)
+    const minMs = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? 0 : 1700;
     setStage("loading");
     setLoadError(null);
     setShowSteps(false);
@@ -55,7 +59,7 @@ export function ParallaxApp() {
     // Select stage stays on screen (CTA shows "Preparing terrain…", PAX waves) while the real work runs.
     const timer = window.setTimeout(() => {
       if (run.current === id) setShowSteps(true);
-    }, 700);
+    }, Math.max(700, minMs + 600));
     setSteps([
       { id: "fetch", label: "Fetching Mars elevation", detail: heroMeta?.source_id ?? HERO_ID, status: "active", progress: 0 },
       { id: "mesh", label: "Building terrain mesh", detail: "waiting for elevation data", status: "pending" },
@@ -91,6 +95,10 @@ export function ParallaxApp() {
             : "results.json not published yet — Earth comparison will show as unavailable",
       });
       window.clearTimeout(timer);
+      const wait = minMs - (performance.now() - t0);
+      if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+      if (run.current !== id) return;
+      setEntry((e) => ({ scene, demo, n: e.n + 1 }));
       setHero(hf);
       const qs = new URLSearchParams(window.location.search);
       const wantStatic = qs.has("static");
@@ -124,9 +132,9 @@ export function ParallaxApp() {
           locator={locator}
           sources={sources}
           heroMeta={heroMeta}
-          onExplore={() => {
+          onExplore={(scene, opts) => {
             setRetrying(false);
-            startExplore();
+            startExplore(scene, !!opts?.demo);
           }}
           onOpenAbout={() => setAboutOpen(true)}
           busy={stage === "loading"}
@@ -139,13 +147,16 @@ export function ParallaxApp() {
           error={loadError}
           onRetry={() => {
             setRetrying(true);
-            startExplore();
+            startExplore(entry.scene, false);
           }}
           onStatic={() => goStatic("The terrain could not be loaded, so no 3D view is available.")}
         />
       ) : null}
       {stage === "explore" && hero ? (
         <ExploreView
+          key={entry.n}
+          initialMode={entry.scene === "ctx" ? "compare" : "explore"}
+          demo={entry.demo}
           hero={hero}
           results={results}
           sources={sources}

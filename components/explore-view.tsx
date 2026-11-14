@@ -4,7 +4,8 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Loadable } from "@/lib/data";
 import type { CompareScene, Heightfield, Results, SourceRecord } from "@/lib/types";
-import type { CameraMode, DriveState, TerrainEngine, ViewSpec } from "@/lib/terrain-engine";
+import type { CameraMode, DriveState, Framing, TerrainEngine, ViewSpec } from "@/lib/terrain-engine";
+import { audio, sfx } from "@/lib/audio";
 import { loadHeightfield, sampleBilinear } from "@/lib/heightfield";
 import { slopeLayerBaseline } from "@/lib/terrain-compute";
 import { formatCoord, formatMetres, niceScaleBar } from "@/lib/format";
@@ -16,6 +17,9 @@ import { LeftPanel, ICONS, type Layer } from "./workspace/left-panel";
 import { RightPanel } from "./workspace/right-panel";
 import { TimelinePanel } from "./workspace/timeline-panel";
 import type { EvidenceSection, ProfileData, ProfileSeries, WorkspaceMode } from "./workspace/types";
+import { SoundControl } from "./sound-control";
+import { DemoOverlay, type DemoCaption } from "./demo-overlay";
+import { AnalystPanel } from "./analyst-panel";
 
 const TerrainViewer = dynamic(() => import("./terrain-viewer"), { ssr: false });
 const PAX_URL = "/models/pax-rover.glb";
@@ -122,6 +126,8 @@ function statsFor(series: ProfileSeries[], slope: ProfileSeries[], baselineM: nu
 }
 
 export function ExploreView({
+  initialMode = "explore",
+  demo = false,
   hero,
   results,
   sources,
@@ -130,6 +136,10 @@ export function ExploreView({
   onStatic,
   minFps,
 }: {
+  /** "compare" opens straight on the CTX yardang study area vs Earth */
+  initialMode?: "explore" | "compare";
+  /** run the scripted 30-second guided demo on arrival */
+  demo?: boolean;
   hero: Heightfield;
   results: Loadable<Results>;
   sources: Loadable<SourceRecord[]>;
@@ -163,6 +173,18 @@ export function ExploreView({
   const [lowFps, setLowFps] = useState<number | null>(null);
   const [tourOpen, setTourOpen] = useState(false);
   const [fade, setFade] = useState<{ src: string; visible: boolean } | null>(null);
+  const [framing, setFraming] = useState<Framing>("cinematic");
+  const [perf, setPerf] = useState<boolean>(() => {
+    try {
+      return window.localStorage.getItem("parallax-x-perf") === "1";
+    } catch {
+      return false;
+    }
+  });
+  const [engineReady, setEngineReady] = useState(false);
+  const [caption, setCaption] = useState<DemoCaption | null>(null);
+  const [analystOpen, setAnalystOpen] = useState(false);
+  const demoTimers = useRef<number[]>([]);
   const engine = useRef<TerrainEngine | null>(null);
   const getEngine = useCallback(() => engine.current, []);
 
@@ -226,6 +248,7 @@ export function ExploreView({
       try {
         const hf = await loadHeightfield(scene.heightfield_id);
         crossfade(() => setEarthHf(hf));
+        sfx("chime");
       } catch {
         setNotice(`Earth scene ${scene.heightfield_id} could not be loaded.`);
       } finally {
@@ -241,6 +264,7 @@ export function ExploreView({
     setTourOpen(false);
     setLens("landform");
     setSolo("none");
+    if (mode !== "compare") sfx("whoosh");
     if (!reduced && mode !== "compare") {
       setTransition("Moving to the yardang study area");
       window.setTimeout(() => setTransition(null), 1500);
@@ -260,6 +284,7 @@ export function ExploreView({
   };
 
   const goExplore = () => {
+    if (mode !== "explore") sfx("click");
     engine.current?.stopDrive();
     if (mode === "compare") setExaggeration(hero.meta.vertical_exaggeration_default);
     setMode("explore");
@@ -267,6 +292,7 @@ export function ExploreView({
   };
 
   const goSimulate = async () => {
+    if (mode !== "simulate") sfx("click");
     setTourOpen(false);
     setExaggeration(hero.meta.vertical_exaggeration_default);
     setLens("landform");
@@ -308,11 +334,71 @@ export function ExploreView({
     await loadEarth(id);
   };
 
-  const openEvidence = (s: EvidenceSection) => setAnalysis(s);
+  const openEvidence = (s: EvidenceSection) => {
+    sfx(s === "validation" ? "neutral" : "reveal");
+    setAnalysis(s);
+  };
+
+  const togglePerf = () => {
+    const on = !perf;
+    setPerf(on);
+    engine.current?.setLowPower(on);
+    setLowFps(null);
+    try {
+      window.localStorage.setItem("parallax-x-perf", on ? "1" : "0");
+    } catch {}
+  };
+
+  // ---- drive helpers (seek/skip work from any mode: they bring PAX into Simulate first) ----
+  const withPax = async (fn: (e: TerrainEngine) => void) => {
+    if (mode !== "simulate") await goSimulate();
+    else if (!(await ensurePax())) return;
+    const e = engine.current;
+    if (e) fn(e);
+  };
+
+  // ---- guided demo: deterministic, skippable, captions; sound only if the user enabled it ----
+  const stopDemo = useCallback(() => {
+    demoTimers.current.forEach((t) => window.clearTimeout(t));
+    demoTimers.current = [];
+    setCaption(null);
+  }, []);
 
   useEffect(() => {
     if (engine.current) engine.current.viewGap = VIEW_GAP;
   });
+
+  useEffect(() => {
+    engine.current?.setFraming(framing);
+  }, [framing, engineReady]);
+
+  // rover motor sound follows the real drive state (moving, not pausing at a point of interest)
+  useEffect(() => {
+    audio.setMotor(!!drive?.started && !!drive.playing && drive.poi === null && mode === "simulate");
+  }, [drive?.started, drive?.playing, drive?.poi, mode]);
+  useEffect(() => () => audio.setMotor(false), []);
+
+  const started = useRef(false);
+  useEffect(() => {
+    if (!engineReady || started.current || !r) return;
+    started.current = true;
+    if (perf) engine.current?.setLowPower(true);
+    const id = window.setTimeout(() => {
+      sfx("scan");
+      if (demo) runDemo();
+      else if (initialMode === "compare") void goCompare();
+      else
+        void ensurePax().then((ok) => {
+          // rover wake-up: PAX parked on the measured surface, waves once
+          if (!ok || !engine.current) return;
+          engine.current.showPax(true);
+          window.setTimeout(() => engine.current?.playPax("Wave"), 1800);
+        });
+    }, 200);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [engineReady, r]);
+  useEffect(() => stopDemo, [stopDemo]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -328,12 +414,17 @@ export function ExploreView({
       else if (e.key === "+" || e.key === "=") eng?.dolly(0.85);
       else if (e.key === "-" || e.key === "_") eng?.dolly(1 / 0.85);
       else if (e.key === "r" || e.key === "R") eng?.reset();
+      else if (e.key === " " && mode === "simulate" && eng) {
+        if (!drive?.started) eng.startDrive();
+        else if (drive.playing) eng.pauseDrive();
+        else eng.resumeDrive();
+      } else if (e.key === "Escape" && caption) stopDemo();
       else return;
       e.preventDefault();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [analysis]);
+  }, [analysis, mode, drive?.started, drive?.playing, caption, stopDemo]);
 
   useEffect(() => {
     const id = window.setTimeout(() => engine.current?.reset(), 60);
@@ -347,6 +438,45 @@ export function ExploreView({
     },
     [onStatic],
   );
+
+  function runDemo() {
+    if (!r) return;
+    stopDemo();
+    setAnalysis(null);
+    setAnalystOpen(false);
+    const pos = r.sites.filter((x) => x.role === "positive");
+    const thr = Number(r.run.parameters?.pass_percentile ?? 90);
+    const top = r.candidates[0];
+    const T = (ms: number, fn: () => void) => demoTimers.current.push(window.setTimeout(fn, ms));
+    const N = 6;
+    const total = 30000;
+    const cap = (i: number, title: string, body: string) => setCaption({ i, n: N, title, body, t0: performance.now(), total, start: [0, 4500, 11000, 16000, 22000, 26500][i - 1] });
+    cap(1, "Real Mars terrain", `HiRISE stereo elevation of the Medusae Fossae Formation, ${(hero.meta.extent_m[0] / 1000).toFixed(1)} × ${(hero.meta.extent_m[1] / 1000).toFixed(1)} km, lit by a single low sun.`);
+    if (mode !== "explore") goExplore();
+    engine.current?.descend();
+    T(4500, () => {
+      cap(2, "PAX on the measured surface", "PAX follows the real mesh height along a pre-authored demonstration path. A visualization — not rover physics or a safe route.");
+      void goSimulate().then(() => {
+        engine.current?.seekDrive(0.2);
+        engine.current?.resumeDrive();
+      });
+    });
+    T(11000, () => cap(3, "Points of interest", "PAX stops and looks around. Scrub the timeline and the linked terrain profile follows."));
+    T(16000, () => {
+      cap(4, "Mars vs Earth, same scale", `The CTX yardang study area beside ${top ? `Gobi ${top.id}` : "the top Earth window"} — both 10 km, 30 m grid, ×4 vertical on both.`);
+      void goCompare();
+    });
+    T(22000, () => {
+      cap(5, `Pre-registered validation: ${r.decision.pass ? "PASSED" : "FAILED"}`, `Known yardang analogs ranked ${pos.map((x) => x.median_pct_full?.toFixed(1)).join(", ")} — the bar was ${thr}. Full fingerprint ${(r.decision.mean_pos_full ?? NaN).toFixed(1)} vs slope-only ${(r.decision.mean_pos_b0 ?? NaN).toFixed(1)}.`);
+      sfx("neutral");
+      setAnalysis("validation");
+    });
+    T(26500, () => {
+      setAnalysis(null);
+      cap(6, "The takeaway", "30 m terrain shape alone cannot identify Mars analogs. Geology, wind regime and higher-resolution Earth data are the next step.");
+    });
+    T(total + 800, () => setCaption(null));
+  }
 
   // ---- real profile data ----
   const profile = useMemo<ProfileData | null>(() => {
@@ -393,13 +523,13 @@ export function ExploreView({
     const sub =
       planet === "Mars"
         ? spec.hf === marsCmp
-          ? "Target terrain · CTX stereo DTM"
-          : "Showcase terrain · HiRISE 1 m DTM"
+          ? "Target · CTX"
+          : "Showcase · HiRISE 1 m"
         : selScene?.kind === "candidate"
-          ? "Morphometric candidate · NASADEM"
+          ? "Candidate · NASADEM"
           : selScene?.kind === "positive"
-            ? "Published yardang analog (control)"
-            : "Process-different control";
+            ? "Known analog · control"
+            : "Different process · control";
     const elev = rel ? `Relief: 0 – ${Math.round(m.z_max_m - m.z_min_m).toLocaleString("en-US")} m` : `Elevation: ${Math.round(m.z_min_m).toLocaleString("en-US")} – ${Math.round(m.z_max_m).toLocaleString("en-US")} m`;
     const area = `Area: ${formatMetres(m.extent_m[0])} × ${formatMetres(m.extent_m[1])}`;
     const coord = planet === "Mars" ? (spec.hf === marsCmp && marsScene ? formatCoord(marsScene.centroid, "Mars") : null) : selScene ? formatCoord(selScene.centroid, "Earth") : null;
@@ -440,6 +570,28 @@ export function ExploreView({
             <span className="inline-block h-2 w-2 rounded-full bg-copper" aria-hidden="true" />
             Validation: {r ? (r.decision.pass ? "passed" : "failed") : "…"}
           </button>
+          <button
+            type="button"
+            onClick={() => (caption ? stopDemo() : runDemo())}
+            className="hidden min-h-[40px] items-center gap-2 rounded-[10px] border border-hairline bg-surface/60 px-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink/90 hover:border-copper md:flex"
+            title="Deterministic 30-second walkthrough (skippable)"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4 text-copper-light" fill="currentColor" aria-hidden="true">
+              {caption ? <rect x="6" y="6" width="12" height="12" rx="2" /> : <path d="M8 5.6v12.8a1 1 0 001.52.85l10.2-6.4a1 1 0 000-1.7L9.52 4.75A1 1 0 008 5.6z" />}
+            </svg>
+            {caption ? "Stop demo" : "Demo"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              sfx("reveal");
+              setAnalystOpen(true);
+            }}
+            className="hidden min-h-[40px] items-center gap-2 rounded-[10px] border border-hairline bg-surface/60 px-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink/90 hover:border-copper 2xl:flex"
+          >
+            Analyst
+          </button>
+          <SoundControl compact />
           <button type="button" onClick={onOpenAbout} className="min-h-[40px] px-2 text-[13px] text-muted hover:text-ink">
             About
           </button>
@@ -473,7 +625,10 @@ export function ExploreView({
         <div className="order-1 flex min-h-[640px] min-w-0 flex-col gap-3 lg:order-2 lg:min-h-0">
           <div className="relative min-h-[420px] flex-1 overflow-hidden rounded-[12px]">
             <div className="absolute inset-y-0 left-0" style={{ width: roverCompare ? `calc(50% - ${VIEW_GAP / 2}px)` : "100%" }}>
-              <TerrainViewer views={views} exaggeration={exaggeration} onEngine={(e) => (engine.current = e)} onCamera={setMpp} onFallback={onFallback} onDrive={setDrive} minFps={minFps} />
+              <TerrainViewer views={views} exaggeration={exaggeration} onEngine={(e) => {
+                  engine.current = e;
+                  setEngineReady(!!e);
+                }} onCamera={setMpp} onFallback={onFallback} onDrive={setDrive} minFps={minFps} />
               {fade ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={fade.src} alt="" aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" style={{ opacity: fade.visible ? 1 : 0, transition: "opacity 600ms ease-in-out" }} />
@@ -493,11 +648,12 @@ export function ExploreView({
                       <div className="min-w-0">
                         <p className="font-display text-[20px] font-semibold uppercase leading-none tracking-[0.04em]">{planet}</p>
                         <p className="mt-1 truncate text-[13px] text-ink/85">
-                          {hd.title} <span className="text-muted">· {hd.sub}</span>
+                          {hd.title}
+                          <span className={`text-muted ${nFrames > 1 ? "hidden 2xl:inline" : ""}`}> · {hd.sub}</span>
                         </p>
                       </div>
                     </div>
-                    <div className={`hidden shrink-0 text-right text-[13px] leading-snug text-ink/85 ${nFrames > 1 ? "xl:block" : "md:block"}`}>
+                    <div className={`hidden shrink-0 text-right text-[13px] leading-snug text-ink/85 ${nFrames > 1 ? "2xl:block" : "md:block"}`}>
                       <p className="num">{hd.elev}</p>
                       <p className="num">{hd.area}</p>
                     </div>
@@ -516,23 +672,50 @@ export function ExploreView({
                   {i === 0 ? (
                     <div className="pointer-events-auto absolute left-3 top-[86px] flex flex-col gap-2">
                       <ToolButton label="Reset view (R)" d={TOOL.reset} onClick={() => engine.current?.reset()} />
-                      <ToolButton label="Zoom in (+)" d={TOOL.zin} onClick={() => engine.current?.dolly(0.82)} />
-                      <ToolButton label="Zoom out (−)" d={TOOL.zout} onClick={() => engine.current?.dolly(1 / 0.82)} />
+                      <span className="contents [@media(max-height:860px)]:hidden">
+                        <ToolButton label="Zoom in (+)" d={TOOL.zin} onClick={() => engine.current?.dolly(0.82)} />
+                        <ToolButton label="Zoom out (−)" d={TOOL.zout} onClick={() => engine.current?.dolly(1 / 0.82)} />
+                      </span>
                       <ToolButton label="Orbit (← →)" d={TOOL.orbit} onClick={() => engine.current?.orbit(Math.PI / 12, 0)} />
+                      <button
+                        type="button"
+                        onClick={() => setFraming(framing === "cinematic" ? "survey" : "cinematic")}
+                        aria-pressed={framing === "survey"}
+                        title={framing === "cinematic" ? "Survey view: whole footprint, exact data boundary, no haze" : "Back to cinematic view"}
+                        aria-label="Toggle survey view with the exact data footprint"
+                        className={`grid h-[38px] w-[38px] place-items-center rounded-[8px] border backdrop-blur ${framing === "survey" ? "border-ink/70 bg-ink/15 text-ink" : "border-hairline bg-bg/75 text-ink/90 hover:border-copper"}`}
+                      >
+                        <Svg d="M4 4h16v16H4z M8 4v2M12 4v2M16 4v2M4 8h2M4 12h2M4 16h2" className="h-[18px] w-[18px]" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => togglePerf()}
+                        aria-pressed={perf}
+                        title={perf ? "Performance mode on (fewer triangles, lower pixel ratio). Click for full quality." : "Performance mode for integrated GPUs"}
+                        aria-label="Toggle performance mode"
+                        className={`grid h-[38px] w-[38px] place-items-center rounded-[8px] border text-[11px] font-bold backdrop-blur ${perf ? "border-[#E0A66A] bg-[#E0A66A]/15 text-[#f0c99a]" : "border-hairline bg-bg/75 text-ink/80 hover:border-copper"}`}
+                      >
+                        {perf ? "LO" : "HI"}
+                      </button>
                     </div>
                   ) : null}
                   {hd.coord ? <p className="num absolute right-4 top-[78px] rounded-[6px] bg-bg/70 px-2 py-[2px] text-[13px] text-ink/85">{hd.coord}</p> : null}
+                  {framing === "survey" ? (
+                    <p className="absolute bottom-[60px] right-4 rounded-[6px] bg-bg/70 px-2 py-[2px] text-[11px] text-ink/80">Survey view · white outline = exact data footprint</p>
+                  ) : framing === "cinematic" && lens === "landform" ? (
+                    <p className="absolute bottom-[60px] right-4 rounded-[6px] bg-bg/60 px-2 py-[2px] text-[11px] text-muted">{nFrames > 1 ? "Haze: illustrative" : "Terrain: measured · sky & haze: illustrative"}</p>
+                  ) : null}
                   <div className="absolute bottom-[60px] left-4">{mpp > 0 ? <ScaleBar mpp={mpp} /> : null}</div>
                   <div className="pointer-events-auto absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 rounded-b-[12px] border-t border-hairline/80 bg-surface/88 px-4 py-2 backdrop-blur">
                     <div className="flex items-center gap-2">
-                      <span className="mr-1 text-[12px] font-medium uppercase tracking-[0.14em] text-muted">Layers</span>
+                      <span className={`mr-1 text-[12px] font-medium uppercase tracking-[0.14em] text-muted ${nFrames > 1 ? "hidden 2xl:inline" : ""}`}>Layers</span>
                       {layerButtons.map(([v, l]) => (
                         <button
                           key={v}
                           type="button"
                           disabled={lens === "rover"}
                           onClick={() => setLayer(v)}
-                          className={`min-h-[34px] rounded-[8px] border px-3 text-[12px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 disabled:opacity-40 ${
+                          className={`min-h-[34px] rounded-[8px] border text-[12px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 disabled:opacity-40 ${nFrames > 1 ? "px-2 2xl:px-3" : "px-3"} ${
                             layer === v
                               ? planet === "Mars"
                                 ? "border-copper bg-copper/15 text-ink shadow-[0_0_14px_rgba(198,106,75,0.25)]"
@@ -544,7 +727,9 @@ export function ExploreView({
                         </button>
                       ))}
                     </div>
-                    <span className="num shrink-0 rounded-[6px] border border-hairline px-2 py-[2px] text-[12px] text-ink/85">vertical ×{exaggeration}</span>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span className="num rounded-[6px] border border-hairline px-2 py-[2px] text-[12px] text-ink/85">vertical ×{exaggeration}</span>
+                    </div>
                   </div>
                 </div>
               );
@@ -586,9 +771,14 @@ export function ExploreView({
             <div className="pointer-events-none absolute right-4 top-[110px] flex flex-col items-end gap-2">
               {busy ? <div className="rounded-[8px] bg-bg/85 px-3 py-2 text-[13px] text-muted" aria-live="polite">{busy}</div> : null}
               {notice ? <div className="max-w-[340px] rounded-[8px] border border-hairline bg-bg/90 px-3 py-2 text-[13px] text-muted">{notice}</div> : null}
-              {lowFps !== null ? (
+              {lowFps !== null && !caption ? (
                 <div className="pointer-events-auto flex items-center gap-3 rounded-[8px] border border-hairline bg-surface/95 px-3 py-2 text-[13px] text-ink">
                   <span>3D rendering slowly (~{lowFps.toFixed(0)} fps)</span>
+                  {!perf ? (
+                    <button type="button" className="text-copper hover:underline" onClick={togglePerf}>
+                      Performance mode
+                    </button>
+                  ) : null}
                   <button type="button" className="text-copper hover:underline" onClick={() => onStatic(`Static view chosen after slow 3D rendering (~${lowFps.toFixed(0)} fps).`)}>
                     Static view
                   </button>
@@ -624,7 +814,20 @@ export function ExploreView({
               onResume={() => engine.current?.resumeDrive()}
               onReplay={() => engine.current?.restartDrive()}
               onStop={() => engine.current?.stopDrive()}
-              onCamera={(m: CameraMode) => engine.current?.setCameraMode(m)}
+              onSeek={(f) => {
+                sfx("tick");
+                void withPax((e) => e.seekDrive(f));
+              }}
+              onSkip={() => {
+                sfx("click");
+                void withPax((e) => e.skipDrive());
+              }}
+              onSpeed={(m) => engine.current?.setDriveSpeed(m)}
+              poiFracs={engine.current?.poiFractions ?? [0.25, 0.5, 0.75]}
+              onCamera={(m: CameraMode) => {
+                sfx("click");
+                engine.current?.setCameraMode(m);
+              }}
               onOpenSimulate={() => void goSimulate()}
               profile={profile}
               cursorFrac={cursorFrac}
@@ -643,6 +846,9 @@ export function ExploreView({
       </div>
 
       <p className="sr-only">Keyboard: arrow keys orbit, plus and minus zoom, R resets the view.</p>
+
+      {caption ? <DemoOverlay caption={caption} onSkip={stopDemo} /> : null}
+      {analystOpen && r ? <AnalystPanel results={r} selectedSceneId={inCompare ? selId : null} onClose={() => setAnalystOpen(false)} /> : null}
 
       {analysis && r ? (
         <AnalysisView

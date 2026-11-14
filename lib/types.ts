@@ -215,6 +215,9 @@ export interface Locator {
   lon_max: number;
   lat_min: number;
   lat_max: number;
+  /** pixel size of the locator image */
+  width: number;
+  height: number;
   footprints: LocatorFootprint[];
   source: string;
 }

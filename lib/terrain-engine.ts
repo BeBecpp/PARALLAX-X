@@ -45,6 +45,9 @@ export interface PaxInfo {
   clips: string[];
 }
 export type CameraMode = "orbit" | "follow" | "closeup";
+/** "cinematic" = terrain fills the frame and dissolves into an illustrative haze at the far edge;
+ *  "survey" = whole measured footprint in view with its exact boundary outlined (science view). */
+export type Framing = "cinematic" | "survey";
 export type PaxScale = "true" | "cinematic";
 export interface DriveState {
   playing: boolean;
@@ -57,6 +60,10 @@ export interface DriveState {
   scale: PaxScale;
   /** enlargement factor of the displayed PAX relative to its ~0.5 m model height */
   enlargement: number;
+  /** index (1..3) of the point of interest PAX is pausing at, or null */
+  poi: number | null;
+  /** playback-speed multiplier (time-lapse; not a physical speed) */
+  speed: number;
 }
 
 type TerrainMaterial = THREE.MeshStandardMaterial | THREE.MeshBasicMaterial;
@@ -81,10 +88,15 @@ interface Pose {
 
 const BG = 0x090c11;
 const FOV = 36;
-const POLAR = (57 * Math.PI) / 180; // from vertical: a confident oblique view
+const POLAR = (57 * Math.PI) / 180; // from vertical: survey view (whole footprint)
+const POLAR_CINE = (65 * Math.PI) / 180; // lower, filmic oblique: terrain fills the frame
 const AZIMUTH = (28 * Math.PI) / 180; // camera south-south-east of the terrain, looking NNW
 const SUN_AZ = (292 * Math.PI) / 180; // light from WNW: grazing, scarps read clearly
 const SUN_ALT = (24 * Math.PI) / 180;
+
+/** Illustrative atmosphere per planet (NOT data): horizon haze / fog colour. */
+const HAZE: Record<string, number> = { mars: 0x4a3326, earth: 0x2c3a46 };
+const POIS = [0.25, 0.5, 0.75];
 
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
@@ -122,7 +134,11 @@ export class TerrainEngine {
   viewGap = 2;
   private quality = 2; // 2 = full, 1 = DPR 1, 0 = DPR 1 + no shadows
   private lastShadow = 0;
-  private drive = { started: false, playing: false, t: 0, periodS: 48, lastEmit: 0 };
+  private drive = { started: false, playing: false, t: 0, periodS: 48, speed: 1, lastEmit: 0, dwellUntil: 0, poi: null as number | null };
+  private framing: Framing = "cinematic";
+  private snapCam = false;
+  private lowPower = false;
+  private backdrops: Record<string, THREE.Texture> = {};
   private camMode: CameraMode = "orbit";
   private paxScaleMode: PaxScale = "cinematic";
   private path: THREE.CatmullRomCurve3 | null = null;
@@ -152,12 +168,14 @@ export class TerrainEngine {
     renderer.domElement.setAttribute("aria-label", "3D terrain view (drag to orbit, scroll to zoom)");
     renderer.domElement.addEventListener("webglcontextlost", (e) => {
       e.preventDefault();
+      if (this.disposed) return; // our own forceContextLoss() on dispose, not a GPU failure
       this.cb.onContextLost?.();
     });
     container.appendChild(renderer.domElement);
     this.renderer = renderer;
 
-    this.backdrop = makeBackdrop();
+    this.backdrop = makeBackdrop("neutral");
+    this.backdrops = { mars: makeBackdrop("mars"), earth: makeBackdrop("earth") };
     for (let i = 0; i < 2; i++) this.scenes.push(this.makeScene());
 
     this.camera = new THREE.PerspectiveCamera(FOV, 1, 1, 200000);
@@ -263,7 +281,7 @@ export class TerrainEngine {
     const { width: w, height: h, extent_m } = spec.hf.meta;
     // ≤ ~700 vertices per side keeps integrated GPUs smooth; the full-resolution normal map
     // keeps the lighting detail of every measured cell.
-    const stride = chooseStride(w, h, 700);
+    const stride = chooseStride(w, h, this.lowPower ? 380 : 700);
     const arr = getMeshArrays(spec.hf, stride);
     const geom = new THREE.BufferGeometry();
     geom.setAttribute("position", new THREE.BufferAttribute(arr.positions, 3));
@@ -274,6 +292,9 @@ export class TerrainEngine {
 
     const lit = new THREE.MeshStandardMaterial({ roughness: 0.93, metalness: 0, normalMapType: THREE.ObjectSpaceNormalMap });
     const basic = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const edge = { color: new THREE.Color(BG), fade: { value: 1 } };
+    lit.userData.edge = edge;
+    basic.userData.edge = edge;
     edgeFade(lit);
     edgeFade(basic);
     const mesh = new THREE.Mesh<THREE.BufferGeometry, TerrainMaterial>(geom, lit);
@@ -284,6 +305,23 @@ export class TerrainEngine {
     mesh.receiveShadow = true;
     const group = new THREE.Group();
     group.add(mesh);
+    // exact data-footprint boundary (science view): the outermost measured vertices, draped
+    {
+      const P = arr.positions;
+      const C = arr.cols;
+      const Rw = arr.rows;
+      const idx: number[] = [];
+      for (let c = 0; c < C; c++) idx.push(c);
+      for (let r = 1; r < Rw; r++) idx.push(r * C + C - 1);
+      for (let c = C - 2; c >= 0; c--) idx.push((Rw - 1) * C + c);
+      for (let r = Rw - 2; r > 0; r--) idx.push(r * C);
+      const lift = Math.max(...extent_m) * 0.0008;
+      const pts = idx.map((i) => new THREE.Vector3(P[i * 3], P[i * 3 + 1] + lift, P[i * 3 + 2]));
+      const outline = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0xf1f4f7, transparent: true, opacity: 0.7, fog: false }));
+      outline.name = "footprint";
+      outline.visible = false;
+      group.add(outline);
+    }
 
     const [fx, fy] = focalCell(spec.hf);
     const focus: [number, number] = [((fx + 0.5) / w - 0.5) * extent_m[0], ((fy + 0.5) / h - 0.5) * extent_m[1]];
@@ -330,6 +368,7 @@ export class TerrainEngine {
       const entry = this.meshFor(spec);
       this.applyMaterial(entry, spec);
       entry.group.scale.y = this.exaggeration;
+      this.applyAtmosphere(this.scenes[i], entry, spec.tone);
       this.scenes[i].add(entry.group);
       this.placeLights(this.scenes[i], Math.max(...spec.hf.meta.extent_m));
     });
@@ -354,6 +393,74 @@ export class TerrainEngine {
     if (this.pax) this.showPax(this.paxVisible);
     this.renderer.shadowMap.needsUpdate = true;
     this.dirty = true;
+  }
+
+  /** Illustrative haze (fog + horizon backdrop + edge dissolve) tinted per planet; never touches geometry. */
+  private applyAtmosphere(scene: THREE.Scene, entry: MeshEntry, tone: string) {
+    const survey = this.framing === "survey";
+    const haze = survey ? BG : (HAZE[tone] ?? BG);
+    scene.background = survey ? this.backdrop : (this.backdrops[tone] ?? this.backdrop);
+    (scene.fog as THREE.Fog).color.setHex(haze);
+    const edge = entry.lit.userData.edge as { color: THREE.Color; fade: { value: number } };
+    edge.color.setHex(haze);
+    edge.fade.value = survey ? 0.0 : 1;
+    const outline = entry.group.getObjectByName("footprint");
+    if (outline) outline.visible = survey;
+  }
+
+  /** Switch between the filmic composition and the survey (science) view with the footprint outlined. */
+  setFraming(f: Framing) {
+    if (f === this.framing) return;
+    this.framing = f;
+    this.specs.forEach((spec, i) => {
+      const entry = this.meshes.get(spec.hf.meta.id);
+      if (entry) this.applyAtmosphere(this.scenes[i], entry, spec.tone);
+    });
+    if (this.camMode === "orbit" || !this.drive.started) this.frame("smooth");
+    this.updateFog();
+    this.dirty = true;
+  }
+
+  get currentFraming(): Framing {
+    return this.framing;
+  }
+
+  /** Performance mode for integrated GPUs: ~4x fewer triangles and a lower pixel ratio.
+   *  The measured heightfield, normal map and every number shown stay identical. */
+  setLowPower(on: boolean) {
+    if (on === this.lowPower) return;
+    this.lowPower = on;
+    this.renderer.setPixelRatio(on ? 0.8 : this.quality >= 2 ? Math.min(window.devicePixelRatio || 1, 1.5) : 1);
+    if (this.pathLine) {
+      this.pathLine.parent?.remove(this.pathLine);
+      this.pathLine.geometry.dispose();
+      (this.pathLine.material as THREE.Material).dispose();
+      this.pathLine = null;
+      this.path = null;
+    }
+    for (const entry of this.meshes.values()) this.disposeEntry(entry);
+    this.meshes.clear();
+    const keepFrame = this.framedKey;
+    this.setViews(this.specs);
+    this.framedKey = keepFrame;
+    if (this.drive.started) {
+      this.ensurePath();
+      this.placeRover();
+    }
+    this.resize();
+    this.probeDone = false;
+    this.probeTime = 0;
+    this.probeFrames = 0;
+    this.warmup = 0;
+  }
+
+  get isLowPower(): boolean {
+    return this.lowPower;
+  }
+
+  /** Replay the orbital descent onto the current composition (skippable by any input). */
+  descend() {
+    this.frame("intro");
   }
 
   setExaggeration(e: number) {
@@ -391,15 +498,18 @@ export class TerrainEngine {
     const dW = (halfW * 0.8) / Math.tan(hfov / 2);
     const halfH = (E / 2) * Math.cos(POLAR) * 1.15 + R * Math.sin(POLAR) * 0.5;
     const dH = (halfH * 0.82) / Math.tan(vfov / 2);
-    const d = Math.max(dW, dH, E * 0.5);
+    const cine = this.framing === "cinematic";
+    const polar = cine ? POLAR_CINE : POLAR;
+    // cinematic: the measured surface overflows the frame sides; its far edge dissolves into haze
+    const d = cine ? Math.max(dW * 0.6, E * 0.42) : Math.max(dW, dH, E * 0.5);
     const first = this.specs[0] ? this.meshes.get(this.specs[0].hf.meta.id) : undefined;
     const f = n === 1 && first ? first.focus : [0, 0];
-    const blend = 0.3; // stay mostly centred so the whole tile reads, lean toward the focal relief
-    const target = new THREE.Vector3(f[0] * blend, R * 0.3, f[1] * blend + E * 0.04);
+    const blend = cine ? 0.45 : 0.3; // lean toward the focal relief
+    const target = new THREE.Vector3(f[0] * blend, R * 0.3, f[1] * blend + (cine ? -E * 0.03 : E * 0.04));
     const position = new THREE.Vector3(
-      target.x + d * Math.sin(POLAR) * Math.sin(AZIMUTH),
-      target.y + d * Math.cos(POLAR),
-      target.z + d * Math.sin(POLAR) * Math.cos(AZIMUTH),
+      target.x + d * Math.sin(polar) * Math.sin(AZIMUTH),
+      target.y + d * Math.cos(polar),
+      target.z + d * Math.sin(polar) * Math.cos(AZIMUTH),
     );
     return { target, position };
   }
@@ -422,15 +532,15 @@ export class TerrainEngine {
       // descend from high above the footprint into the oblique composition
       const off = to.position.clone().sub(to.target);
       const sph = new THREE.Spherical().setFromVector3(off);
-      sph.radius *= 2.1;
-      sph.phi = Math.max(0.12, sph.phi - 0.55);
-      sph.theta -= 0.35;
+      sph.radius *= 3.0;
+      sph.phi = 0.1; // start almost straight down, like an orbital pass
+      sph.theta -= 0.6;
       from = { target: to.target.clone().setY(0), position: to.target.clone().add(new THREE.Vector3().setFromSpherical(sph)) };
       this.applyPose(from);
     } else {
       from = { target: this.controls.target.clone(), position: this.camera.position.clone() };
     }
-    this.tween = { from, to, t0: performance.now(), dur: mode === "intro" ? 1700 : 1000 };
+    this.tween = { from, to, t0: performance.now(), dur: mode === "intro" ? 2600 : 1100 };
     this.dirty = true;
   }
 
@@ -447,8 +557,13 @@ export class TerrainEngine {
     const d = this.camera.position.distanceTo(this.controls.target) || E;
     for (const sc of this.scenes) {
       const fog = sc.fog as THREE.Fog;
-      fog.near = d * 0.9;
-      fog.far = d * 3.2 + E;
+      if (this.framing === "cinematic") {
+        fog.near = d * 0.55;
+        fog.far = d * 2.1 + E * 0.2;
+      } else {
+        fog.near = d * 0.9;
+        fog.far = d * 3.2 + E;
+      }
     }
   }
 
@@ -563,8 +678,10 @@ export class TerrainEngine {
     const entry = this.meshes.get(spec.hf.meta.id);
     const E = this.extent();
     const [fx, fz] = entry ? entry.focus : [0, 0];
-    const x = fx + Math.sin(AZIMUTH) * E * 0.07;
-    const z = fz + Math.cos(AZIMUTH) * E * 0.07;
+    // park PAX just in front of the composed view centre (lower third of the frame), on the measured surface
+    const tgt = this.composedPose().target;
+    const x = (this.framing === "cinematic" ? tgt.x : fx) + Math.sin(AZIMUTH) * E * (this.framing === "cinematic" ? 0.05 : 0.07);
+    const z = (this.framing === "cinematic" ? tgt.z : fz) + Math.cos(AZIMUTH) * E * (this.framing === "cinematic" ? 0.05 : 0.07);
     const heightM = this.paxScaleMode === "cinematic" ? E * 0.022 : this.pax.unit; // true scale: glTF metres
     this.pax.root.scale.setScalar(heightM / this.pax.unit);
     if (this.drive.started) this.placeRover();
@@ -670,6 +787,8 @@ export class TerrainEngine {
       camera: this.camMode,
       scale: this.paxScaleMode,
       enlargement: this.enlargement(),
+      poi: this.drive.poi,
+      speed: this.drive.speed,
     });
   }
 
@@ -697,10 +816,50 @@ export class TerrainEngine {
     this.drive.started = true;
     this.drive.playing = true;
     this.drive.t = 0;
+    this.drive.dwellUntil = 0;
+    this.drive.poi = null;
     this.playPax("WheelSpin");
     if (this.camMode === "orbit") this.setCameraMode("follow");
     this.placeRover();
     this.emitDrive(true);
+  }
+
+  /** Jump PAX to a position (0..1) along the pre-authored loop; keeps the current play/pause state. */
+  seekDrive(frac: number) {
+    if (!this.pax) return;
+    if (!this.drive.started) {
+      if (!this.paxVisible) this.showPax(true);
+      this.ensurePath();
+      this.drive.started = true;
+      this.drive.playing = false;
+      if (this.camMode === "orbit") this.setCameraMode("follow");
+    }
+    this.drive.t = ((frac % 1) + 1) % 1;
+    this.drive.dwellUntil = 0;
+    this.drive.poi = null;
+    this.roverTilt.set(0, 0, 0);
+    this.placeRover();
+    this.snapCam = true;
+    this.renderer.shadowMap.needsUpdate = true;
+    this.emitDrive(true);
+    this.dirty = true;
+  }
+
+  /** Skip to the next point of interest on the loop. */
+  skipDrive() {
+    const t = this.drive.t % 1;
+    const next = POIS.find((p) => p > t + 0.002) ?? 0;
+    this.seekDrive(next);
+  }
+
+  /** Playback-speed multiplier (time-lapse only). */
+  setDriveSpeed(m: number) {
+    this.drive.speed = Math.max(0.25, Math.min(4, m));
+    this.emitDrive(true);
+  }
+
+  get poiFractions(): number[] {
+    return POIS.slice();
   }
 
   pauseDrive() {
@@ -724,6 +883,8 @@ export class TerrainEngine {
     this.drive.started = false;
     this.drive.playing = false;
     this.drive.t = 0;
+    this.drive.dwellUntil = 0;
+    this.drive.poi = null;
     if (this.pathLine) this.pathLine.visible = false;
     this.playPax("Idle");
     this.setCameraMode("orbit");
@@ -769,7 +930,8 @@ export class TerrainEngine {
     const spec = this.specs[0];
     if (spec) desired.y = Math.max(desired.y, this.heightAt(spec, desired.x, desired.z) + size * 0.6);
     const look = new THREE.Vector3(p.x, p.y + size * 0.55, p.z);
-    const k = this.reducedMotion ? 1 : 1 - Math.exp(-dt * 5.5); // framerate-independent smoothing
+    const k = this.reducedMotion || this.snapCam ? 1 : 1 - Math.exp(-dt * 5.5); // framerate-independent smoothing
+    this.snapCam = false;
     this.camera.position.lerp(desired, k);
     this.controls.target.lerp(look, k);
     this.camera.lookAt(this.controls.target);
@@ -794,7 +956,7 @@ export class TerrainEngine {
       const onDone = (e: { action: THREE.AnimationAction }) => {
         if (e.action !== next) return;
         p.mixer.removeEventListener("finished", onDone);
-        if (p.current === next) this.playPax("Idle");
+        if (p.current === next) this.playPax(this.drive.started && this.drive.playing && performance.now() >= this.drive.dwellUntil ? "WheelSpin" : "Idle");
       };
       p.mixer.addEventListener("finished", onDone);
     }
@@ -871,6 +1033,15 @@ export class TerrainEngine {
       this.renderer.setScissor(x, 0, vw, H);
       this.renderer.render(this.scenes[i], this.camera);
     }
+    if (gap > 0) {
+      // the UI draws panel frames over the gap: keep it the page background
+      this.renderer.setClearColor(BG, 1);
+      for (let i = 1; i < this.specs.length; i++) {
+        this.renderer.setViewport(i * (vw + gap) - gap, 0, gap, H);
+        this.renderer.setScissor(i * (vw + gap) - gap, 0, gap, H);
+        this.renderer.clear(true, false, false);
+      }
+    }
     this.renderer.setScissorTest(false);
     const dist = this.camera.position.distanceTo(this.controls.target);
     const mpp = (2 * dist * Math.tan((FOV * Math.PI) / 360)) / H;
@@ -883,7 +1054,7 @@ export class TerrainEngine {
   /** Step down rendering cost on slow GPUs (measured, not guessed). Geometry/data are untouched. */
   private degrade(fps: number) {
     this.quality = fps < 20 ? 0 : Math.min(this.quality - 1, 1);
-    this.renderer.setPixelRatio(1);
+    this.renderer.setPixelRatio(this.lowPower ? 0.8 : 1);
     if (this.quality === 0) {
       this.renderer.shadowMap.enabled = false;
       for (const e of this.meshes.values()) {
@@ -922,7 +1093,28 @@ export class TerrainEngine {
     if (this.pax && this.paxVisible && this.pax.root.parent) {
       this.pax.mixer.update(this.reducedMotion ? 0 : dt);
       if (this.drive.started) {
-        if (this.drive.playing) this.drive.t = (this.drive.t + dt / this.drive.periodS) % 1;
+        if (this.drive.playing) {
+          if (this.drive.dwellUntil > now) {
+            // pausing at a point of interest: PAX looks around (HeadTurn), wheels still
+          } else {
+            if (this.drive.poi !== null) {
+              this.drive.poi = null;
+              this.playPax("WheelSpin");
+              this.emitDrive(true);
+            }
+            const prev = this.drive.t;
+            const next = prev + (dt * this.drive.speed) / this.drive.periodS;
+            const hit = POIS.findIndex((p) => prev < p && next >= p);
+            this.drive.t = next % 1;
+            if (hit >= 0 && !this.reducedMotion) {
+              this.drive.t = POIS[hit];
+              this.drive.poi = hit + 1;
+              this.drive.dwellUntil = now + 2200 / this.drive.speed;
+              this.playPax("HeadTurn");
+              this.emitDrive(true);
+            }
+          }
+        }
         this.placeRover();
         this.trackCamera(dt);
         this.emitDrive();
@@ -963,6 +1155,7 @@ export class TerrainEngine {
           return;
         }
         this.probeDone = true;
+        console.info(`[PARALLAX X] fps probe ${fps.toFixed(1)} (quality ${this.quality})`);
         this.cb.onFpsProbe?.(fps);
       }
       return;
@@ -989,6 +1182,7 @@ export class TerrainEngine {
     for (const entry of this.meshes.values()) this.disposeEntry(entry);
     this.meshes.clear();
     this.backdrop.dispose();
+    for (const t of Object.values(this.backdrops)) t.dispose();
     if (this.pathLine) {
       this.pathLine.geometry.dispose();
       (this.pathLine.material as THREE.Material).dispose();
@@ -1015,31 +1209,36 @@ export class TerrainEngine {
 /** Soft fade of the terrain colour into the background over the outer ~7 % of the footprint. */
 function edgeFade(mat: THREE.Material) {
   mat.onBeforeCompile = (shader) => {
-    shader.uniforms.uEdgeColor = { value: new THREE.Color(BG) };
+    const edge = mat.userData.edge as { color: THREE.Color; fade: { value: number } } | undefined;
+    shader.uniforms.uEdgeColor = { value: edge ? edge.color : new THREE.Color(BG) };
+    shader.uniforms.uEdgeFade = edge ? edge.fade : { value: 1 };
     shader.vertexShader = shader.vertexShader
       .replace("#include <common>", "#include <common>\nvarying vec2 vEdgeUv;")
       .replace("#include <uv_vertex>", "#include <uv_vertex>\nvEdgeUv = uv;");
     shader.fragmentShader = shader.fragmentShader
-      .replace("#include <common>", "#include <common>\nvarying vec2 vEdgeUv;\nuniform vec3 uEdgeColor;")
+      .replace("#include <common>", "#include <common>\nvarying vec2 vEdgeUv;\nuniform vec3 uEdgeColor;\nuniform float uEdgeFade;")
       .replace(
         "#include <dithering_fragment>",
-        "#include <dithering_fragment>\nfloat edgeD = max(abs(vEdgeUv.x - 0.5), abs(vEdgeUv.y - 0.5));\nfloat edgeK = smoothstep(0.36, 0.5, edgeD);\ngl_FragColor.rgb = mix(gl_FragColor.rgb, uEdgeColor, edgeK * 0.92);",
+        "#include <dithering_fragment>\nfloat edgeD = max(abs(vEdgeUv.x - 0.5), abs(vEdgeUv.y - 0.5));\nfloat edgeK = smoothstep(0.36, 0.5, edgeD);\ngl_FragColor.rgb = mix(gl_FragColor.rgb, uEdgeColor, edgeK * 0.95 * uEdgeFade);",
       );
   };
   mat.needsUpdate = true;
 }
 
-/** Atmospheric backdrop: deep graphite with a faint cool horizon haze (screen-space gradient). */
-function makeBackdrop(): THREE.Texture {
+/** Illustrative sky backdrop (screen-space gradient; not data). Mars: dusty butterscotch horizon glow;
+ *  Earth: cool blue-grey haze; neutral: graphite (survey/science view). */
+function makeBackdrop(tone: "mars" | "earth" | "neutral"): THREE.Texture {
   const c = document.createElement("canvas");
   c.width = 4;
   c.height = 256;
   const g = c.getContext("2d")!;
   const grd = g.createLinearGradient(0, 0, 0, 256);
-  grd.addColorStop(0, "#07090d");
-  grd.addColorStop(0.55, "#0e141b");
-  grd.addColorStop(0.72, "#121a22");
-  grd.addColorStop(1, "#090c11");
+  const stops: Record<string, [number, string][]> = {
+    neutral: [[0, "#07090d"], [0.55, "#0e141b"], [0.72, "#121a22"], [1, "#090c11"]],
+    mars: [[0, "#07080b"], [0.1, "#140f0e"], [0.24, "#3a281f"], [0.34, "#4a3326"], [0.5, "#2a1d17"], [1, "#0d0b0a"]],
+    earth: [[0, "#06080b"], [0.1, "#0d1217"], [0.24, "#22303b"], [0.34, "#2c3a46"], [0.5, "#1a232b"], [1, "#0a0d10"]],
+  };
+  for (const [o, col] of stops[tone]) grd.addColorStop(o, col);
   g.fillStyle = grd;
   g.fillRect(0, 0, 4, 256);
   const t = new THREE.CanvasTexture(c);

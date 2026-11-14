@@ -93,9 +93,9 @@ def headline(base, ov, t):
     hf = F_HEAD(ov.get('size', 64)); sf_ = F_SUB(ov.get('subsize', 25))
     tr = ov.get('track', 3.0)
     t2 = ov.get('text2'); lh = int(ov.get('size', 64) * 1.04)
-    tw = max(text_w(d, ov['text'], hf, tr), text_w(d, t2, hf, tr) if t2 else 0); sw = text_w(d, ov.get('sub', ''), sf_, 2.2) if ov.get('sub') else 0
+    tw = max(text_w(d, ov['text'], hf, tr), text_w(d, t2, hf, tr) if t2 else 0, text_w(d, ov.get('sub2', ''), sf_, 2.2) if ov.get('sub2') else 0); sw = text_w(d, ov.get('sub', ''), sf_, 2.2) if ov.get('sub') else 0
     padx, pady = 34, 22
-    bw = max(tw, sw) + padx * 2 + 14; bh = pady * 2 + ov.get('size', 64) * 1.0 + (lh if t2 else 0) + (ov.get('subsize', 25) + 16 if ov.get('sub') else 0)
+    bw = max(tw, sw) + padx * 2 + 14; s2 = ov.get('sub2'); bh = (ov.get('subsize', 25) + 8 if s2 else 0) + pady * 2 + ov.get('size', 64) * 1.0 + (lh if t2 else 0) + (ov.get('subsize', 25) + 16 if ov.get('sub') else 0)
     x, y = ov['x'], ov['y']
     if ov.get('align') == 'center': x = x - bw / 2
     elif ov.get('align') == 'right': x = x - bw
@@ -108,6 +108,31 @@ def headline(base, ov, t):
     if t2: tracked(d, (x + padx + 8, y + pady - 6 + lh), t2, hf, ov.get('color2', COPPER_L), tr)
     if ov.get('sub'):
         tracked(d, (x + padx + 10, y + pady + ov.get('size', 64) + 4 + (lh if t2 else 0)), ov['sub'], sf_, ov.get('subcolor', COPPER_L) if not t2 else INK, 2.2)
+        if s2: tracked(d, (x + padx + 10, y + pady + ov.get('size', 64) + 4 + (lh if t2 else 0) + ov.get('subsize', 25) + 8), s2, sf_, COPPER_L, 2.2)
+    base.paste(Image.blend(base, layer, op))
+
+def rail(base, rl, t):
+    """Titled list; each line fades in at its own time. rl: x, y, in, out, title, lines:[{t, key, text}]"""
+    fo = 1 - ease((t - (rl['out'] - 0.3)) / 0.3); fi = ease((t - rl['in']) / 0.3); op = min(fi, fo)
+    if op <= 0: return
+    layer = base.copy(); d = ImageDraw.Draw(layer)
+    ft = F_HEAD(rl.get('title_size', 40)); fk = F_HEAD(rl.get('size', 30)); fl = F_SUB(rl.get('size', 30) - 4)
+    lh = rl.get('lh', 50); x, y = rl['x'], rl['y']
+    kw = max(text_w(d, ln['key'], fk, 1.5) for ln in rl['lines']) + 22
+    w = max([text_w(d, rl['title'], ft, 3)] + [kw + text_w(d, ln['text'], fl, 1.2) for ln in rl['lines']]) + 70
+    h = 34 + rl.get('title_size', 40) + 18 + lh * len(rl['lines']) + 10
+    glass(layer, (x, y, x + w, y + h), alpha=0.66)
+    d = ImageDraw.Draw(layer)
+    d.rectangle((x, y + 14, x + 5, y + h - 14), fill=tuple(rl.get('accent', COPPER)))
+    tracked(d, (x + 34, y + 18), rl['title'], ft, INK, 3)
+    for i, ln in enumerate(rl['lines']):
+        a = ease((t - ln['t']) / 0.28)
+        if a <= 0: continue
+        yy = y + 34 + rl.get('title_size', 40) + 14 + i * lh + (1 - a) * 8
+        kc = tuple(int(v * a + 20 * (1 - a)) for v in tuple(ln.get('kc', COPPER_L)))
+        tc = tuple(int(v * a + 20 * (1 - a)) for v in INK)
+        tracked(d, (x + 36, yy), ln['key'], fk, kc, 1.5)
+        tracked(d, (x + 36 + kw, yy + 3), ln['text'], fl, tc, 1.2)
     base.paste(Image.blend(base, layer, op))
 
 def caption(base, c, t):
@@ -178,6 +203,8 @@ def render(f):
     for e in TL.get('endtitles', []): endtitle(im, e, t)
     for ov in TL.get('headlines', []):
         if ov['in'] - 0.1 <= t <= ov['out'] + 0.1: headline(im, ov, t)
+    for rl in TL.get('rails', []):
+        if rl['in'] - 0.1 <= t <= rl['out'] + 0.1: rail(im, rl, t)
     for n in TL.get('notices', []): notice(im, n, t)
     for c in TL.get('captions', []):
         if c['in'] <= t <= c['out']: caption(im, c, t)

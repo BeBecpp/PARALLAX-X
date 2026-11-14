@@ -1,0 +1,1306 @@
+{
+ "duration": 29.3,
+ "fade_in": 0.3,
+ "fade_out": 0.4,
+ "fade_out_depth": 1.0,
+ "stem_prefix": "v3_",
+ "voice_dir": "audio/v3/af_heart",
+ "voice": {
+  "m1": 0.0,
+  "m2": 3.041,
+  "m3": 10.489,
+  "m3b": 14.601,
+  "m4": 18.018,
+  "m5": 25.474,
+  "m6": 27.393
+ },
+ "lufs": -14.8,
+ "duck_db": -21.0,
+ "sfx_duck_db": -11.0,
+ "music_gain": 0.72,
+ "sfx_gain": 0.9,
+ "segments": [
+  {
+   "name": "S1 film05 open",
+   "type": "seq",
+   "dir": "src/film05_open",
+   "first": 6,
+   "start": 0.0,
+   "end": 1.8
+  },
+  {
+   "name": "S2 select CTX",
+   "type": "seq",
+   "dir": "src/capture/A_select",
+   "first": 16,
+   "speed": 1.354,
+   "start": 1.8,
+   "end": 5.0,
+   "xin": 0.13
+  },
+  {
+   "name": "S3 compare + F1-F5",
+   "type": "seq",
+   "dir": "src/capture/B_compare",
+   "first": 24,
+   "start": 5.0,
+   "end": 7.5,
+   "xin": 0.17,
+   "zoom": [
+    [
+     0,
+     1150,
+     430,
+     1.3
+    ],
+    [
+     2.5,
+     1160,
+     440,
+     1.33
+    ]
+   ]
+  },
+  {
+   "name": "S4 W1 explainer (Evidence, real pipeline curves)",
+   "type": "seq",
+   "dir": "src/capture/F_w1g",
+   "first": 102,
+   "start": 7.5,
+   "end": 10.2,
+   "xin": 0.13,
+   "src_box": [
+    300,
+    250,
+    2340,
+    1316
+   ],
+   "zoom": [
+    [
+     0,
+     960,
+     540,
+     1.0
+    ],
+    [
+     2.7,
+     880,
+     560,
+     1.05
+    ]
+   ]
+  },
+  {
+   "name": "S5 rover (real Simulate, HiRISE)",
+   "type": "seq",
+   "dir": "src/capture/E_rover",
+   "start": 10.2,
+   "end": 17.6,
+   "xin": 0.1,
+   "first": 36,
+   "src_box": [
+    160,
+    120,
+    1707,
+    960
+   ],
+   "zoom": [
+    [
+     0,
+     960,
+     540,
+     1.0
+    ],
+    [
+     4.9,
+     960,
+     540,
+     1.0
+    ],
+    [
+     7.0,
+     900,
+     520,
+     1.07
+    ],
+    [
+     7.4,
+     900,
+     520,
+     1.07
+    ]
+   ]
+  },
+  {
+   "name": "S6a lab: plan -> Expedition Lab",
+   "type": "seq",
+   "dir": "src/capture/G_lab2",
+   "first": 0,
+   "start": 17.6,
+   "end": 20.6,
+   "xin": 0.17,
+   "src_box": [
+    0,
+    0,
+    2880,
+    1620
+   ],
+   "zoom": [
+    [
+     0,
+     1150,
+     430,
+     1.3
+    ],
+    [
+     0.9,
+     960,
+     540,
+     1.0
+    ],
+    [
+     1.5,
+     960,
+     540,
+     1.0
+    ],
+    [
+     2.6,
+     1500,
+     460,
+     1.36
+    ]
+   ]
+  },
+  {
+   "name": "S6b lab: NOT MEASURED -> key measurements (real formulas)",
+   "type": "seq",
+   "dir": "src/capture/G_lab2",
+   "first": 300,
+   "speed": 1.68,
+   "start": 20.6,
+   "end": 24.8,
+   "xin": 0.13,
+   "src_box": [
+    0,
+    0,
+    2880,
+    1620
+   ],
+   "zoom": [
+    [
+     0,
+     1367,
+     470,
+     1.75
+    ],
+    [
+     4.2,
+     1367,
+     480,
+     1.8
+    ]
+   ]
+  },
+  {
+   "name": "S7 lab: resolution check 13.9% -> 1.6%",
+   "type": "seq",
+   "dir": "src/capture/G_lab2",
+   "first": 192,
+   "start": 24.8,
+   "end": 26.6,
+   "xin": 0.13,
+   "src_box": [
+    0,
+    0,
+    2880,
+    1620
+   ],
+   "zoom": [
+    [
+     0,
+     1367,
+     460,
+     1.8
+    ],
+    [
+     1.8,
+     1367,
+     460,
+     1.86
+    ]
+   ]
+  },
+  {
+   "name": "S8 film05 logo",
+   "type": "seq",
+   "dir": "src/film05_logo",
+   "first": 12,
+   "start": 26.6,
+   "end": 28.0,
+   "xin": 0.12
+  },
+  {
+   "name": "S9 end card",
+   "type": "card",
+   "start": 28.0,
+   "end": 29.31,
+   "xin": 0.4,
+   "zoom": [
+    [
+     0,
+     960,
+     540,
+     1.0
+    ],
+    [
+     1.31,
+     960,
+     530,
+     1.03
+    ]
+   ]
+  }
+ ],
+ "endcard_bg": "src/capture/B_compare/00100.jpg",
+ "endcard_bg_box": [
+  384,
+  150,
+  1440,
+  744
+ ],
+ "masks": [
+  {
+   "in": 26.5,
+   "out": 28.01,
+   "y0": 655,
+   "y1": 712,
+   "color": [
+    5,
+    4,
+    4
+   ]
+  }
+ ],
+ "notices": [
+  {
+   "in": 0.0,
+   "out": 1.8,
+   "x": 40,
+   "y": 38,
+   "size": 21,
+   "text": "AI-GENERATED CONCEPT FOOTAGE  \u00b7  BRAND FILM BY KHUSLEN (V01D-404)"
+  },
+  {
+   "in": 10.3,
+   "out": 17.55,
+   "x": 48,
+   "y": 44,
+   "size": 21,
+   "text": "ILLUSTRATIVE TRAVERSE  \u00b7  NOT MOBILITY PHYSICS  \u00b7  ROVER ENLARGED \u00d741"
+  },
+  {
+   "in": 26.55,
+   "out": 28.0,
+   "x": 40,
+   "y": 38,
+   "size": 21,
+   "text": "AI-GENERATED CONCEPT FOOTAGE  \u00b7  BRAND FILM BY KHUSLEN (V01D-404)"
+  }
+ ],
+ "headlines": [
+  {
+   "in": 2.05,
+   "out": 4.95,
+   "x": 60,
+   "y": 262,
+   "text": "NASA MRO CTX  +  NASADEM",
+   "size": 58,
+   "sub": "COMMON 30 m GRID  \u00b7  \u03c3 30 m  \u00b7  9.99 km WINDOWS"
+  },
+  {
+   "in": 7.65,
+   "out": 8.95,
+   "x": 40,
+   "y": 330,
+   "text": "ECDF  +",
+   "text2": "WASSERSTEIN-1",
+   "size": 48,
+   "sub": "D = \u2155 \u00b7 \u03a3 W\u2081(F\u2096)",
+   "subsize": 26
+  },
+  {
+   "in": 9.0,
+   "out": 10.15,
+   "x": 40,
+   "y": 330,
+   "text": "5 EXPLORATORY",
+   "text2": "CANDIDATES",
+   "size": 48,
+   "sub": "OF 1,915 WINDOWS \u00b7 PRE-REGISTERED",
+   "sub2": "VALIDATION: NOT PASSED",
+   "subsize": 19,
+   "accent_color": [
+    106,
+    155,
+    173
+   ],
+   "color2": [
+    150,
+    196,
+    214
+   ]
+  },
+  {
+   "in": 10.95,
+   "out": 13.55,
+   "x": 1860,
+   "y": 104,
+   "align": "right",
+   "text": "NASA PDS HiRISE \u00b7 1 m DTM",
+   "size": 50,
+   "sub": "SEPARATE MARS SCENE  \u00b7  DEM-CONFORMED 3D ROVER",
+   "subsize": 22
+  },
+  {
+   "in": 13.65,
+   "out": 16.95,
+   "x": 1860,
+   "y": 104,
+   "align": "right",
+   "text": "WHEEL SPIN  \u0394\u03b8 = \u0394s / r",
+   "size": 54,
+   "sub": "6 WHEEL PIVOTS  \u00b7  4-POINT SURFACE TILT  \u00b7  RIGGED MAST",
+   "subsize": 22
+  },
+  {
+   "in": 19.55,
+   "out": 20.55,
+   "x": 60,
+   "y": 112,
+   "text": "EXPEDITION LAB",
+   "size": 58,
+   "sub": "PROPOSED FIELD TESTS  \u00b7  NOT MEASURED",
+   "subsize": 23
+  },
+  {
+   "in": 20.75,
+   "out": 24.72,
+   "x": 60,
+   "y": 112,
+   "text": "FIELD MEASUREMENTS",
+   "text2": "TO COLLECT",
+   "size": 56,
+   "sub": "SLIP  \u00b7  SINKAGE  \u00b7  ENERGY  \u2014  NOT MEASURED",
+   "subsize": 22
+  },
+  {
+   "in": 24.95,
+   "out": 26.55,
+   "x": 60,
+   "y": 112,
+   "text": "4 m: 13.9% > 15\u00b0",
+   "text2": "\u2192 180 m: 1.6% > 15\u00b0",
+   "size": 54,
+   "sub": "SAME HiRISE CROP  \u00b7  SCALE CHANGES WHAT WE CAN SEE",
+   "subsize": 22
+  }
+ ],
+ "rails": [
+  {
+   "in": 5.15,
+   "out": 7.45,
+   "x": 50,
+   "y": 470,
+   "title": "5 TERRAIN FEATURES",
+   "title_size": 38,
+   "size": 29,
+   "lh": 48,
+   "lines": [
+    {
+     "t": 5.35,
+     "key": "F1",
+     "text": "LOCAL RELIEF  \u00b7  P95\u2212P5  \u00b7  \u22482 km"
+    },
+    {
+     "t": 5.7,
+     "key": "F2",
+     "text": "SLOPE  \u00b7  180 m BASELINE"
+    },
+    {
+     "t": 6.05,
+     "key": "F3",
+     "text": "SLOPE  \u00b7  600 m BASELINE"
+    },
+    {
+     "t": 6.4,
+     "key": "F4",
+     "text": "TPI  \u00b7  510 m DISK"
+    },
+    {
+     "t": 6.75,
+     "key": "F5",
+     "text": "RIDGE COHERENCE  \u00b7  \u03c3 300 m"
+    }
+   ]
+  }
+ ],
+ "endtitles": [
+  {
+   "in": 26.5,
+   "logo_in": 27.6,
+   "logo_fade": 0.4,
+   "logo_w": 1240,
+   "logo_y": 500,
+   "lines": [
+    {
+     "in": 28.0,
+     "y": 732,
+     "text": "FROM MEASURED TERRAIN TO TESTABLE QUESTIONS",
+     "size": 42,
+     "bold": true,
+     "track": 4,
+     "color": [
+      255,
+      150,
+      92
+     ]
+    },
+    {
+     "in": 28.1,
+     "y": 806,
+     "text": "parallax-x-lyart.vercel.app",
+     "size": 36,
+     "track": 2.0,
+     "color": [
+      236,
+      239,
+      243
+     ]
+    },
+    {
+     "in": 28.15,
+     "y": 46,
+     "text": "NASA SPACE APPS CHALLENGE 2026 ENTRY  \u00b7  NOT AFFILIATED WITH OR ENDORSED BY NASA",
+     "size": 19,
+     "track": 2.2,
+     "color": [
+      150,
+      158,
+      168
+     ]
+    },
+    {
+     "in": 28.15,
+     "y": 76,
+     "text": "AI voice: Kokoro TTS  \u00b7  Concept film: Khuslen (V01D-404), AI-generated  \u00b7  Rover model: NASA/JPL-Caltech  \u00b7  Original score",
+     "size": 19,
+     "track": 0.6,
+     "color": [
+      150,
+      158,
+      168
+     ]
+    }
+   ]
+  }
+ ],
+ "captions": [
+  {
+   "in": 0.17,
+   "out": 3.146,
+   "lines": [
+    "What makes an Earth landscape useful for Mars exploration?"
+   ]
+  },
+  {
+   "in": 3.186,
+   "out": 5.833,
+   "lines": [
+    "PARALLAX X compares five terrain features"
+   ]
+  },
+  {
+   "in": 5.873,
+   "out": 10.471,
+   "lines": [
+    "across 1,915 Earth windows, using Wasserstein distance."
+   ]
+  },
+  {
+   "in": 10.659,
+   "out": 14.731,
+   "lines": [
+    "Then watch our six-wheel rover move across high-resolution Martian terrain."
+   ]
+  },
+  {
+   "in": 14.771,
+   "out": 16.68,
+   "lines": [
+    "An illustration, not physics."
+   ]
+  },
+  {
+   "in": 18.163,
+   "out": 22.507,
+   "lines": [
+    "Expedition Lab designs field tests for wheel slip, sinkage, and energy."
+   ]
+  },
+  {
+   "in": 25.669,
+   "out": 27.548,
+   "lines": [
+    "Similarity is a starting point."
+   ]
+  },
+  {
+   "in": 27.588,
+   "out": 29.045,
+   "lines": [
+    "Evidence comes first."
+   ]
+  }
+ ],
+ "bpm": 100,
+ "chords": [
+  [
+   0.0,
+   1.8,
+   [
+    "D3",
+    "A3",
+    "F4",
+    "E5"
+   ],
+   0.3
+  ],
+  [
+   1.8,
+   3.4,
+   [
+    "D3",
+    "A3",
+    "F4",
+    "C5",
+    "E5"
+   ],
+   0.42
+  ],
+  [
+   3.4,
+   5.0,
+   [
+    "Bb2",
+    "F3",
+    "D4",
+    "A4"
+   ],
+   0.48
+  ],
+  [
+   5.0,
+   7.5,
+   [
+    "F2",
+    "C4",
+    "F4",
+    "A4",
+    "C5",
+    "E5"
+   ],
+   0.6
+  ],
+  [
+   7.5,
+   9.2,
+   [
+    "C3",
+    "G3",
+    "E4",
+    "G4",
+    "D5"
+   ],
+   0.62
+  ],
+  [
+   9.2,
+   10.2,
+   [
+    "A2",
+    "E3",
+    "A3",
+    "D4",
+    "E4"
+   ],
+   0.7
+  ],
+  [
+   10.2,
+   12.05,
+   [
+    "D2",
+    "A2",
+    "D3",
+    "F3",
+    "A3",
+    "D4",
+    "F4"
+   ],
+   0.78
+  ],
+  [
+   12.05,
+   13.9,
+   [
+    "Bb1",
+    "F2",
+    "Bb2",
+    "D3",
+    "F3",
+    "D4"
+   ],
+   0.74
+  ],
+  [
+   13.9,
+   15.75,
+   [
+    "F2",
+    "C3",
+    "F3",
+    "A3",
+    "C4",
+    "F4"
+   ],
+   0.8
+  ],
+  [
+   15.75,
+   17.6,
+   [
+    "C2",
+    "G2",
+    "C3",
+    "E3",
+    "G3",
+    "E4"
+   ],
+   0.84
+  ],
+  [
+   17.6,
+   19.4,
+   [
+    "Bb2",
+    "F3",
+    "D4",
+    "F4",
+    "C5"
+   ],
+   0.55
+  ],
+  [
+   19.4,
+   21.2,
+   [
+    "F2",
+    "C4",
+    "F4",
+    "A4",
+    "C5"
+   ],
+   0.58
+  ],
+  [
+   21.2,
+   23.0,
+   [
+    "C3",
+    "G3",
+    "E4",
+    "G4",
+    "E5"
+   ],
+   0.6
+  ],
+  [
+   23.0,
+   24.8,
+   [
+    "G2",
+    "D3",
+    "Bb3",
+    "D4",
+    "G4"
+   ],
+   0.5
+  ],
+  [
+   24.8,
+   26.6,
+   [
+    "A2",
+    "E3",
+    "A3",
+    "D4",
+    "E4"
+   ],
+   0.62
+  ],
+  [
+   26.6,
+   29.3,
+   [
+    "D2",
+    "A2",
+    "F#3",
+    "A3",
+    "E4",
+    "F#4",
+    "C#5"
+   ],
+   0.6
+  ]
+ ],
+ "drone": [
+  [
+   0.0,
+   1.8,
+   "D1",
+   0.3
+  ],
+  [
+   1.8,
+   10.2,
+   "D2",
+   0.09
+  ],
+  [
+   10.2,
+   17.6,
+   "D1",
+   0.16
+  ],
+  [
+   17.6,
+   24.8,
+   "Bb1",
+   0.08
+  ],
+  [
+   24.8,
+   26.6,
+   "A1",
+   0.1
+  ],
+  [
+   26.6,
+   29.3,
+   "D1",
+   0.14
+  ]
+ ],
+ "arp": [
+  [
+   1.9,
+   5.0,
+   [
+    "D4",
+    "A4",
+    "F5",
+    "A4",
+    "E5",
+    "A4"
+   ],
+   1,
+   0.04,
+   2300
+  ],
+  [
+   5.0,
+   7.5,
+   [
+    "F4",
+    "C5",
+    "A5",
+    "C5",
+    "F5",
+    "C5"
+   ],
+   2,
+   0.04,
+   2900
+  ],
+  [
+   7.5,
+   10.05,
+   [
+    "C4",
+    "G4",
+    "E5",
+    "G4",
+    "D5",
+    "G4"
+   ],
+   2,
+   0.042,
+   3100
+  ],
+  [
+   10.2,
+   12.05,
+   [
+    "D4",
+    "A4",
+    "D5",
+    "F5",
+    "A4",
+    "D5"
+   ],
+   2,
+   0.05,
+   3400
+  ],
+  [
+   12.05,
+   13.9,
+   [
+    "Bb3",
+    "F4",
+    "Bb4",
+    "D5",
+    "F4",
+    "Bb4"
+   ],
+   2,
+   0.05,
+   3400
+  ],
+  [
+   13.9,
+   15.75,
+   [
+    "F4",
+    "C5",
+    "F5",
+    "A5",
+    "C5",
+    "F5"
+   ],
+   2,
+   0.054,
+   3800
+  ],
+  [
+   15.75,
+   17.5,
+   [
+    "C4",
+    "G4",
+    "C5",
+    "E5",
+    "G4",
+    "C5"
+   ],
+   2,
+   0.058,
+   4200
+  ],
+  [
+   17.6,
+   21.2,
+   [
+    "Bb3",
+    "F4",
+    "D5",
+    "F4",
+    "C5",
+    "F4"
+   ],
+   2,
+   0.038,
+   2800
+  ],
+  [
+   21.2,
+   24.75,
+   [
+    "C4",
+    "G4",
+    "E5",
+    "G4",
+    "E5",
+    "G4"
+   ],
+   2,
+   0.04,
+   3000
+  ],
+  [
+   24.8,
+   26.5,
+   [
+    "A3",
+    "E4",
+    "A4",
+    "D5",
+    "E5",
+    "A4"
+   ],
+   1,
+   0.04,
+   3200
+  ]
+ ],
+ "pulse": [
+  [
+   10.2,
+   12.05,
+   "D2",
+   0.12
+  ],
+  [
+   12.05,
+   13.9,
+   "Bb1",
+   0.12
+  ],
+  [
+   13.9,
+   15.75,
+   "F1",
+   0.12
+  ],
+  [
+   15.75,
+   17.55,
+   "C2",
+   0.13
+  ],
+  [
+   17.6,
+   21.2,
+   "Bb1",
+   0.085
+  ],
+  [
+   21.2,
+   24.75,
+   "C2",
+   0.09
+  ]
+ ],
+ "brass": [
+  [
+   10.2,
+   1.8,
+   [
+    "D2",
+    "A2",
+    "D3"
+   ],
+   0.3
+  ],
+  [
+   13.9,
+   1.8,
+   [
+    "F2",
+    "C3",
+    "F3"
+   ],
+   0.26
+  ],
+  [
+   15.75,
+   1.8,
+   [
+    "C2",
+    "G2",
+    "C3"
+   ],
+   0.3
+  ],
+  [
+   26.6,
+   2.6,
+   [
+    "D2",
+    "A2",
+    "F#3"
+   ],
+   0.12
+  ]
+ ],
+ "drums": [
+  [
+   10.2,
+   17.55,
+   0.6,
+   [
+    [
+     0,
+     1.0,
+     70
+    ],
+    [
+     1.5,
+     0.55,
+     82
+    ],
+    [
+     2,
+     0.8,
+     66
+    ],
+    [
+     3.5,
+     0.5,
+     90
+    ]
+   ],
+   0.42,
+   0.03
+  ],
+  [
+   18.05,
+   24.75,
+   0.6,
+   [
+    [
+     0,
+     0.55,
+     74
+    ],
+    [
+     2,
+     0.45,
+     70
+    ]
+   ],
+   0.28,
+   0.02
+  ]
+ ],
+ "bells": [
+  [
+   26.62,
+   [
+    "D5",
+    "A5",
+    "F#5",
+    "C#6",
+    "E6"
+   ],
+   0.028,
+   0.28
+  ],
+  [
+   28.85,
+   [
+    "A5",
+    "F#6",
+    "D6"
+   ],
+   0.03,
+   0.15
+  ]
+ ],
+ "sfx": [
+  [
+   "impact",
+   0.05,
+   0.55,
+   0.15
+  ],
+  [
+   "whoosh",
+   0.7,
+   0.9,
+   1.4
+  ],
+  [
+   "whoosh_down",
+   1.8,
+   0.7,
+   0.7
+  ],
+  [
+   "click",
+   2.5631708517971443,
+   0.9
+  ],
+  [
+   "click",
+   3.843328409650418,
+   0.9
+  ],
+  [
+   "whoosh_down",
+   3.9664204825209257,
+   0.8,
+   1.2
+  ],
+  [
+   "whoosh",
+   5.05,
+   0.8,
+   0.9
+  ],
+  [
+   "tick",
+   5.35,
+   0.5
+  ],
+  [
+   "tick",
+   5.7,
+   0.5
+  ],
+  [
+   "tick",
+   6.05,
+   0.5
+  ],
+  [
+   "tick",
+   6.4,
+   0.5
+  ],
+  [
+   "tick",
+   6.75,
+   0.5
+  ],
+  [
+   "scan",
+   7.55,
+   0.8
+  ],
+  [
+   "click",
+   7.7,
+   0.8
+  ],
+  [
+   "shimmer",
+   9.0,
+   0.7
+  ],
+  [
+   "riser",
+   10.2,
+   1.0,
+   1.9
+  ],
+  [
+   "impact",
+   10.2,
+   1.35,
+   0.45
+  ],
+  [
+   "whoosh",
+   17.65,
+   0.9,
+   0.9
+  ],
+  [
+   "click",
+   18.533,
+   0.9
+  ],
+  [
+   "scan",
+   18.9,
+   0.9
+  ],
+  [
+   "scan",
+   20.650000000000002,
+   0.6
+  ],
+  [
+   "tick",
+   24.95,
+   0.5
+  ],
+  [
+   "tick",
+   25.35,
+   0.5
+  ],
+  [
+   "riser",
+   26.6,
+   0.35,
+   1.2
+  ],
+  [
+   "impact",
+   26.6,
+   0.55,
+   0.3
+  ],
+  [
+   "shimmer",
+   28.0,
+   0.35
+  ]
+ ],
+ "mech": [
+  [
+   "motor",
+   10.05,
+   4.9,
+   0.085
+  ],
+  [
+   "grains",
+   10.2,
+   4.6,
+   0.05
+  ],
+  [
+   "servo",
+   14.933,
+   0.85,
+   520,
+   820,
+   0.06,
+   -0.2
+  ],
+  [
+   "servo",
+   15.833,
+   0.95,
+   820,
+   600,
+   0.055,
+   0.2
+  ],
+  [
+   "servo",
+   16.733,
+   0.5,
+   600,
+   700,
+   0.04,
+   0.0
+  ],
+  [
+   "motor",
+   17.333,
+   1.5,
+   0.07
+  ],
+  [
+   "grains",
+   17.4,
+   1.3,
+   0.04
+  ]
+ ]
+}

@@ -1,0 +1,32 @@
+1
+00:00:00,170 --> 00:00:03,146
+What makes an Earth landscape useful for Mars exploration?
+
+2
+00:00:03,186 --> 00:00:05,833
+PARALLAX X compares five terrain features
+
+3
+00:00:05,873 --> 00:00:10,471
+across 1,915 Earth windows, using Wasserstein distance.
+
+4
+00:00:10,659 --> 00:00:14,731
+Then watch our six-wheel rover move across high-resolution Martian terrain.
+
+5
+00:00:14,771 --> 00:00:16,680
+An illustration, not physics.
+
+6
+00:00:18,163 --> 00:00:22,507
+Expedition Lab designs field tests for wheel slip, sinkage, and energy.
+
+7
+00:00:25,669 --> 00:00:27,548
+Similarity is a starting point.
+
+8
+00:00:27,588 --> 00:00:29,045
+Evidence comes first.
+

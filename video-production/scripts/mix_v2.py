@@ -5,7 +5,7 @@ import sys
 TL = json.load(open(sys.argv[1] if len(sys.argv) > 1 else 'timeline.json'))
 P = TL.get('stem_prefix', '')
 VDIR = TL.get('voice_dir')
-TAG = '_V2' if P else ''; D = TL['duration']; N = int(round(D * SR))
+TAG = {'v2_': '_V2', 'v3_': '_V3'}.get(P, ''); D = TL['duration']; N = int(round(D * SR))
 music, _ = sf.read(f'audio/stems/{P}music.wav'); sfx, _ = sf.read(f'audio/stems/{P}sfx.wav')
 music = music[:N]; sfx = sfx[:N]
 # ---- narration: raw (24 kHz, unprocessed) + processed 48 kHz voice stem ----
@@ -41,7 +41,7 @@ for i in range(0, N, 48):  # 1 ms blocks
     duck[i:i + 48] = g
 duck_db = TL.get('duck_db', -13.0) * duck  # music sits ~10.5 dB lower under narration (bed already well below voice)
 music_d = music * (10 ** (duck_db / 20))[:, None]
-sfx_d = sfx * (10 ** ((-4 * duck) / 20))[:, None]
+sfx_d = sfx * (10 ** ((TL.get('sfx_duck_db', -4.0) * duck) / 20))[:, None]
 MG = TL.get('music_gain', 0.62); SG = TL.get('sfx_gain', 0.85)
 mix = music_d * MG + sfx_d * SG + voice[:, None] * 1.0
 # fades

@@ -2,7 +2,29 @@
 
 This folder is separate from the web app. Nothing in the app was changed.
 
-## V2: rover-first revision (current)
+## V3: real rover + cinematic science (current)
+
+| File | What it is |
+|---|---|
+| `PARALLAX_X_SPACE_APPS_2026_DEMO_V3_SCIENCE.mp4` | **V3 video**: 29.300 s, 1920×1080, 30 fps, H.264 + AAC, faststart |
+| `PARALLAX_X_THEORY_BEHIND_THE_DEMO.md` | **Technical companion for judges**: data, F1–F5, ECDF, Wasserstein-1, validation (FAILED), rover animation logic, field-test formulas, stack, citations, timestamp links |
+| `PARALLAX_X_DEMO_V3_CAPTIONS.srt` | V3 English captions (also burned in) |
+| `PARALLAX_X_DEMO_V3_NARRATION_KOKORO.wav` | V3 raw Kokoro narration (`af_heart`), 24 kHz |
+| `PARALLAX_X_DEMO_V3_AUDIO_MIX.wav` | V3 master: 48 kHz / 24-bit |
+| `PARALLAX_X_DEMO_V3_EDIT_NOTES.md` | Timestamped shot list, captures, audio, rebuild, verification |
+| `PARALLAX_X_DEMO_V3_CREDITS_AND_AI_DISCLOSURE.md` | Credits, AI disclosure, science notes, suggested description |
+| `PARALLAX_X_DEMO_V3_FRAME_MONTAGE.jpg` | V3 frames, one per second |
+
+To rebuild V3:
+
+```bash
+python3 scripts/make_timeline_v3.py
+.venv-tts/bin/python scripts/music_v2.py timeline_v3.json
+.venv-tts/bin/python scripts/mix_v2.py timeline_v3.json
+./scripts/encode_v3.sh
+```
+
+## V2: rover-first revision (kept for comparison)
 
 | File | What it is |
 |---|---|

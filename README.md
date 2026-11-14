@@ -2,7 +2,7 @@
 
 **NASA Space Apps Challenge 2026 · Ulaanbaatar · Challenge: "Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars"**
 
-**Live app:** _LIVE_URL_ · **Source:** https://github.com/BeBecpp/PARALLAX-X
+**Live app:** https://parallax-x-lyart.vercel.app · **Source:** https://github.com/BeBecpp/PARALLAX-X
 
 PARALLAX X is a reproducible, evidence-first search for **Earth terrain that resembles a specific Martian landform**: the wind-carved yardangs of the Medusae Fossae Formation (MFF). You pick the Mars site, explore real NASA HiRISE elevation data in 3D, and compare it with Earth terrain at the same physical scale. Then you see **how far the evidence goes, and where it stops**.
 

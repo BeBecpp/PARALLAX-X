@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ValidationBanner } from "./validation-banner";
 import type { Loadable } from "@/lib/data";
 import type { Heightfield, HeightfieldMeta, Results, SourceRecord } from "@/lib/types";
 import type { TerrainEngine, ViewSpec } from "@/lib/terrain-engine";
@@ -373,6 +374,9 @@ export function ExploreView({
           </Button>
         </div>
       </header>
+      <div className="z-10 border-b border-hairline">
+        <ValidationBanner results={r} compact onDetails={() => { setDrawerTab("result"); setDrawerOpen(true); }} />
+      </div>
 
       <div className="relative flex min-h-0 flex-1">
         <div className="flex min-w-0 flex-1 flex-col">

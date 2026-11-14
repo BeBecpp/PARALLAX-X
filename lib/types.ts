@@ -131,6 +131,10 @@ export interface Results {
 
 export interface RobustnessCheck {
   pass?: boolean;
+  decision_pass?: boolean;
+  criteria?: { id: string; description: string; value: string; pass: boolean }[];
+  spearman_rank_corr_with_nasadem?: number | null;
+  n_common_windows?: number;
   decision?: { pass?: boolean; summary?: string };
   summary?: string;
   sites?: { id?: string; name?: string; median_pct_full?: number | null; median_pct?: number | null }[] | Record<string, number | null>;

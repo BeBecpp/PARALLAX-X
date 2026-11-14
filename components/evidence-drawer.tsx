@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { Loadable } from "@/lib/data";
 import type { Results, RobustnessCheck, SourceRecord } from "@/lib/types";
-import { rankLabel, shortHash } from "@/lib/format";
+import { rankLabel, shortHash, formatCoord } from "@/lib/format";
 import { NotAvailable } from "./ui";
 
 export type EvidenceTab = "result" | "method" | "sources" | "limits" | "ai";
@@ -37,6 +37,7 @@ function Td({ children, right, mono }: { children: React.ReactNode; right?: bool
 
 function checkPass(c: RobustnessCheck): boolean | null {
   if (typeof c.pass === "boolean") return c.pass;
+  if (typeof c.decision_pass === "boolean") return c.decision_pass;
   if (c.decision && typeof c.decision.pass === "boolean") return c.decision.pass;
   return null;
 }
@@ -65,6 +66,21 @@ function RobustnessBlock({ title, check, r }: { title: string; check: Robustness
         {pass !== null ? <span className="ml-2 text-muted">— decision: {pass ? "pass" : "did not pass"}</span> : null}
       </p>
       {summary ? <p className="mt-1 text-[14px] text-muted">{summary}</p> : null}
+      {Array.isArray(check.criteria) ? (
+        <ul className="mt-1 space-y-0.5 text-[14px] text-muted">
+          {check.criteria.map((c) => (
+            <li key={c.id}>
+              <span className="num">({c.id})</span> {c.pass ? "met" : "not met"}: <span className="num text-ink">{c.value}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {typeof check.spearman_rank_corr_with_nasadem === "number" ? (
+        <p className="mt-1 text-[14px] text-muted">
+          Rank agreement with the NASADEM run (Spearman ρ over <span className="num">{check.n_common_windows}</span> windows):{" "}
+          <span className="num text-ink">{check.spearman_rank_corr_with_nasadem.toFixed(3)}</span>
+        </p>
+      ) : null}
       {rows.length ? (
         <table className="mt-2 w-full">
           <thead>
@@ -176,7 +192,8 @@ function ResultTab({ r }: { r: Results }) {
           <ul className="space-y-2 text-[14px]">
             {r.candidates.map((c) => (
               <li key={c.id} className="border-b border-hairline pb-2">
-                {c.label} — {rankLabel(c.best_pct)} (best window), <span className="num">{c.n_windows}</span> windows,{" "}
+                <span className="font-medium text-ink">Gobi {c.id}</span>{" "}
+                <span className="num text-ink">{formatCoord(c.centroid, "Earth")}</span> — {c.label} — {rankLabel(c.best_pct)} (best window), <span className="num">{c.n_windows}</span> windows,{" "}
                 <span className="num">{c.area_km2.toFixed(0)}</span> km²
               </li>
             ))}

@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidationBanner } from "./validation-banner";
+
 import { useState } from "react";
 import type { Loadable } from "@/lib/data";
 import type { HeightfieldMeta, Locator, LocatorFootprint, SourceRecord } from "@/lib/types";
@@ -209,6 +211,10 @@ export function SelectView({
           Choose a Mars site with real high-resolution terrain data. PARALLAX X ranks Earth landscapes by how closely
           their shape matches it, at a scale both planets&apos; data can resolve.
         </p>
+
+        <div className="mt-6 max-w-[1100px]">
+          <ValidationBanner />
+        </div>
 
         <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1.7fr_1fr]">
           <LocatorMap locator={locator} />

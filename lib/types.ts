@@ -125,8 +125,43 @@ export interface Results {
   sensitivity_6km?: RobustnessCheck | null;
   glo30_check?: RobustnessCheck | null;
   /** Post-hoc, descriptive only. */
-  diagnostics?: { status?: string; groups?: { group: string; n: number; median_pct?: number | null }[] } | null;
+  diagnostics?: Diagnostics | null;
   n_clusters_total?: number;
+  /** Mars fingerprint summary (centre, per-feature sample counts and medians in raw units). */
+  mars?: MarsSummary | null;
+}
+
+export interface MarsSummary {
+  centre_lonlat: [number, number];
+  n_samples?: Record<string, number>;
+  median_raw?: Record<string, number>;
+}
+
+export interface DiagnosticGroup {
+  group: string;
+  n: number;
+  median_pct?: number | null;
+  /** Per-feature medians in raw units (see features[].units). */
+  median_raw?: Record<string, number>;
+  /** Per-feature median W1 distance to Mars in normalized (ECDF) units. */
+  median_w1?: Record<string, number>;
+}
+
+export interface RidgeSpectrum {
+  segments?: number;
+  segment_length_m?: number;
+  compensated_peak_wavelengths_m?: number[];
+  ew_variance_fraction_lt300m?: number;
+  ew_variance_fraction_lt150m?: number;
+  /** Fraction of gradient retained by the F2 operator at a given ridge wavelength (m, as string key). */
+  f2_gradient_attenuation_at?: Record<string, number>;
+  spectrum?: { wavelength_m: number[]; power_k2: number[] };
+}
+
+export interface Diagnostics {
+  status?: string;
+  groups?: DiagnosticGroup[];
+  ctx_ridge_spectrum?: RidgeSpectrum | null;
 }
 
 export interface RobustnessCheck {
@@ -134,6 +169,9 @@ export interface RobustnessCheck {
   decision_pass?: boolean;
   criteria?: { id: string; description: string; value: string; pass: boolean }[];
   spearman_rank_corr_with_nasadem?: number | null;
+  window_km?: number;
+  dem?: string;
+  status?: string;
   n_common_windows?: number;
   decision?: { pass?: boolean; summary?: string };
   summary?: string;
@@ -157,6 +195,7 @@ export interface SourceRecord {
   retrieved_utc: string;
   usage: string;
   resources_tab_route?: string;
+  mirror_url?: string;
 }
 
 export interface LocatorFootprint {

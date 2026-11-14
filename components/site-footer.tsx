@@ -22,35 +22,40 @@ export function Credits() {
     <ul className="space-y-1 text-[14px] text-muted">
       <li>Mars elevation: NASA Planetary Data System — HiRISE (MRO, University of Arizona)</li>
       <li>Mars context: USGS Astrogeology CTX DTM</li>
-      <li>Earth elevation: NASA NASADEM via the Microsoft Planetary Computer mirror</li>
+      <li>Mars locator: MGS MOLA global DEM 463 m (NASA/GSFC; USGS Astrogeology mosaic)</li>
+      <li>Earth elevation: NASA NASADEM via the Microsoft Planetary Computer mirror; Copernicus GLO-30</li>
       <li>Boundaries: Natural Earth</li>
     </ul>
   );
 }
 
-export function SiteFooter() {
+const PROVENANCE = ["PDS HiRISE", "USGS CTX", "NASADEM (Planetary Computer mirror)", "Copernicus GLO-30", "MGS MOLA"];
+
+/** Compact provenance strip. Full credits live in the About dialog. */
+export function SiteFooter({ onOpenAbout }: { onOpenAbout?: () => void }) {
   return (
-    <footer className="border-t border-hairline px-6 py-8 md:px-8">
-      <div className="mx-auto grid max-w-[1200px] gap-8 md:grid-cols-[1.4fr_1fr]">
-        <div>
-          <h2 className="font-display text-[18px] font-semibold text-ink">About</h2>
-          <div className="mt-3">
-            <AboutText />
-          </div>
-        </div>
-        <div>
-          <h2 className="font-display text-[18px] font-semibold text-ink">Data credits</h2>
-          <div className="mt-3">
-            <Credits />
-          </div>
-          <p className="mt-4 text-[14px] text-muted">
-            Code:{" "}
-            <a className="text-ink underline decoration-hairline underline-offset-4 hover:decoration-copper" href={REPO_URL} target="_blank" rel="noreferrer">
-              github.com/BeBecpp/PARALLAX-X
-            </a>
-          </p>
-          <p className="mt-2 text-[14px] text-muted">NASA Space Apps 2026 project. Not affiliated with or endorsed by NASA.</p>
-        </div>
+    <footer className="border-t border-hairline">
+      <div className="mx-auto flex max-w-[1360px] flex-col gap-3 px-6 py-5 text-[14px] text-muted md:px-10 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
+        <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 leading-relaxed">
+          <span className="mr-1 text-[12px] font-medium uppercase tracking-[0.14em] text-muted/80">Data</span>
+          {PROVENANCE.map((p, i) => (
+            <span key={p} className="whitespace-nowrap">
+              {i ? <span className="mr-2 text-hairline" aria-hidden="true">/</span> : null}
+              <span className="text-ink/85">{p}</span>
+            </span>
+          ))}
+        </p>
+        <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          {onOpenAbout ? (
+            <button type="button" onClick={onOpenAbout} className="min-h-[32px] text-muted underline decoration-hairline underline-offset-4 hover:text-ink hover:decoration-copper">
+              Credits &amp; methods
+            </button>
+          ) : null}
+          <a className="text-muted underline decoration-hairline underline-offset-4 hover:text-ink hover:decoration-copper" href={REPO_URL} target="_blank" rel="noreferrer">
+            Source code
+          </a>
+          <span>NASA Space Apps 2026 · Not affiliated with NASA</span>
+        </p>
       </div>
     </footer>
   );

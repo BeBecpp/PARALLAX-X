@@ -6,22 +6,39 @@ import { AI_USE_TEXT } from "./evidence-drawer";
 
 export function AboutDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const ref = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef(onClose);
   useEffect(() => {
-    if (open) ref.current?.focus();
+    closeRef.current = onClose;
+  });
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.activeElement as HTMLElement | null;
+    ref.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeRef.current();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      prev?.focus?.();
+    };
   }, [open]);
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0B1016]/80 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#090C11]/80 p-4 backdrop-blur-[2px]" onClick={onClose}>
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="About PARALLAX X"
-        className="fade-in max-h-[90vh] w-full max-w-[640px] overflow-y-auto rounded-[8px] border border-hairline bg-surface p-6"
+        aria-label="Research and methods"
+        className="fade-in max-h-[90vh] w-full max-w-[640px] overflow-y-auto rounded-[12px] border border-hairline bg-surface p-6 md:p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4">
-          <h2 className="font-display text-[24px] font-semibold">About PARALLAX X</h2>
-          <button ref={ref} type="button" onClick={onClose} className="min-h-[40px] rounded-[8px] px-3 text-[15px] text-muted hover:text-ink">
+          <div>
+            <p className="text-[12px] font-medium uppercase tracking-[0.16em] text-copper-light">Research / Methods</p>
+            <h2 className="mt-1 font-display text-[26px] font-semibold tracking-[-0.01em]">About PARALLAX X</h2>
+          </div>
+          <button ref={ref} type="button" onClick={onClose} className="min-h-[44px] rounded-[8px] border border-hairline px-4 text-[15px] text-muted hover:text-ink">
             Close
           </button>
         </div>

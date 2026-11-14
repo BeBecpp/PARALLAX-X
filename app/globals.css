@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0b1016;
-  --color-surface: #19232e;
-  --color-hairline: #2a3540;
-  --color-ink: #eaf0f4;
-  --color-muted: #87929d;
-  --color-copper: #c97951;
-  --color-earth: #6a9bad;
+  /* Premium UI tokens (CLAUDE_PREMIUM_UI_OVERHAUL §3). Variable names kept for existing components. */
+  --color-bg: #090c11;
+  --color-surface: #121820;
+  --color-surface-soft: #171d25;
+  --color-hairline: #2b343e;
+  --color-ink: #f3f1ed;
+  --color-muted: #9da6af;
+  --color-copper: #c66a4b;
+  --color-copper-light: #df9070;
+  --color-earth: #789da8;
 
   --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -80,11 +83,36 @@ body {
     repeating-linear-gradient(45deg, #4a4744 0 2px, #f2ebe3 2px 6px);
 }
 
+/* Select/Loading stage motion (PAX poster tilt, step pulse). Reduced motion disables via the rule below. */
+.pax-tilt {
+  animation: pax-tilt 3.2s ease-in-out infinite;
+  transform-origin: 50% 85%;
+}
+@keyframes pax-tilt {
+  0%, 100% { transform: rotate(0deg); }
+  40% { transform: rotate(-3deg); }
+  60% { transform: rotate(-3deg); }
+}
+.pulse-soft {
+  animation: pulse-soft 1.4s ease-in-out infinite;
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 1ms !important;
     transition-duration: 1ms !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pax-tilt,
+  .pulse-soft {
+    animation: none !important;
   }
 }

@@ -254,3 +254,119 @@ export function getSlopeClassRGBA(hf: Heightfield, baselineM: number): Uint8Arra
   if (!t) m.set(key, (t = slopeClassRGBA(hf, classifySlope(computeSlopeDeg(hf, baselineM)))));
   return t;
 }
+
+// ---- lit-terrain helpers (visual styling only; geometry stays the measured heights) ----
+
+/**
+ * Object-space surface normals of the TRUE (unexaggerated) heightfield, encoded RGB in [0,255].
+ * Axes match the mesh: x east, y up, z south. Used as an ObjectSpaceNormalMap so lighting keeps
+ * full-resolution relief detail even when the mesh is decimated; three.js applies the mesh's
+ * vertical exaggeration through the normal matrix.
+ */
+export function normalMapRGBA(hf: Heightfield): Uint8Array {
+  const { width: w, height: h, posting_m: cs } = hf.meta;
+  const out = new Uint8Array(w * h * 4);
+  for (let y = 0; y < h; y++) {
+    const ym = y > 0 ? y - 1 : y;
+    const yp = y < h - 1 ? y + 1 : y;
+    for (let x = 0; x < w; x++) {
+      const xm = x > 0 ? x - 1 : x;
+      const xp = x < w - 1 ? x + 1 : x;
+      const dzdx = (filled(hf, y * w + xp) - filled(hf, y * w + xm)) / ((xp - xm) * cs);
+      const dzdz = (filled(hf, yp * w + x) - filled(hf, ym * w + x)) / ((yp - ym) * cs);
+      let nx = -dzdx;
+      let ny = 1;
+      let nz = -dzdz;
+      const l = Math.hypot(nx, ny, nz);
+      nx /= l;
+      ny /= l;
+      nz /= l;
+      const i = (y * w + x) * 4;
+      out[i] = Math.round((nx * 0.5 + 0.5) * 255);
+      out[i + 1] = Math.round((ny * 0.5 + 0.5) * 255);
+      out[i + 2] = Math.round((nz * 0.5 + 0.5) * 255);
+      out[i + 3] = 255;
+    }
+  }
+  return out;
+}
+
+const ALBEDO: Record<Tone, { low: [number, number, number]; high: [number, number, number] }> = {
+  // restrained visualization palette (NOT imagery): warm sandstone for Mars, cool slate for Earth
+  mars: { low: [150, 112, 88], high: [214, 186, 160] },
+  earth: { low: [112, 128, 136], high: [182, 196, 202] },
+};
+
+/** Albedo texture: planet tone with a gentle elevation gradient and a faint full-res cavity term. */
+export function albedoRGBA(hf: Heightfield, tone: Tone): Uint8Array {
+  const { width: w, height: h } = hf.meta;
+  const shade = computeHillshade(hf, 1, 315, 60);
+  const span = Math.max(1e-6, hf.maxRel - hf.minRel);
+  const { low, high } = ALBEDO[tone];
+  const out = new Uint8Array(w * h * 4);
+  for (let i = 0; i < w * h; i++) {
+    const v = hf.heights[i];
+    if (Number.isNaN(v)) {
+      out.set([9, 12, 17, 255], i * 4);
+      continue;
+    }
+    const t = Math.min(1, Math.max(0, (v - hf.minRel) / span));
+    const e = 0.25 + 0.75 * Math.pow(t, 0.8);
+    const cav = 0.82 + 0.18 * shade[i];
+    out[i * 4] = Math.round((low[0] + (high[0] - low[0]) * e) * cav);
+    out[i * 4 + 1] = Math.round((low[1] + (high[1] - low[1]) * e) * cav);
+    out[i * 4 + 2] = Math.round((low[2] + (high[2] - low[2]) * e) * cav);
+    out[i * 4 + 3] = 255;
+  }
+  return out;
+}
+
+export function getNormalMapRGBA(hf: Heightfield): Uint8Array {
+  const m = texCache(hf);
+  let t = m.get("nrm");
+  if (!t) m.set("nrm", (t = normalMapRGBA(hf)));
+  return t;
+}
+
+export function getAlbedoRGBA(hf: Heightfield, tone: Tone): Uint8Array {
+  const m = texCache(hf);
+  const key = `alb|${tone}`;
+  let t = m.get(key);
+  if (!t) m.set(key, (t = albedoRGBA(hf, tone)));
+  return t;
+}
+
+/** Grid cell (x,y) of the strongest local relief (coarse 8x8 blocks): the default camera focus. */
+export function focalCell(hf: Heightfield): [number, number] {
+  const { width: w, height: h } = hf.meta;
+  const B = 8;
+  const bw = Math.floor(w / B);
+  const bh = Math.floor(h / B);
+  let best = -1;
+  let bx = w / 2;
+  let by = h / 2;
+  for (let j = 1; j < B - 1; j++) {
+    for (let i = 1; i < B - 1; i++) {
+      let s = 0;
+      let s2 = 0;
+      let n = 0;
+      for (let y = j * bh; y < (j + 1) * bh; y += 2) {
+        for (let x = i * bw; x < (i + 1) * bw; x += 2) {
+          const v = hf.heights[y * w + x];
+          if (Number.isNaN(v)) continue;
+          s += v;
+          s2 += v * v;
+          n++;
+        }
+      }
+      if (n < 10) continue;
+      const varr = s2 / n - (s / n) ** 2;
+      if (varr > best) {
+        best = varr;
+        bx = (i + 0.5) * bw;
+        by = (j + 0.5) * bh;
+      }
+    }
+  }
+  return [bx, by];
+}

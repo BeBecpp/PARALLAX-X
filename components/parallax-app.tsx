@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { loadLocator, loadResults, loadSources, type Loadable } from "@/lib/data";
 import { fetchHeightfieldMeta, loadHeightfield } from "@/lib/heightfield";
-import { getHillshadeRGBA, getMeshArrays } from "@/lib/terrain-compute";
+import { chooseStride, getAlbedoRGBA, getMeshArrays, getNormalMapRGBA } from "@/lib/terrain-compute";
 import { formatBytes } from "@/lib/format";
 import type { Heightfield, HeightfieldMeta, Locator, Results, SourceRecord } from "@/lib/types";
 import { SelectView } from "./select-view";
@@ -17,7 +17,8 @@ import { SiteFooter } from "./site-footer";
 const HERO_ID = "mars_hirise_hero";
 type Stage = "select" | "loading" | "explore" | "static";
 
-const nextFrame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+// rAF is paused in background tabs; never let loading stall on it
+const nextFrame = () => new Promise<void>((r) => { let done = false; const go = () => { if (!done) { done = true; r(); } }; requestAnimationFrame(go); setTimeout(go, 50); });
 
 export function ParallaxApp() {
   const [stage, setStage] = useState<Stage>("select");
@@ -32,6 +33,7 @@ export function ParallaxApp() {
   const [staticReason, setStaticReason] = useState("");
   const [force3D, setForce3D] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [retrying, setRetrying] = useState(false); // retry from the error screen: stay on the loading view
   const run = useRef(0);
 
   useEffect(() => {
@@ -49,10 +51,11 @@ export function ParallaxApp() {
     setStage("loading");
     setLoadError(null);
     setShowSteps(false);
-    // Step list appears only if real work takes longer than 300 ms. No minimum duration.
+    // Step list appears only if real work takes longer than 700 ms. No minimum duration: until then the
+    // Select stage stays on screen (CTA shows "Preparing terrain…", PAX waves) while the real work runs.
     const timer = window.setTimeout(() => {
       if (run.current === id) setShowSteps(true);
-    }, 300);
+    }, 700);
     setSteps([
       { id: "fetch", label: "Fetching Mars elevation", detail: heroMeta?.source_id ?? HERO_ID, status: "active", progress: 0 },
       { id: "mesh", label: "Building terrain mesh", detail: "waiting for elevation data", status: "pending" },
@@ -72,9 +75,10 @@ export function ParallaxApp() {
       patch("mesh", { status: "active", detail: "loading 3D engine" });
       await nextFrame();
       await import("./terrain-viewer"); // the three.js chunk
-      const mesh = getMeshArrays(hf);
-      getHillshadeRGBA(hf, hf.meta.vertical_exaggeration_default, "mars");
-      patch("mesh", { status: "done", detail: `${(mesh.cols * mesh.rows).toLocaleString("en-US")} vertices · hillshade from ${(hf.meta.width * hf.meta.height).toLocaleString("en-US")} cells` });
+      const mesh = getMeshArrays(hf, chooseStride(hf.meta.width, hf.meta.height, 700));
+      getAlbedoRGBA(hf, "mars");
+      getNormalMapRGBA(hf);
+      patch("mesh", { status: "done", detail: `${(mesh.cols * mesh.rows).toLocaleString("en-US")} vertices · surface normals from ${(hf.meta.width * hf.meta.height).toLocaleString("en-US")} cells` });
       patch("results", { status: "active" });
       const res = await resultsP;
       if (run.current !== id) return;
@@ -115,15 +119,28 @@ export function ParallaxApp() {
 
   return (
     <>
-      {stage === "select" ? (
-        <SelectView locator={locator} sources={sources} heroMeta={heroMeta} onExplore={startExplore} onOpenAbout={() => setAboutOpen(true)} />
+      {stage === "select" || (stage === "loading" && !showSteps && !loadError && !retrying) ? (
+        <SelectView
+          locator={locator}
+          sources={sources}
+          heroMeta={heroMeta}
+          onExplore={() => {
+            setRetrying(false);
+            startExplore();
+          }}
+          onOpenAbout={() => setAboutOpen(true)}
+          busy={stage === "loading"}
+        />
       ) : null}
-      {stage === "loading" ? (
+      {stage === "loading" && (showSteps || loadError || retrying) ? (
         <LoadingView
           steps={steps}
           showSteps={showSteps}
           error={loadError}
-          onRetry={startExplore}
+          onRetry={() => {
+            setRetrying(true);
+            startExplore();
+          }}
           onStatic={() => goStatic("The terrain could not be loaded, so no 3D view is available.")}
         />
       ) : null}
@@ -159,7 +176,7 @@ export function ParallaxApp() {
                 : undefined
             }
           />
-          <SiteFooter />
+          <SiteFooter onOpenAbout={() => setAboutOpen(true)} />
         </div>
       ) : null}
       <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />

@@ -33,6 +33,21 @@ def git(*args) -> str:
         return "unknown"
 
 
+def write_thumb(z: np.ndarray, name: str, tone: str, size: int = 160) -> str:
+    """Small hillshade thumbnail of a real heightfield (display only)."""
+    from PIL import Image
+    zz = np.where(np.isfinite(z), z, np.nanmean(z))
+    gy, gx = np.gradient(zz, 30.0)
+    hs = np.clip(0.55 + (-gx * 0.7 + gy * 0.7) / np.sqrt(1 + gx ** 2 + gy ** 2) * 2.2, 0, 1)
+    lo, hi = (np.array([70, 48, 36]), np.array([226, 176, 140])) if tone == "mars" else (np.array([44, 58, 66]), np.array([196, 210, 216]))
+    rgb = (lo[None, None, :] + (hi - lo)[None, None, :] * hs[..., None]).astype(np.uint8)
+    im = Image.fromarray(rgb).resize((size, size), Image.LANCZOS)
+    out = PUBLIC_DATA / "thumbs"
+    out.mkdir(parents=True, exist_ok=True)
+    im.save(out / f"{name}.webp", quality=82)
+    return f"/data/thumbs/{name}.webp"
+
+
 def window_array(w: dict, win_px: int) -> np.ndarray:
     z = np.load(WORK / "tiles" / f"{w['tile']}.npz")["z"].astype(np.float64)
     return z[w["r"] : w["r"] + win_px, w["c"] : w["c"] + win_px]
@@ -82,7 +97,8 @@ def main():
         "display_note": "CTX 20 m posts resampled (average) to 30 m + common Gaussian σ=30 m — identical processing to Earth windows",
         "source_posting_m": 20.2, "vertical_exaggeration_default": 2.0, "window_origin_px": [mr, mc]})
     scenes.append({"id": "cmp_mars", "label": "Medusae Fossae yardangs (Mars)", "kind": "mars", "heightfield_id": rec["id"],
-                   "centroid": S["mars"]["centre_lonlat"], "pct_full": None, "pct_b0": None, "per_feature_w1": None})
+                   "centroid": S["mars"]["centre_lonlat"], "pct_full": None, "pct_b0": None, "per_feature_w1": None,
+                   "median_raw": S["mars"]["median_raw"], "thumb": write_thumb(mz, "cmp_mars", "mars")})
 
     def earth_scene(w, sid, label, kind, site_id=None):
         z = window_array(w, win_px)
@@ -93,7 +109,8 @@ def main():
             "terrain_description": label, "display_note": "NASADEM 1″ resampled (average) to 30 m + common Gaussian σ=30 m",
             "source_posting_m": 30.0, "vertical_exaggeration_default": 2.0, "window_id": w["id"]})
         scenes.append({"id": sid, "label": label, "kind": kind, "heightfield_id": r["id"], "centroid": [w["lon"], w["lat"]],
-                       "pct_full": w["pct"], "pct_b0": w["pct_b0"], "per_feature_w1": w["w1"], **({"site_id": site_id} if site_id else {})})
+                       "pct_full": w["pct"], "pct_b0": w["pct_b0"], "per_feature_w1": w["w1"], "median_raw": w["median_raw"],
+                       "thumb": write_thumb(z, sid, "earth"), **({"site_id": site_id} if site_id else {})})
 
     cands = []
     for c in S["candidates"]:

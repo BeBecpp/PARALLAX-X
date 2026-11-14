@@ -18,6 +18,8 @@ export interface RoverStageProps {
   scanCue?: number;
   /** Yaw (radians) of the three-quarter pose. */
   yaw?: number;
+  /** Extra camera distance to leave room around the complete rover. */
+  framePadding?: number;
   /** Slowly roll the wheels forward (illustrative motion, no translation). */
   rolling?: boolean;
   /** Start with the mast stowed and raise it (the source model's rigged clip) shortly after the first frame. */
@@ -46,7 +48,7 @@ function makeContactShadow(): THREE.Mesh {
   return mesh;
 }
 
-export function RoverStage({ scanCue = 0, yaw = -0.62, rolling = false, deployOnReady = true, onReady, onError, className = "" }: RoverStageProps) {
+export function RoverStage({ scanCue = 0, yaw = -0.62, framePadding = 1, rolling = false, deployOnReady = true, onReady, onError, className = "" }: RoverStageProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const rigRef = useRef<RoverRig | null>(null);
   const rollRef = useRef(rolling);
@@ -108,7 +110,7 @@ export function RoverStage({ scanCue = 0, yaw = -0.62, rolling = false, deployOn
       camera.aspect = w / h;
       const vf = THREE.MathUtils.degToRad(camera.fov) / 2;
       const hf = Math.atan(Math.tan(vf) * camera.aspect);
-      const dist = (radius / Math.sin(Math.min(vf, hf))) * 0.98;
+      const dist = (radius / Math.sin(Math.min(vf, hf))) * 0.98 * framePadding;
       const elev = THREE.MathUtils.degToRad(11);
       camera.position.set(0, target.y + Math.sin(elev) * dist, Math.cos(elev) * dist);
       camera.lookAt(target);
@@ -232,7 +234,7 @@ export function RoverStage({ scanCue = 0, yaw = -0.62, rolling = false, deployOn
       canvas.remove();
       if (debug) delete (window as unknown as Record<string, unknown>).__rover;
     };
-    // yaw is a mount-time pose
+    // yaw and framePadding are mount-time framing
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

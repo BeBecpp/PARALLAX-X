@@ -11,7 +11,7 @@ const RoverStage = dynamic(() => import("./rover-stage"), { ssr: false });
  * Branded opening sequence. Phases (a small timer-driven state machine):
  *   0 ARRIVAL  — orbit light trail draws, the copper X lands, the wordmark assembles
  *   1 WELCOME  — "Welcome to PARALLAX X" + the three-verb promise
- *   2 MISSION  — the real expedition rover glTF raises its mast over the real HiRISE hillshade of the study site
+ *   2 MISSION  — the real expedition rover glTF raises its mast above the mission caption
  *   3 SELECT   — hand-off line, then the overlay dissolves into the destination selector underneath
  * Plays once per browser session, is skippable at every moment (button, Esc/Enter/Space, click), never blocks
  * on a timer longer than ~10 s, and collapses to a 1.4 s static card under prefers-reduced-motion.
@@ -104,23 +104,28 @@ export function WelcomeIntro({ state, onDone, onBrandFilm }: { state: IntroState
           <div aria-hidden="true" className="intro-ambient absolute inset-0" />
           <div aria-hidden="true" className="intro-grain absolute inset-0" />
 
-          {/* PHASE 2 — mission reveal: real HiRISE hillshade (data) + real rover glTF */}
-          <div aria-hidden={phase < 2} className={`absolute inset-0 transition-opacity duration-[1200ms] ${phase >= 2 ? "opacity-100" : "opacity-0"}`}>
-            <div className="intro-terrain absolute inset-[-8%]" style={{ backgroundImage: "url(/data/thumbs/mars_hirise_hero_lg.webp)" }} />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_62%,rgba(6,8,11,0.05),rgba(6,8,11,0.85)_75%)]" />
-            <div className="absolute inset-x-0 top-0 h-[38%] bg-[linear-gradient(180deg,#06080B,rgba(6,8,11,0))]" />
-          </div>
-          <div
-            className={`absolute left-1/2 top-[54%] h-[min(56vh,520px)] w-[min(92vw,900px)] -translate-x-1/2 transition-all duration-[1400ms] ease-out ${phase >= 2 ? "-translate-y-1/2 opacity-100" : "-translate-y-[44%] opacity-0"}`}
-          >
-            {/* a real render of the same model covers the seconds the live model needs to decode; never a fake */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/models/expedition-rover-poster.webp" alt="" className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ${roverReady ? "opacity-0" : "opacity-100"}`} draggable={false} />
-            {playing && !reduced && !roverFailed ? (
-              <div className={`absolute inset-0 transition-opacity duration-700 ${roverReady ? "opacity-100" : "opacity-0"}`}>
-                <RoverStage yaw={-0.62} onReady={() => setRoverReady(true)} onError={() => setRoverFailed(true)} />
-              </div>
-            ) : null}
+          {/* PHASE 2/3 — keep the complete rover and caption in separate rows */}
+          <div aria-hidden={phase < 2} className="absolute inset-x-0 bottom-[3vh] top-[24%] flex flex-col items-center gap-3">
+            <div
+              className={`relative min-h-0 w-[min(92vw,900px)] flex-1 transition-all duration-[1400ms] ease-out ${phase >= 2 ? "translate-y-0 opacity-100" : "translate-y-[6%] opacity-0"}`}
+            >
+              {/* a real render of the same model covers the seconds the live model needs to decode; never a fake */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/models/expedition-rover-poster.webp" alt="" className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ${roverReady ? "opacity-0" : "opacity-100"}`} draggable={false} />
+              {playing && !reduced && !roverFailed ? (
+                <div className={`absolute inset-0 transition-opacity duration-700 ${roverReady ? "opacity-100" : "opacity-0"}`}>
+                  <RoverStage yaw={-0.62} framePadding={1.2} onReady={() => setRoverReady(true)} onError={() => setRoverFailed(true)} />
+                </div>
+              ) : null}
+            </div>
+
+            <div className={`w-full shrink-0 text-center transition-all duration-700 ${phase >= 2 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
+              <p className="text-[12px] font-semibold uppercase tracking-[0.3em] text-copper-light">{phase >= 3 ? "Phase 04 · Select your destination" : "Phase 03 · Mission reveal"}</p>
+              <p className="mt-2 font-display text-[clamp(20px,2.4vw,32px)] font-semibold text-ink">{phase >= 3 ? "Choose a real Mars terrain to explore." : "Medusae Fossae Formation, Mars"}</p>
+              <p className="mx-auto mt-2 max-w-[640px] px-6 text-[13px] leading-snug text-muted">
+                Backdrop: HiRISE stereo-terrain hillshade of the study site (real data). Rover: 3D model NASA/JPL-Caltech with insignia removed, shown enlarged — a visualization, not affiliated with NASA.
+              </p>
+            </div>
           </div>
 
           {/* PHASE 0/1 — brand */}
@@ -136,20 +141,6 @@ export function WelcomeIntro({ state, onDone, onBrandFilm }: { state: IntroState
             </div>
           </div>
 
-          {/* PHASE 2/3 — captions */}
-          <div className={`absolute inset-x-0 bottom-[9vh] text-center transition-all duration-700 ${phase >= 2 ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
-            <p className="text-[12px] font-semibold uppercase tracking-[0.3em] text-copper-light">{phase >= 3 ? "Phase 04 · Select your destination" : "Phase 03 · Mission reveal"}</p>
-            <p className="mt-2 font-display text-[clamp(20px,2.4vw,32px)] font-semibold text-ink">{phase >= 3 ? "Choose a real Mars terrain to explore." : "Medusae Fossae Formation, Mars"}</p>
-            <p className="mx-auto mt-2 max-w-[640px] px-6 text-[13px] leading-snug text-muted">
-              Backdrop: HiRISE stereo-terrain hillshade of the study site (real data). Rover: 3D model NASA/JPL-Caltech with insignia removed, shown enlarged — a visualization, not affiliated with NASA.
-            </p>
-          </div>
-
-          <div className="absolute left-6 top-5 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-muted">
-            <span className="num">0{Math.min(phase, 3) + 1}</span>
-            <span className="h-px w-10 bg-hairline" />
-            <span>{["Arrival", "Welcome", "Mission reveal", "Select destination"][Math.min(phase, 3)]}</span>
-          </div>
           <button
             type="button"
             onClick={(e) => {
@@ -173,9 +164,6 @@ export function WelcomeIntro({ state, onDone, onBrandFilm }: { state: IntroState
               Watch the brand film <span className="text-[11px] font-normal text-muted">AI concept · 22 s</span>
             </button>
           ) : null}
-          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[2px] bg-hairline/40">
-            <div className="intro-progress h-full bg-copper/80" style={{ animationDuration: `${TIMELINE[3]}ms` }} />
-          </div>
         </>
       )}
     </div>

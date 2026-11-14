@@ -1,0 +1,23 @@
+const { chromium } = require('playwright');
+const OUT = process.argv[2];
+(async () => {
+  const b = await chromium.launch({ args: ['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'] });
+  const ctx = await b.newContext({ viewport: { width: 1920, height: 1080 } });
+  await ctx.addInitScript(() => { try { sessionStorage.setItem('parallax-x-intro-seen','1'); } catch(e){} });
+  const p = await ctx.newPage();
+  await p.goto('https://parallax-x-lyart.vercel.app/', { waitUntil: 'networkidle' });
+  await p.keyboard.press('Escape'); await p.waitForTimeout(1500);
+  await p.screenshot({ path: OUT + '/01_select.png' });
+  const fps = async () => p.evaluate(() => new Promise(r => { let n=0; const t0=performance.now(); const f=()=>{ n++; if(performance.now()-t0<2000) requestAnimationFrame(f); else r(n/2); }; requestAnimationFrame(f); }));
+  console.log('select fps', await fps());
+  await p.locator('[role=radiogroup][aria-label="Mars scene"] >> text=CTX Yardang Study').first().click();
+  await p.waitForTimeout(500);
+  await p.screenshot({ path: OUT + '/02_ctx_selected.png' });
+  await p.getByRole('button',{name:/^explore/i}).first().click();
+  await p.waitForTimeout(12000);
+  await p.screenshot({ path: OUT + '/03_explore.png' });
+  console.log('explore fps', await fps());
+  const btns = await p.evaluate(() => [...document.querySelectorAll('button, [role=tab], a')].map(e => (e.innerText||e.getAttribute('aria-label')||'').replace(/\s+/g,' ').trim()).filter(Boolean));
+  console.log(JSON.stringify(btns));
+  await b.close();
+})();

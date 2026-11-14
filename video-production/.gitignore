@@ -1,0 +1,7 @@
+.venv-tts/
+src/
+build/
+frames/
+audio/tts/
+audio/stems/
+__pycache__/

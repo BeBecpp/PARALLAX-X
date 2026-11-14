@@ -1,0 +1,44 @@
+1
+00:00:00,270 --> 00:00:03,325
+Where on Earth could we investigate landscapes like Mars?
+
+2
+00:00:03,365 --> 00:00:06,125
+PARALLAX X compares real Martian terrain
+
+3
+00:00:06,165 --> 00:00:09,355
+with 1,915 selected Earth windows.
+
+4
+00:00:09,395 --> 00:00:12,925
+Five exploratory candidates emerge in Mongolia's Gobi.
+
+5
+00:00:12,965 --> 00:00:16,000
+But our method failed its pre-registered validation.
+
+6
+00:00:16,120 --> 00:00:18,542
+So Expedition Lab turns uncertainty
+
+7
+00:00:18,582 --> 00:00:21,430
+into testable rover field-experiment plans.
+
+8
+00:00:21,470 --> 00:00:23,880
+Some things, only fieldwork can measure.
+
+9
+00:00:24,365 --> 00:00:25,525
+PARALLAX X.
+
+10
+00:00:25,565 --> 00:00:27,100
+Similarity is not proof.
+
+11
+00:00:27,140 --> 00:00:28,675
+Evidence comes first.
+

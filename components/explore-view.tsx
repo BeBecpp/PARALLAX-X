@@ -624,8 +624,8 @@ export function ExploreView({
           />
         </div>
 
-        <div className="order-1 flex min-h-[640px] min-w-0 flex-col gap-3 lg:order-2 lg:min-h-0">
-          <div className="relative min-h-[420px] flex-1 overflow-hidden rounded-[12px]">
+        <div className="order-1 flex min-w-0 flex-col gap-3 lg:order-2 lg:min-h-0">
+          <div className="relative h-[58vh] min-h-[360px] overflow-hidden rounded-[12px] lg:h-auto lg:min-h-[420px] lg:flex-1">
             <div className="absolute inset-y-0 left-0" style={{ width: roverCompare ? `calc(50% - ${VIEW_GAP / 2}px)` : "100%" }}>
               <TerrainViewer views={views} exaggeration={exaggeration} onEngine={(e) => {
                   engine.current = e;

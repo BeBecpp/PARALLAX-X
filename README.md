@@ -27,6 +27,56 @@ The study design, including the pass/fail rule, was **pre-registered and committ
 
 We think an honest failure is a useful contribution. It shows which questions public 30 m data **can** and **cannot** answer about Mars analogs, and what data would be needed: higher-resolution Earth DEMs and process-aware evidence.
 
+## Expedition Lab: from planetary evidence to field experiments
+
+**Product thesis.** PARALLAX X is an evidence-first Mars–Earth analog explorer that turns terrain measurements into
+transparent field-test questions.
+
+### The three questions
+- **Where?** The CTX yardang study area in Medusae Fossae drives the search. Its pre-registered fingerprint (F1–F5,
+  Wasserstein-1) ranks 1,915 declared Earth windows. The result is five *exploratory* Gobi candidates; none is a
+  confirmed analog.
+- **Why?** For each candidate, *Why investigate this location?* shows:
+  - which terrain-shape features are closest to Mars (measured);
+  - post-hoc roughness (derived) and land cover (contextual);
+  - everything that is still unknown.
+- **What next?** **Plan a field experiment** opens Expedition Lab with the candidate preserved. It generates a
+  deterministic protocol (`lib/expedition.ts`, unit-tested) for one of three experiments:
+  - **Wheel mobility** (the primary experiment);
+  - **Rock sampling & drilling**;
+  - **Thermal & energy**.
+
+  Every value comes from `results.json` / `fieldtest.json`. Traction, sinkage, soil strength, rock type, drillability
+  and battery behaviour are shown as **Not measured** or **Field verification required**, and acceptance thresholds
+  are **TO BE DEFINED** from real mission requirements. A plan can be copied or downloaded as Markdown.
+
+### Evidence classes
+Every value carries one of these labels:
+- **Measured:** computed from documented source data.
+- **Derived:** an explicit calculation based on measured inputs.
+- **Contextual:** from an external source, with its scale and limitations.
+- **Not measured:** no sufficient evidence.
+- **Field verification required:** an open scientific or engineering question.
+
+### What is measured, and what is not
+The protocols are *proposals*. **No field test has been performed.** The rover traverse shown from the lab runs on the
+separate HiRISE Mars scene. It is labelled "Illustrative terrain-following visualization · not a validated mobility
+simulation", and it never drives on a Gobi candidate.
+
+### Post-hoc descriptive layers
+These come from `science/pipeline/fieldtest_posthoc.py` (logged in `science/DEVIATIONS.md`, Python tests in
+`science/tests/`):
+- **Local detrended RMS roughness:** the RMS of plane-fit residuals in 330 m and 990 m cells on the common 30 m grid.
+- **ESA WorldCover 2021 v200 land-cover fractions:** computed inside the exact candidate footprints.
+
+Neither layer enters F1–F5, the ranking or the FAILED decision.
+
+### The Resolution Paradox and the judge demo
+- **The Resolution Paradox** (Explore → left panel) shows the same HiRISE crop at its native posting and on the 30 m
+  grid: 13.9 % of the area is steeper than 15° at a 4 m baseline, against 1.6 % at 180 m.
+- **The judge demo** (Demo button or **J**) runs five acts in about 30 s: question → search → matched-scale evidence →
+  Expedition Lab → FAILED validation. It ends on "Similarity is not proof. Evidence comes first."
+
 ## What you can do in the app
 0. **Welcome intro:** a skippable branded opening. The orbital-X logo assembles, then a welcome line, then the rover over the real HiRISE hillshade, then the destination selector. It plays once per session and respects reduced motion. Every logo instance is generated from one vector source, `lib/brand.ts`.
 1. **Select:** a Mars region navigator on the real MOLA map. The exact data footprints are drawn at true size; click anywhere to check coverage ("Not yet available" outside the published study area). Choose one of two real scenes: **HiRISE Scarp Explorer** (fine-scale 3D showcase) or **CTX Yardang Study** (the area used in the Mars–Earth ranking).

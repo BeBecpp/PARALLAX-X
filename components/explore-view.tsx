@@ -20,6 +20,9 @@ import type { EvidenceSection, ProfileData, ProfileSeries, WorkspaceMode } from 
 import { SoundControl } from "./sound-control";
 import { DemoOverlay, type DemoCaption } from "./demo-overlay";
 import { AnalystPanel } from "./analyst-panel";
+import { LabMissionPanel, LabProtocolPanel } from "./expedition-lab";
+import { useFieldTest } from "./analysis/field-test-readiness";
+import type { ExperimentId } from "@/lib/expedition";
 
 const TerrainViewer = dynamic(() => import("./terrain-viewer"), { ssr: false });
 const VIEW_GAP = 12;
@@ -183,7 +186,12 @@ export function ExploreView({
   const [engineReady, setEngineReady] = useState(false);
   const [caption, setCaption] = useState<DemoCaption | null>(null);
   const [analystOpen, setAnalystOpen] = useState(false);
+  /** Expedition Lab: the candidate and experiment being planned (null = closed) */
+  const [lab, setLab] = useState<{ cand: string; exp: ExperimentId } | null>(null);
+  const fieldtestL = useFieldTest();
+  const fieldtest = fieldtestL.status === "ready" ? fieldtestL.data : null;
   const demoTimers = useRef<number[]>([]);
+  const runDemoRef = useRef<() => void>(() => {});
   const engine = useRef<TerrainEngine | null>(null);
   const getEngine = useCallback(() => engine.current, []);
 
@@ -333,6 +341,50 @@ export function ExploreView({
     await loadEarth(id);
   };
 
+  /** Open Expedition Lab for a candidate: the comparison stays on screen with that candidate loaded. */
+  const openLab = async (candId: string, exp: ExperimentId = "mobility") => {
+    const c = r?.candidates.find((x) => x.id === candId);
+    if (!c) return;
+    setAnalysis(null);
+    setAnalystOpen(false);
+    sfx("reveal");
+    setLab({ cand: candId, exp });
+    if (c.compare_scene_id && (mode !== "compare" || selId !== c.compare_scene_id)) await selectScene(c.compare_scene_id);
+  };
+
+  const labCandidate = (candId: string) => {
+    const c = r?.candidates.find((x) => x.id === candId);
+    setLab((l) => (l ? { ...l, cand: candId } : l));
+    if (c?.compare_scene_id && mode === "compare") void loadEarth(c.compare_scene_id);
+  };
+
+  /** Illustrative traverse: the rover on the HiRISE Mars scene (NOT the Gobi candidate), clearly labelled. */
+  const labRover = async () => {
+    await goSimulate();
+    engine.current?.setCameraMode("follow");
+    engine.current?.startDrive();
+  };
+
+  /** The resolution paradox: the same HiRISE crop at its native posting, then averaged to the 30 m comparison grid. */
+  const runResolution = () => {
+    stopDemo();
+    setAnalysis(null);
+    if (!r) return;
+    const T = (ms: number, fn: () => void) => demoTimers.current.push(window.setTimeout(fn, ms));
+    const total = 11000;
+    const cap = (i: number, title: string, body: string, start: number) => setCaption({ i, n: 3, title, body, t0: performance.now(), total, start });
+    if (mode !== "explore") goExplore();
+    void setResolution("native");
+    engine.current?.flyTo("grazing");
+    cap(1, "The resolution paradox · HiRISE scarps, 1 m posting", `Steeper than 15°: ${(r.hirise.frac_area_slope_gt15_baseline_4m * 100).toFixed(1)}% of this crop at a 4 m slope baseline. (A separate scene ~10 km from the CTX study area.)`, 0);
+    T(3500, () => {
+      void setResolution("30m");
+      cap(2, "Same terrain, 30 m comparison grid", `Steeper than 15°: only ${(r.hirise.frac_area_slope_gt15_baseline_180m * 100).toFixed(1)}% at a 180 m baseline. A place can look similar at one scale and behave very differently at another.`, 3500);
+    });
+    T(7500, () => cap(3, "Before testing rover mobility", "We must know what our elevation data cannot resolve — which is why the field-test plan measures slope, rocks and soil on the ground.", 7500));
+    T(total + 600, () => setCaption(null));
+  };
+
   const openEvidence = (s: EvidenceSection) => {
     sfx(s === "validation" ? "neutral" : "reveal");
     setAnalysis(s);
@@ -413,6 +465,7 @@ export function ExploreView({
       else if (e.key === "+" || e.key === "=") eng?.dolly(0.85);
       else if (e.key === "-" || e.key === "_") eng?.dolly(1 / 0.85);
       else if (e.key === "r" || e.key === "R") eng?.reset();
+      else if (e.key === "j" || e.key === "J") runDemoRef.current();
       else if (e.key === " " && mode === "simulate" && eng) {
         if (!drive?.started) eng.startDrive();
         else if (drive.playing) eng.pauseDrive();
@@ -449,33 +502,39 @@ export function ExploreView({
     const T = (ms: number, fn: () => void) => demoTimers.current.push(window.setTimeout(fn, ms));
     const N = 6;
     const total = 30000;
-    const cap = (i: number, title: string, body: string) => setCaption({ i, n: N, title, body, t0: performance.now(), total, start: [0, 4500, 11000, 16000, 22000, 26500][i - 1] });
-    cap(1, "Real Mars terrain", `HiRISE stereo elevation of the Medusae Fossae Formation, ${(hero.meta.extent_m[0] / 1000).toFixed(1)} × ${(hero.meta.extent_m[1] / 1000).toFixed(1)} km, lit by a single low sun.`);
+    const starts = [0, 5000, 11000, 17000, 24000, 27500];
+    const cap = (i: number, title: string, body: string) => setCaption({ i, n: N, title, body, t0: performance.now(), total, start: starts[i - 1] });
+    const topScene = top ? r.compare_scenes.find((s) => s.id === top.compare_scene_id) : undefined;
+    const closest = topScene?.per_feature_w1 ? Object.entries(topScene.per_feature_w1).sort((a, b) => a[1] - b[1]).slice(0, 2).map(([k]) => r.features.find((f) => f.id === k)?.name.toLowerCase()) : [];
+    setLab(null);
+    void ensureRover(); // decode the rover now so it is ready for act 4
+    cap(1, "Where on Earth should we test ideas inspired by Martian terrain?", "Mars · Medusae Fossae Formation: wind-carved terrain. Shown here: the HiRISE scarp scene, measured stereo elevation.");
     if (mode !== "explore") goExplore();
     engine.current?.descend();
-    T(4500, () => {
-      cap(2, "Rover on the measured surface", "The rover follows the real mesh height along a pre-authored demonstration path. A visualization — not rover physics or a safe route.");
-      void goSimulate().then(() => {
-        engine.current?.seekDrive(0.2);
-        engine.current?.resumeDrive();
-      });
-    });
-    T(11000, () => cap(3, "Points of interest", "The rover brakes, stops and surveys with its mast camera. Scrub the timeline and the linked terrain profile follows."));
-    T(16000, () => {
-      cap(4, "Mars vs Earth, same scale", `The CTX yardang study area beside ${top ? `Gobi ${top.id}` : "the top Earth window"} — both 10 km, 30 m grid, ×4 vertical on both.`);
+    T(starts[1], () => {
+      cap(2, "The search", `A pre-registered fingerprint of the CTX yardang study area (5 terrain features) was ranked against ${r.null_set.n_windows.toLocaleString("en-US")} declared Earth windows: ${r.candidates.length} exploratory Gobi candidates.`);
       void goCompare();
     });
-    T(22000, () => {
-      cap(5, `Pre-registered validation: ${r.decision.pass ? "PASSED" : "FAILED"}`, `Known yardang analogs ranked ${pos.map((x) => x.median_pct_full?.toFixed(1)).join(", ")} — the bar was ${thr}. Full fingerprint ${(r.decision.mean_pos_full ?? NaN).toFixed(1)} vs slope-only ${(r.decision.mean_pos_b0 ?? NaN).toFixed(1)}.`);
+    T(starts[2], () =>
+      cap(3, "The evidence, at matched scale", `Mars CTX beside Gobi ${top?.id ?? ""}: both 10 km, 30 m grid, ×4 vertical. Closest measured features: ${closest.join(" and ")}. A rank — not proof.`),
+    );
+    T(starts[3], () => {
+      cap(4, "The experiment · Expedition Lab", "A wheel-mobility field-test plan: traction, sinkage and soil strength are NOT MEASURED — the test exists to measure them. Rover: illustrative only.");
+      if (top) void openLab(top.id, "mobility");
+      T(3200, () => void labRover());
+    });
+    T(starts[4], () => {
+      cap(5, `The result: pre-registered validation ${r.decision.pass ? "PASSED" : "FAILED"}`, `Known yardang sites ranked ${pos.map((x) => x.median_pct_full?.toFixed(1)).join(", ")} (bar ${thr}); full fingerprint ${(r.decision.mean_pos_full ?? NaN).toFixed(1)} vs slope-only ${(r.decision.mean_pos_b0 ?? NaN).toFixed(1)}. Steep area 13.9% at 4 m → 1.6% at 180 m.`);
       sfx("neutral");
       setAnalysis("validation");
     });
-    T(26500, () => {
-      setAnalysis(null);
-      cap(6, "The takeaway", "30 m terrain shape alone cannot identify Mars analogs. Geology, wind regime and higher-resolution Earth data are the next step.");
-    });
-    T(total + 800, () => setCaption(null));
+    T(starts[5], () => cap(6, "Similarity is not proof. Evidence comes first.", "PARALLAX X turns planetary terrain evidence into testable field-experiment plans."));
+    T(total + 1500, () => setCaption(null));
   }
+
+  useEffect(() => {
+    runDemoRef.current = runDemo;
+  });
 
   // ---- real profile data ----
   const profile = useMemo<ProfileData | null>(() => {
@@ -602,6 +661,9 @@ export function ExploreView({
       {/* ===== three-column workspace ===== */}
       <div className="grid min-h-0 flex-1 gap-3 overflow-y-auto p-3 lg:grid-cols-[minmax(250px,19%)_minmax(0,1fr)_minmax(300px,24%)] lg:overflow-hidden">
         <div className="order-2 min-h-0 lg:order-1">
+          {lab && r ? (
+            <LabMissionPanel results={r} candidateId={lab.cand} experiment={lab.exp} onCandidate={labCandidate} onExperiment={(exp) => setLab((l) => (l ? { ...l, exp } : l))} onBack={() => { setLab(null); void goCompare(); }} />
+          ) : (
           <LeftPanel
             results={r}
             mode={mode}
@@ -620,7 +682,9 @@ export function ExploreView({
             onSimulate={() => void goSimulate()}
             onTour={startTour}
             onOpenEvidence={openEvidence}
+            onResolution={runResolution}
           />
+          )}
         </div>
 
         <div className="order-1 flex min-w-0 flex-col gap-3 lg:order-2 lg:min-h-0">
@@ -771,8 +835,10 @@ export function ExploreView({
               </div>
             ) : null}
             {mode === "simulate" ? (
-              <div className="pointer-events-none absolute left-1/2 top-[86px] -translate-x-1/2 rounded-[8px] border border-hairline bg-bg/80 px-3 py-[6px] text-[13px] text-ink/85 backdrop-blur">
-                Terrain-following demonstration · hand-drawn loop · {drive?.scale === "true" ? "true scale (≈3 m)" : `rover enlarged ×${drive?.enlargement ?? "…"} for visibility`} · not mobility physics
+              <div className="pointer-events-none absolute left-[64px] top-[84px] max-w-[min(520px,calc(100%-120px))] rounded-[8px] border border-copper/40 bg-bg/85 px-3 py-[6px] text-[12px] leading-snug text-ink/85 backdrop-blur">
+                <span className="font-semibold uppercase tracking-[0.06em] text-ink">Illustrative terrain-following visualization · not a validated mobility simulation</span>
+                <br />
+                HiRISE Mars scene{lab ? ` — not the Gobi ${lab.cand} candidate` : ""} · hand-drawn loop · {drive?.scale === "true" ? "true scale (≈3 m)" : `rover enlarged ×${drive?.enlargement ?? "…"} for visibility`}
               </div>
             ) : null}
 
@@ -846,7 +912,11 @@ export function ExploreView({
 
         <div className="order-3 min-h-0">
           {r ? (
-            <RightPanel results={r} mode={mode} selectedSceneId={inCompare ? selId : null} onSelectScene={(id) => void selectScene(id)} onOpenEvidence={openEvidence} />
+            lab ? (
+              <LabProtocolPanel results={r} fieldtest={fieldtest} candidateId={lab.cand} experiment={lab.exp} onShowRover={() => void labRover()} onResolution={runResolution} />
+            ) : (
+              <RightPanel results={r} mode={mode} selectedSceneId={inCompare ? selId : null} onSelectScene={(id) => void selectScene(id)} onOpenEvidence={openEvidence} onPlanExperiment={(c) => void openLab(c)} />
+            )
           ) : (
             <div className="h-full rounded-[12px] border border-hairline bg-surface/90 p-5 text-[14px] text-muted">Results not available.</div>
           )}
@@ -868,6 +938,7 @@ export function ExploreView({
             setAnalysis(null);
             void selectScene(id);
           }}
+          onPlanExperiment={(c: string) => void openLab(c)}
         />
       ) : null}
     </div>

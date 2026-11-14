@@ -15,6 +15,8 @@ export interface RightPanelProps {
   selectedSceneId: string | null;
   onSelectScene: (compareSceneId: string) => void;
   onOpenEvidence: (section: EvidenceSection) => void;
+  /** Open Expedition Lab for an exploratory candidate (results.candidates[].id) */
+  onPlanExperiment?: (candidateId: string) => void;
   /** Fine-scale HiRISE numbers are in results.hirise; shown in explore/simulate modes. */
 }
 

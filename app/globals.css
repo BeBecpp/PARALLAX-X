@@ -281,3 +281,12 @@ body {
 @keyframes intro-failsafe {
   to { opacity: 0; visibility: hidden; }
 }
+
+/* Expedition Lab panels: a short, calm entrance (no blocking animation) */
+.lab-in {
+  animation: lab-in 360ms var(--ease-out-ui, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+@keyframes lab-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}

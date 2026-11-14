@@ -95,6 +95,7 @@ export function LeftPanel({
   onSimulate,
   onTour,
   onOpenEvidence,
+  onResolution,
 }: {
   results: Results | null;
   mode: WorkspaceMode;
@@ -107,6 +108,8 @@ export function LeftPanel({
   onExaggeration: (e: number) => void;
   res: "native" | "30m";
   onRes: (r: "native" | "30m") => void;
+  /** play the resolution-paradox sequence (HiRISE native -> 30 m grid) */
+  onResolution?: () => void;
   roverStatus: "idle" | "loading" | "ready" | "error";
   onCompare: () => void;
   onExplore: () => void;
@@ -232,6 +235,16 @@ export function LeftPanel({
             </div>
           ) : null}
         </div>
+        {mode === "explore" && onResolution && results ? (
+          <button
+            type="button"
+            onClick={onResolution}
+            className="mt-3 w-full rounded-[10px] border border-copper/40 bg-copper/10 px-3 py-2.5 text-left transition-colors hover:bg-copper/15"
+          >
+            <span className="block text-[12px] font-semibold uppercase tracking-[0.14em] text-copper-light">The resolution paradox ▸</span>
+            <span className="mt-0.5 block text-[12px] leading-snug text-ink/85">Same HiRISE crop, two scales: steep area {(results.hirise.frac_area_slope_gt15_baseline_4m * 100).toFixed(1)}% at 4 m vs {(results.hirise.frac_area_slope_gt15_baseline_180m * 100).toFixed(1)}% at 180 m.</span>
+          </button>
+        ) : null}
       </div>
 
       <div className="mt-auto space-y-4">

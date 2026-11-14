@@ -32,11 +32,13 @@ export interface AnalysisViewProps {
   initialSection?: AnalysisNav;
   /** When provided, the candidate explorer shows "View in 3D comparison" for the selected item. */
   onCompare?: (compareSceneId: string) => void;
+  /** open Expedition Lab for an exploratory candidate id */
+  onPlanExperiment?: (candidateId: string) => void;
 }
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, summary, [tabindex]:not([tabindex="-1"])';
 
-export function AnalysisView({ results, sources, onClose, initialSection = "overview", onCompare }: AnalysisViewProps) {
+export function AnalysisView({ results, sources, onClose, initialSection = "overview", onCompare, onPlanExperiment }: AnalysisViewProps) {
   const [active, setActive] = useState<AnalysisNav>(initialSection);
   const rootRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLElement>(null);
@@ -218,7 +220,7 @@ export function AnalysisView({ results, sources, onClose, initialSection = "over
             <OverviewSection results={results} sources={sources} />
             <TerrainSection results={results} />
             <MethodSection results={results} sources={sources} />
-            <CandidatesSection results={results} sources={sources} onCompare={onCompare} />
+            <CandidatesSection results={results} sources={sources} onCompare={onCompare} onPlanExperiment={onPlanExperiment} />
             <ValidationSection results={results} />
             <SourcesSection sources={sources} />
             <footer className="border-t border-hairline pt-6 text-[14px] text-muted">

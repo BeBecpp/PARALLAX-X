@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { CompareScene, Results, SourceRecord } from "@/lib/types";
 import { formatCoord, rankPhrase } from "@/lib/format";
 import { W1Bars } from "./charts";
+import { FieldTestReadiness } from "./field-test-readiness";
 import { Card, ExtLink, SectionHeader, Tag, fmt, fmtInt, groupId } from "./primitives";
 
 type Item = {
@@ -94,7 +95,7 @@ function buildItems(r: Results): Item[] {
   return [...cands, ...siteItems];
 }
 
-export function CandidatesSection({ results: r, sources, onCompare }: { results: Results; sources: SourceRecord[] | null; onCompare?: (compareSceneId: string) => void }) {
+export function CandidatesSection({ results: r, sources, onCompare, onPlanExperiment }: { results: Results; sources: SourceRecord[] | null; onCompare?: (compareSceneId: string) => void; onPlanExperiment?: (candidateId: string) => void }) {
   const items = buildItems(r);
   const [sel, setSel] = useState<string>(items[0]?.key ?? "");
   const it = items.find((i) => i.key === sel) ?? items[0];
@@ -272,6 +273,19 @@ export function CandidatesSection({ results: r, sources, onCompare }: { results:
               </div>
             </div>
           </Card>
+          <div className="lg:col-start-2">
+            <h4 className="mb-3 mt-2 font-display text-[22px] font-semibold text-ink">Why investigate this location?</h4>
+            <FieldTestReadiness results={r} itemKey={it.key} sceneId={it.scene?.id ?? null} kind={it.kind} />
+            {it.kind === "candidate" && onPlanExperiment ? (
+              <button
+                type="button"
+                onClick={() => onPlanExperiment(it.key)}
+                className="mt-4 inline-flex min-h-[48px] items-center gap-2 rounded-[10px] bg-copper px-5 text-[15px] font-semibold uppercase tracking-[0.06em] text-white shadow-[0_10px_30px_rgba(201,121,81,0.3)] hover:brightness-110"
+              >
+                Design a field test for {it.key} <span aria-hidden="true">→</span>
+              </button>
+            ) : null}
+          </div>
         </div>
       ) : (
         <p className="text-muted">No candidates published.</p>

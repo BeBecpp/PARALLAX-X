@@ -50,7 +50,7 @@ function siteRole(site: Site): string {
 
 /* ------------------------------------------------------------------ */
 
-export function RightPanel({ results, mode, selectedSceneId, onSelectScene, onOpenEvidence }: RightPanelProps) {
+export function RightPanel({ results, mode, selectedSceneId, onSelectScene, onOpenEvidence, onPlanExperiment }: RightPanelProps) {
   const scenes = results.compare_scenes;
   const marsScene = scenes.find((s) => s.kind === "mars") ?? null;
   const selected = selectedSceneId ? (scenes.find((s) => s.id === selectedSceneId && s.kind !== "mars") ?? null) : null;
@@ -69,6 +69,12 @@ export function RightPanel({ results, mode, selectedSceneId, onSelectScene, onOp
         <MetricCards results={results} featureById={featureById} mars={marsScene} earth={selected} />
       </Section>
 
+      {selected?.kind === "candidate" && onPlanExperiment ? (
+        <Section>
+          <PlanCta results={results} scene={selected} onPlan={onPlanExperiment} />
+        </Section>
+      ) : null}
+
       <Section>
         <Ranking results={results} selectedSceneId={selectedSceneId} onSelectScene={onSelectScene} />
       </Section>
@@ -85,6 +91,25 @@ export function RightPanel({ results, mode, selectedSceneId, onSelectScene, onOp
         <WhyCard results={results} mode={mode} selected={selected} featureById={featureById} />
       </Section>
     </aside>
+  );
+}
+
+/** The bridge from "where" to "what next": selected exploratory candidate -> Expedition Lab. */
+function PlanCta({ results, scene, onPlan }: { results: Results; scene: CompareScene; onPlan: (candidateId: string) => void }) {
+  const cand = results.candidates.find((c) => c.compare_scene_id === scene.id);
+  if (!cand) return null;
+  return (
+    <div className="rounded-[12px] border border-copper/40 bg-[linear-gradient(135deg,rgba(201,121,81,0.14),rgba(201,121,81,0.03))] p-3">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-copper-light">What next · {cand.id}</p>
+      <p className="mt-1 text-[13px] leading-snug text-ink/90">An exploratory candidate, not a confirmed analog. Turn its terrain evidence into a rover field-test plan — and see what is still unmeasured.</p>
+      <button
+        type="button"
+        onClick={() => onPlan(cand.id)}
+        className="group mt-2.5 inline-flex min-h-[42px] w-full items-center justify-center gap-2 rounded-[9px] bg-copper text-[13px] font-semibold uppercase tracking-[0.08em] text-white shadow-[0_8px_24px_rgba(201,121,81,0.3)] transition hover:brightness-110"
+      >
+        Plan a field experiment <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
+      </button>
+    </div>
   );
 }
 

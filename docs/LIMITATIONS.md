@@ -33,3 +33,17 @@
 15. **Points of interest.** During the drive the rover brakes at three fixed points on the hand-drawn loop and sweeps its mast camera. These points are evenly spaced positions on the loop, not detected features. Playback speed (0.5×/1×/2×) is time-lapse only.
 16. **Performance mode** (HI/LO button) uses about 4× fewer mesh triangles and a lower pixel ratio. The full-resolution normal map, heightfield values and every number shown are unchanged.
 17. **Sound** is synthesized in the browser and illustrative only (see `AUDIO_CREDITS.md`). It is off until the user enables it.
+18. **Expedition Lab plans are proposals, not results.**
+    - No field test, wheel–soil trial, drilling test or thermal logging has been performed.
+    - The lab shows only values present in `results.json` and `fieldtest.json`. Every physical property a rover test
+      would need is marked not measured: traction, sinkage, soil bearing and shear strength, wheel-scale
+      rocks, lithology, drillability, temperatures and battery behaviour.
+    - Acceptance thresholds are "TO BE DEFINED", because no mission or hardware requirements were supplied.
+19. **Post-hoc roughness** (RMS of plane-fit residuals, 330/990 m cells on the 30 m grid) describes kilometre-scale
+    relief texture only. Mars CTX and Earth NASADEM differ in native resolution and noise before resampling. It is not
+    part of the pre-registered study.
+20. **ESA WorldCover 2021** is a satellite land-cover classification.
+    - Its global overall accuracy is 76.7 % ± 0.5. It was not validated locally.
+    - "Bare / sparse vegetation" does not identify sand, gravel, rock, crust or soil strength.
+    - It reflects 2021 only.
+

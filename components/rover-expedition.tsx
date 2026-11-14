@@ -2,11 +2,9 @@
 
 import { useMemo, useState } from "react";
 import type { Heightfield, Results } from "@/lib/types";
-import type { CameraMode, DriveState, PaxScale, TerrainEngine } from "@/lib/terrain-engine";
+import type { CameraMode, DriveState, RoverScale, TerrainEngine } from "@/lib/terrain-engine";
 import { focalCell } from "@/lib/terrain-compute";
 import { formatMetres, formatPosting, fracToPercent } from "@/lib/format";
-
-const PAX_URL = "/models/pax-rover.glb";
 
 /** Local relief (max − min, metres) of the strongest-relief block — computed from the measured heightfield. */
 function focalRelief(hf: Heightfield): number | null {
@@ -45,7 +43,7 @@ function Pill({ active, onClick, children, label }: { active?: boolean; onClick:
   );
 }
 
-export function PaxExpedition({
+export function RoverExpedition({
   engine,
   hero,
   results,
@@ -70,19 +68,18 @@ export function PaxExpedition({
   const relief = useMemo(() => focalRelief(hero), [hero]);
   const m = hero.meta;
 
-  const ensurePax = async (): Promise<boolean> => {
+  const ensureRover = async (): Promise<boolean> => {
     const e = engine();
     if (!e) return false;
     if (status === "ready") return true;
     setStatus("loading");
-    const info = await e.loadPax(PAX_URL);
+    const info = await e.loadRover();
     if (!info) {
       setStatus("error");
       return false;
     }
-    console.info("[PARALLAX X] PAX glTF loaded in terrain scene; clips:", info.clips.join(", "));
     setStatus("ready");
-    setEnlarge(e.showPax(true));
+    setEnlarge(e.showRover(true));
     return true;
   };
 
@@ -93,19 +90,19 @@ export function PaxExpedition({
       run: (e: TerrainEngine) => {
         onSetRes("native");
         e.flyTo("overview");
-        e.playPax("Wave");
+        e.roverAction("wake");
       },
     },
     {
       title: "The strongest relief",
       body:
         relief !== null
-          ? `PAX points the camera at the steepest part of the crop: ${formatMetres(relief)} of local relief within a ${formatMetres(m.extent_m[0] / 8)} block, read straight from the heightfield.`
-          : "PAX points the camera at the steepest part of the crop.",
+          ? `The camera moves to the steepest part of the crop: ${formatMetres(relief)} of local relief within a ${formatMetres(m.extent_m[0] / 8)} block, read straight from the heightfield.`
+          : "The camera moves to the steepest part of the crop.",
       run: (e: TerrainEngine) => {
         onSetRes("native");
         e.flyTo("focus");
-        e.playPax("HeadTurn");
+        e.roverAction("scan");
       },
     },
     {
@@ -116,7 +113,6 @@ export function PaxExpedition({
       run: (e: TerrainEngine) => {
         onSetRes("30m");
         e.flyTo("grazing");
-        e.playPax("CuriousTilt");
       },
     },
     {
@@ -127,13 +123,12 @@ export function PaxExpedition({
       run: (e: TerrainEngine) => {
         onSetRes("native");
         e.flyTo("overview");
-        e.playPax("Idle");
       },
     },
   ];
 
   const goStep = async (i: number) => {
-    if (!(await ensurePax())) return;
+    if (!(await ensureRover())) return;
     const e = engine();
     if (!e) return;
     e.stopDrive();
@@ -142,17 +137,17 @@ export function PaxExpedition({
   };
 
   const startDrive = async () => {
-    if (!(await ensurePax())) return;
+    if (!(await ensureRover())) return;
     onSetRes("native");
     engine()?.startDrive();
   };
 
   const cam = (c: CameraMode) => engine()?.setCameraMode(c);
-  const scale = (s: PaxScale) => {
+  const scale = (s: RoverScale) => {
     const e = engine();
     if (!e) return;
-    e.setPaxScale(s);
-    setEnlarge(s === "cinematic" ? (e.showPax(true) ?? null) : 1);
+    e.setRoverScale(s);
+    setEnlarge(s === "cinematic" ? (e.showRover(true) ?? null) : 1);
   };
 
   if (!open) {
@@ -162,19 +157,19 @@ export function PaxExpedition({
         onClick={() => setOpen(true)}
         className="pointer-events-auto flex min-h-[44px] items-center gap-2 rounded-[10px] border border-hairline bg-surface/90 px-4 text-[15px] text-ink backdrop-blur"
       >
-        <span className="inline-block h-2 w-2 rounded-full bg-copper" aria-hidden="true" /> PAX expedition
+        <span className="inline-block h-2 w-2 rounded-full bg-copper" aria-hidden="true" /> Rover expedition
       </button>
     );
   }
 
   return (
-    <section aria-label="PAX expedition" className="pointer-events-auto w-[min(360px,calc(100vw-24px))] rounded-[12px] border border-hairline bg-surface/92 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur">
+    <section aria-label="Rover expedition" className="pointer-events-auto w-[min(360px,calc(100vw-24px))] rounded-[12px] border border-hairline bg-surface/92 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.14em] text-muted">PAX expedition</p>
+          <p className="text-[13px] uppercase tracking-[0.14em] text-muted">Rover expedition</p>
           <p className="mt-1 font-display text-[19px] font-semibold leading-tight">{tab === "tour" ? "Guided terrain tour" : "Terrain-following demo"}</p>
         </div>
-        <button type="button" onClick={() => setOpen(false)} className="min-h-[36px] px-2 text-[14px] text-muted hover:text-ink" aria-label="Collapse PAX panel">
+        <button type="button" onClick={() => setOpen(false)} className="min-h-[36px] px-2 text-[14px] text-muted hover:text-ink" aria-label="Collapse rover panel">
           Hide
         </button>
       </div>
@@ -188,7 +183,7 @@ export function PaxExpedition({
         </Pill>
       </div>
 
-      {status === "error" ? <p className="mt-3 text-[14px] text-muted">The PAX model could not be loaded. The terrain remains fully usable.</p> : null}
+      {status === "error" ? <p className="mt-3 text-[14px] text-muted">The rover model could not be loaded. The terrain remains fully usable.</p> : null}
 
       {tab === "tour" ? (
         <div className="mt-3">
@@ -199,7 +194,7 @@ export function PaxExpedition({
               className="min-h-[46px] w-full rounded-[8px] bg-copper px-4 text-[15px] font-medium text-[#120c09] transition-colors hover:brightness-110 disabled:opacity-60"
               disabled={status === "loading"}
             >
-              {status === "loading" ? "Loading PAX (4.6 MB)…" : "Start the tour with PAX"}
+              {status === "loading" ? "Loading rover (4.8 MB)…" : "Start the guided tour"}
             </button>
           ) : (
             <>
@@ -248,7 +243,7 @@ export function PaxExpedition({
                 disabled={status === "loading"}
                 className="min-h-[44px] flex-1 rounded-[8px] bg-copper px-4 text-[15px] font-medium text-[#120c09] hover:brightness-110 disabled:opacity-60"
               >
-                {status === "loading" ? "Loading PAX…" : "Start"}
+                {status === "loading" ? "Loading rover…" : "Start"}
               </button>
             ) : (
               <>
@@ -288,10 +283,10 @@ export function PaxExpedition({
             </div>
           </div>
           <div>
-            <p className="mb-1 text-[13px] text-muted">PAX size</p>
+            <p className="mb-1 text-[13px] text-muted">Rover size</p>
             <div className="flex flex-wrap gap-2">
               <Pill active={drive?.scale === "true"} onClick={() => scale("true")}>
-                True scale (≈0.5 m)
+                True scale (≈3 m long)
               </Pill>
               <Pill active={!drive || drive.scale === "cinematic"} onClick={() => scale("cinematic")}>
                 Cinematic{enlarge && enlarge > 1 ? ` (×${enlarge})` : ""}
@@ -299,7 +294,7 @@ export function PaxExpedition({
             </div>
           </div>
           <p className="text-[13px] leading-relaxed text-muted">
-            Hand-drawn demonstration loop{drive?.pathLengthM ? ` (${formatMetres(drive.pathLengthM)})` : ""}. PAX follows the rendered HiRISE surface height; playback is time-lapsed. This is a visualization — no traction, slip, obstacle or safety physics is modelled.
+            Hand-drawn demonstration loop{drive?.pathLengthM ? ` (${formatMetres(drive.pathLengthM)})` : ""}. The rover follows the rendered HiRISE surface height; playback is time-lapsed. This is a visualization — no traction, slip, obstacle or safety physics is modelled.
           </p>
         </div>
       )}

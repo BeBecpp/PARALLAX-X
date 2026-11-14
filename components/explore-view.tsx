@@ -10,8 +10,8 @@ import { loadHeightfield, sampleBilinear } from "@/lib/heightfield";
 import { slopeLayerBaseline } from "@/lib/terrain-compute";
 import { formatCoord, formatMetres, niceScaleBar } from "@/lib/format";
 import { useReducedMotion } from "@/lib/hooks";
-import { Wordmark } from "./wordmark";
-import { PaxExpedition } from "./pax-expedition";
+import { BrandLogo } from "./brand";
+import { RoverExpedition } from "./rover-expedition";
 import { AnalysisView } from "./analysis/analysis-view";
 import { LeftPanel, ICONS, type Layer } from "./workspace/left-panel";
 import { RightPanel } from "./workspace/right-panel";
@@ -22,7 +22,6 @@ import { DemoOverlay, type DemoCaption } from "./demo-overlay";
 import { AnalystPanel } from "./analyst-panel";
 
 const TerrainViewer = dynamic(() => import("./terrain-viewer"), { ssr: false });
-const PAX_URL = "/models/pax-rover.glb";
 const VIEW_GAP = 12;
 
 function Svg({ d, className = "h-5 w-5" }: { d: string; className?: string }) {
@@ -162,7 +161,7 @@ export function ExploreView({
   const [selId, setSelId] = useState<string | null>(null);
   const [solo, setSolo] = useState<"none" | "mars" | "earth">("none");
   const [drive, setDrive] = useState<DriveState | null>(null);
-  const [paxStatus, setPaxStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [roverStatus, setRoverStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [pathPts, setPathPts] = useState<{ x: number; z: number; d: number }[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -225,16 +224,16 @@ export function ExploreView({
   const nViews = views.length;
 
   // ---- actions ----
-  const ensurePax = useCallback(async (): Promise<boolean> => {
+  const ensureRover = useCallback(async (): Promise<boolean> => {
     const e = engine.current;
     if (!e) return false;
-    setPaxStatus((s) => (s === "ready" ? s : "loading"));
-    const info = await e.loadPax(PAX_URL);
+    setRoverStatus((s) => (s === "ready" ? s : "loading"));
+    const info = await e.loadRover();
     if (!info) {
-      setPaxStatus("error");
+      setRoverStatus("error");
       return false;
     }
-    setPaxStatus("ready");
+    setRoverStatus("ready");
     return true;
   }, []);
 
@@ -260,7 +259,7 @@ export function ExploreView({
 
   const goCompare = async () => {
     engine.current?.stopDrive();
-    engine.current?.showPax(false);
+    engine.current?.showRover(false);
     setTourOpen(false);
     setLens("landform");
     setSolo("none");
@@ -298,8 +297,8 @@ export function ExploreView({
     setLens("landform");
     setRes("native");
     setMode("simulate");
-    if (await ensurePax()) {
-      engine.current?.showPax(true);
+    if (await ensureRover()) {
+      engine.current?.showRover(true);
       setPathPts(engine.current?.getPathSamples(240) ?? null);
     }
   };
@@ -349,10 +348,10 @@ export function ExploreView({
     } catch {}
   };
 
-  // ---- drive helpers (seek/skip work from any mode: they bring PAX into Simulate first) ----
-  const withPax = async (fn: (e: TerrainEngine) => void) => {
+  // ---- drive helpers (seek/skip work from any mode: they bring the rover into Simulate first) ----
+  const withRover = async (fn: (e: TerrainEngine) => void) => {
     if (mode !== "simulate") await goSimulate();
-    else if (!(await ensurePax())) return;
+    else if (!(await ensureRover())) return;
     const e = engine.current;
     if (e) fn(e);
   };
@@ -388,11 +387,11 @@ export function ExploreView({
       if (demo) runDemo();
       else if (initialMode === "compare") void goCompare();
       else
-        void ensurePax().then((ok) => {
-          // rover wake-up: PAX parked on the measured surface, waves once
+        void ensureRover().then((ok) => {
+          // rover introduction: parked on the measured surface, raises its mast (rigged source clip), surveys
           if (!ok || !engine.current) return;
-          engine.current.showPax(true);
-          window.setTimeout(() => engine.current?.playPax("Wave"), 1800);
+          engine.current.showRover(true);
+          engine.current.roverAction("wake");
         });
     }, 200);
     return () => window.clearTimeout(id);
@@ -455,13 +454,13 @@ export function ExploreView({
     if (mode !== "explore") goExplore();
     engine.current?.descend();
     T(4500, () => {
-      cap(2, "PAX on the measured surface", "PAX follows the real mesh height along a pre-authored demonstration path. A visualization — not rover physics or a safe route.");
+      cap(2, "Rover on the measured surface", "The rover follows the real mesh height along a pre-authored demonstration path. A visualization — not rover physics or a safe route.");
       void goSimulate().then(() => {
         engine.current?.seekDrive(0.2);
         engine.current?.resumeDrive();
       });
     });
-    T(11000, () => cap(3, "Points of interest", "PAX stops and looks around. Scrub the timeline and the linked terrain profile follows."));
+    T(11000, () => cap(3, "Points of interest", "The rover brakes, stops and surveys with its mast camera. Scrub the timeline and the linked terrain profile follows."));
     T(16000, () => {
       cap(4, "Mars vs Earth, same scale", `The CTX yardang study area beside ${top ? `Gobi ${top.id}` : "the top Earth window"} — both 10 km, 30 m grid, ×4 vertical on both.`);
       void goCompare();
@@ -486,9 +485,9 @@ export function ExploreView({
         .map((p) => ({ d: p.d, v: sampleBilinear(hero, (p.x / extent_m[0] + 0.5) * w - 0.5, (p.z / extent_m[1] + 0.5) * h - 0.5) }))
         .filter((p) => Number.isFinite(p.v));
       const base = Math.max(8, 4 * hero.meta.posting_m);
-      const elevation: ProfileSeries[] = [{ id: "pax", label: "Mars (HiRISE)", tone: "mars", points: pts }];
-      const slope: ProfileSeries[] = [{ id: "pax-s", label: "Mars (HiRISE)", tone: "mars", points: slopeSeries(pts, base) }];
-      return { title: "PAX demonstration loop — terrain profile", note: "HiRISE DTM elevation (m above the Mars areoid) sampled along the hand-drawn loop", elevation, slope, slopeBaselineM: base, stats: statsFor(elevation, slope, base) };
+      const elevation: ProfileSeries[] = [{ id: "rover", label: "Mars (HiRISE)", tone: "mars", points: pts }];
+      const slope: ProfileSeries[] = [{ id: "rover-s", label: "Mars (HiRISE)", tone: "mars", points: slopeSeries(pts, base) }];
+      return { title: "Rover demonstration loop — terrain profile", note: "HiRISE DTM elevation (m above the Mars areoid) sampled along the hand-drawn loop", elevation, slope, slopeBaselineM: base, stats: statsFor(elevation, slope, base) };
     }
     if (inCompare && marsCmp) {
       const base = 180;
@@ -552,7 +551,7 @@ export function ExploreView({
       {/* ===== top navigation ===== */}
       <header className="z-20 flex h-[68px] shrink-0 items-center gap-2 border-b border-hairline bg-bg/95 px-3 sm:gap-4 sm:px-4 xl:px-6">
         <span className="shrink-0">
-          <Wordmark onClick={onHome} height={30} />
+          <BrandLogo onClick={onHome} height={30} />
         </span>
         <nav className="mx-auto flex min-w-0 items-center gap-2 overflow-x-auto no-scrollbar" aria-label="Workspace">
           <NavPill label="Explore" icon={ICONS.globe} active={mode === "explore" && !analysis} onClick={goExplore} />
@@ -615,7 +614,7 @@ export function ExploreView({
             onExaggeration={setExaggeration}
             res={res}
             onRes={setResolution}
-            paxStatus={paxStatus}
+            roverStatus={roverStatus}
             onCompare={() => void goCompare()}
             onExplore={goExplore}
             onSimulate={() => void goSimulate()}
@@ -758,7 +757,7 @@ export function ExploreView({
 
             {mode === "explore" && tourOpen && lens === "landform" ? (
               <div className="absolute bottom-[64px] right-4 z-10">
-                <PaxExpedition engine={getEngine} hero={hero} results={r} onSetRes={setResolution} onCompare={() => void goCompare()} drive={drive} tourOnly />
+                <RoverExpedition engine={getEngine} hero={hero} results={r} onSetRes={setResolution} onCompare={() => void goCompare()} drive={drive} tourOnly />
               </div>
             ) : null}
             {mode === "explore" && res === "30m" && lens === "landform" && r ? (
@@ -773,7 +772,7 @@ export function ExploreView({
             ) : null}
             {mode === "simulate" ? (
               <div className="pointer-events-none absolute left-1/2 top-[86px] -translate-x-1/2 rounded-[8px] border border-hairline bg-bg/80 px-3 py-[6px] text-[13px] text-ink/85 backdrop-blur">
-                Terrain-following demonstration · hand-drawn loop · {drive?.scale === "true" ? "true scale (≈0.5 m)" : `PAX enlarged ×${drive?.enlargement ?? "…"} for visibility`} · not mobility physics
+                Terrain-following demonstration · hand-drawn loop · {drive?.scale === "true" ? "true scale (≈3 m)" : `rover enlarged ×${drive?.enlargement ?? "…"} for visibility`} · not mobility physics
               </div>
             ) : null}
 
@@ -813,11 +812,11 @@ export function ExploreView({
             <TimelinePanel
               mode={mode}
               drive={drive}
-              paxStatus={paxStatus}
+              roverStatus={roverStatus}
               periodS={48}
               onStart={() => {
                 if (mode !== "simulate") void goSimulate().then(() => engine.current?.startDrive());
-                else void ensurePax().then((ok) => ok && engine.current?.startDrive());
+                else void ensureRover().then((ok) => ok && engine.current?.startDrive());
               }}
               onPause={() => engine.current?.pauseDrive()}
               onResume={() => engine.current?.resumeDrive()}
@@ -825,11 +824,11 @@ export function ExploreView({
               onStop={() => engine.current?.stopDrive()}
               onSeek={(f) => {
                 sfx("tick");
-                void withPax((e) => e.seekDrive(f));
+                void withRover((e) => e.seekDrive(f));
               }}
               onSkip={() => {
                 sfx("click");
-                void withPax((e) => e.skipDrive());
+                void withRover((e) => e.skipDrive());
               }}
               onSpeed={(m) => engine.current?.setDriveSpeed(m)}
               poiFracs={engine.current?.poiFractions ?? [0.25, 0.5, 0.75]}

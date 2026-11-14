@@ -6,7 +6,7 @@ import type { ProfileData, TimelinePanelProps } from "./types";
 import { Icon, MicroLabel, PillTabs } from "./panels/ui";
 import { ProfileChart } from "./panels/profile-chart";
 
-// Bottom instrument: PAX demonstration-loop transport + terrain profile chart.
+// Bottom instrument: rover demonstration-loop transport + terrain profile chart.
 // Time readout is time-lapsed playback of the loop, never a travel time, speed or ETA.
 
 type ChartTab = "elevation" | "slope";
@@ -43,7 +43,7 @@ const CAMERAS: { id: CameraMode; label: string }[] = [
 function SimulationRow({
   mode,
   drive,
-  paxStatus,
+  roverStatus,
   periodS,
   onStart,
   onPause,
@@ -70,7 +70,7 @@ function SimulationRow({
         <div className={compare ? "min-w-0" : "sr-only min-w-0 @[860px]:not-sr-only"}>
           <h2 className="font-display text-[18px] font-semibold uppercase leading-tight tracking-[0.02em] text-ink">Mission simulation</h2>
           <p className="truncate text-[13px] text-muted">
-            {compare ? "Simulation runs on the HiRISE scene" : "PAX on Mars · HiRISE scarps · demonstration loop"}
+            {compare ? "Simulation runs on the HiRISE scene" : "Rover on Mars · HiRISE scarps · demonstration loop"}
           </p>
         </div>
       </div>
@@ -93,8 +93,8 @@ function SimulationRow({
                 <path d="M19 5.8v12.4a.8.8 0 01-1.24.67L9.5 13.2a1.4 1.4 0 010-2.4l8.26-5.67A.8.8 0 0119 5.8z" />
               </svg>
             </RoundButton>
-            <PlayButton drive={drive} paxStatus={paxStatus} onStart={onStart} onPause={onPause} onResume={onResume} />
-            <RoundButton label="Skip to next point of interest" onClick={onSkip} disabled={!drive || paxStatus !== "ready"}>
+            <PlayButton drive={drive} roverStatus={roverStatus} onStart={onStart} onPause={onPause} onResume={onResume} />
+            <RoundButton label="Skip to next point of interest" onClick={onSkip} disabled={!drive || roverStatus !== "ready"}>
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
                 <rect x="16.8" y="5" width="2.2" height="14" rx="1" />
                 <path d="M5 5.8v12.4a.8.8 0 001.24.67l8.26-5.67a1.4 1.4 0 000-2.4L6.24 5.13A.8.8 0 005 5.8z" />
@@ -166,16 +166,16 @@ function SimulationRow({
             T+ {mmss(progress * period)} <span className="text-muted">/ {mmss(period)}</span>
           </p>
         </div>
-        <SeekBar progress={progress} pois={poiFracs} disabled={compare || paxStatus !== "ready"} onSeek={onSeek} />
+        <SeekBar progress={progress} pois={poiFracs} disabled={compare || roverStatus !== "ready"} onSeek={onSeek} />
         <p className="mt-1.5 truncate text-[12px] text-muted" aria-live="polite">
-          {drive?.poi ? `Point of interest ${drive.poi} — PAX pauses and looks around` : compare ? "time-lapsed playback" : "Drag to scrub · time-lapsed playback of a pre-authored path"}
+          {drive?.poi ? `Point of interest ${drive.poi} — the rover stops and surveys` : compare ? "time-lapsed playback" : "Drag to scrub · time-lapsed playback of a pre-authored path"}
         </p>
       </div>
     </div>
   );
 }
 
-/** Scrubbable timeline: pointer drag or arrow keys reposition PAX (and the linked profile cursor). */
+/** Scrubbable timeline: pointer drag or arrow keys reposition the rover (and the linked profile cursor). */
 function SeekBar({ progress, pois, disabled, onSeek }: { progress: number; pois: number[]; disabled: boolean; onSeek: (f: number) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
@@ -260,22 +260,22 @@ function RoundButton({ label, onClick, disabled, children }: { label: string; on
 
 function PlayButton({
   drive,
-  paxStatus,
+  roverStatus,
   onStart,
   onPause,
   onResume,
 }: {
   drive: DriveState | null;
-  paxStatus: TimelinePanelProps["paxStatus"];
+  roverStatus: TimelinePanelProps["roverStatus"];
   onStart: () => void;
   onPause: () => void;
   onResume: () => void;
 }) {
-  const loading = paxStatus === "loading";
-  const error = paxStatus === "error";
+  const loading = roverStatus === "loading";
+  const error = roverStatus === "error";
   const playing = !!drive?.playing;
   const started = !!drive?.started;
-  const label = loading ? "Loading PAX…" : error ? "PAX unavailable" : playing ? "Pause" : started ? "Resume" : "Start demonstration loop";
+  const label = loading ? "Loading rover…" : error ? "Rover unavailable" : playing ? "Pause" : started ? "Resume" : "Start demonstration loop";
   const onClick = playing ? onPause : started ? onResume : onStart;
   return (
     <div className="flex items-center gap-2.5">
@@ -300,7 +300,7 @@ function PlayButton({
       </button>
       {loading || error ? (
         <span role="status" className="whitespace-nowrap text-[12px] leading-tight text-muted">
-          {loading ? "Loading PAX…" : "PAX unavailable"}
+          {loading ? "Loading rover…" : "Rover unavailable"}
         </span>
       ) : null}
     </div>
@@ -322,7 +322,7 @@ function ProfileCard({
   cursorFrac: number | null;
   onCursor: (f: number | null) => void;
   compare: boolean;
-  /** simulate: click the chart to move PAX to that point of the loop */
+  /** simulate: click the chart to move the rover to that point of the loop */
   onPick?: (f: number) => void;
 }) {
   const hover = useRef<number | null>(null);
@@ -368,7 +368,7 @@ function ProfileCard({
         onClick={() => {
           if (onPick && hover.current !== null) onPick(Math.min(0.999, Math.max(0, hover.current)));
         }}
-        title={onPick ? "Click to move PAX to this point of the loop" : undefined}
+        title={onPick ? "Click to move the rover to this point of the loop" : undefined}
       >
         {profile && hasData ? (
           <ProfileChart

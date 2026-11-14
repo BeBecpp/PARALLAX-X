@@ -43,7 +43,7 @@ export interface TimelinePanelProps {
   mode: WorkspaceMode;
   /** null until PAX is loaded into the terrain scene */
   drive: DriveState | null;
-  paxStatus: "idle" | "loading" | "ready" | "error";
+  roverStatus: "idle" | "loading" | "ready" | "error";
   /** demonstration loop period in seconds (time-lapsed playback, not a travel time) */
   periodS: number;
   onStart: () => void;
@@ -51,7 +51,7 @@ export interface TimelinePanelProps {
   onResume: () => void;
   onReplay: () => void;
   onStop: () => void;
-  /** reposition PAX along the loop (0..1); starts it paused if needed */
+  /** reposition the rover along the loop (0..1); starts it paused if needed */
   onSeek: (frac: number) => void;
   /** jump to the next point of interest */
   onSkip: () => void;

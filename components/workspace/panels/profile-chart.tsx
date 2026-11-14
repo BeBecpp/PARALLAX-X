@@ -185,7 +185,7 @@ export function ProfileChart({
             />
           ))}
 
-          {/* PAX / external cursor */}
+          {/* rover / external cursor */}
           {cursorD !== null ? (
             <g pointerEvents="none">
               <line x1={x(cursorD)} x2={x(cursorD)} y1={M.t} y2={M.t + ih} stroke={COLORS.copper} strokeWidth={1.5} />

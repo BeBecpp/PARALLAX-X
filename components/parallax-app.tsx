@@ -11,8 +11,9 @@ import { LoadingView, type LoadStep } from "./loading-view";
 import { ExploreView } from "./explore-view";
 import { StaticFallback } from "./static-fallback";
 import { AboutDialog } from "./about-dialog";
-import { Wordmark } from "./wordmark";
+import { BrandLogo } from "./brand";
 import { SiteFooter } from "./site-footer";
+import { WelcomeIntro, useIntroGate } from "./welcome-intro";
 
 const HERO_ID = "mars_hirise_hero";
 type Stage = "select" | "loading" | "explore" | "static";
@@ -36,6 +37,7 @@ export function ParallaxApp() {
   const [retrying, setRetrying] = useState(false); // retry from the error screen: stay on the loading view
   const run = useRef(0);
   const [entry, setEntry] = useState<{ scene: SceneChoice; demo: boolean; n: number }>({ scene: "hirise", demo: false, n: 0 });
+  const [intro, finishIntro] = useIntroGate();
 
   useEffect(() => {
     loadLocator().then(setLocator);
@@ -56,7 +58,7 @@ export function ParallaxApp() {
     setLoadError(null);
     setShowSteps(false);
     // Step list appears only if real work takes longer than 700 ms. No minimum duration: until then the
-    // Select stage stays on screen (CTA shows "Preparing terrain…", PAX waves) while the real work runs.
+    // Select stage stays on screen (CTA shows "Preparing terrain…") while the real work runs.
     const timer = window.setTimeout(() => {
       if (run.current === id) setShowSteps(true);
     }, Math.max(700, minMs + 600));
@@ -138,6 +140,7 @@ export function ParallaxApp() {
           }}
           onOpenAbout={() => setAboutOpen(true)}
           busy={stage === "loading"}
+          defer3D={intro !== "done"}
         />
       ) : null}
       {stage === "loading" && (showSteps || loadError || retrying) ? (
@@ -169,7 +172,7 @@ export function ParallaxApp() {
       {stage === "static" ? (
         <div className="min-h-screen">
           <header className="flex items-center justify-between px-6 py-5 md:px-8">
-            <Wordmark onClick={home} />
+            <BrandLogo onClick={home} />
           </header>
           <StaticFallback
             hf={hero}
@@ -191,6 +194,7 @@ export function ParallaxApp() {
         </div>
       ) : null}
       <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />
+      <WelcomeIntro state={intro} onDone={finishIntro} />
     </>
   );
 }

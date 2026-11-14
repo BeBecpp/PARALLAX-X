@@ -8,15 +8,13 @@ import { formatLat, formatMarsLon, formatPosting } from "@/lib/format";
 import { sfx } from "@/lib/audio";
 import { useReducedMotion } from "@/lib/hooks";
 import { ValidationBanner } from "./validation-banner";
-import { Wordmark } from "./wordmark";
+import { BrandLogo } from "./brand";
 import { SiteFooter } from "./site-footer";
 import { SoundControl } from "./sound-control";
-import type { PaxCue, PaxCueName } from "./pax-stage";
+// three.js + the 4.9 MB rover glTF load only on the client, after first paint. The poster covers the gap.
+const RoverStage = dynamic(() => import("./rover-stage"), { ssr: false });
 
-// three.js + the 4.6 MB GLB load only on the client, after first paint. The poster covers the gap.
-const PaxStage = dynamic(() => import("./pax-stage"), { ssr: false });
-
-export const PAX_POSTER = "/models/pax-rover-poster.webp";
+export const ROVER_POSTER = "/models/expedition-rover-poster.webp";
 
 /** The two real, selectable Mars scenes (both inside the one published study region). */
 export type SceneChoice = "hirise" | "ctx";
@@ -295,34 +293,41 @@ function Navigator({
 }
 
 /* ------------------------------------------------------------------ */
-/* PAX showcase                                                         */
+/* Expedition rover showcase + mission status                           */
 /* ------------------------------------------------------------------ */
-function PaxShowcase({ cue, line }: { cue: PaxCue | null; line: string }) {
+function RoverShowcase({ scanCue, status, defer3D }: { scanCue: number; status: { label: string; text: string }; defer3D: boolean }) {
   const small = useSyncExternalStore(subscribeSmall, () => window.matchMedia("(max-width: 1023px)").matches, () => true);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
-  const use3D = !small && !failed;
+  const use3D = !small && !failed && !defer3D; // never a second WebGL context while the intro owns one
   return (
     <figure className="relative h-full w-full">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[14px]" style={{ background: "radial-gradient(ellipse 60% 62% at 50% 55%, rgba(232,120,61,0.16) 0%, rgba(23,29,37,0.6) 40%, rgba(9,12,17,0) 78%)" }} />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 60% at 55% 70%, rgba(201,121,81,0.18) 0%, rgba(23,29,37,0.5) 45%, rgba(9,12,17,0) 80%)" }} />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] bg-[linear-gradient(180deg,transparent,rgba(74,51,38,0.35))]" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={PAX_POSTER}
-        alt={use3D && ready ? "" : "PAX, the PARALLAX X rover"}
+        src={ROVER_POSTER}
+        alt={use3D && ready ? "" : "Expedition rover (3D model render)"}
         className="absolute inset-0 h-full w-full object-contain transition-opacity duration-500"
-        style={{ opacity: use3D && ready ? 0 : 1, WebkitMaskImage: "radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%)", maskImage: "radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%)" }}
+        style={{ opacity: use3D && ready ? 0 : 1 }}
         draggable={false}
       />
       {use3D ? (
-        <div className="absolute inset-0 transition-opacity duration-700" style={{ opacity: ready ? 1 : 0 }} role="img" aria-label="PAX, the PARALLAX X rover, animated in 3D">
-          <PaxStage cue={cue} onReady={() => setReady(true)} onError={() => setFailed(true)} />
+        <div className="absolute inset-0 transition-opacity duration-700" style={{ opacity: ready ? 1 : 0 }} role="img" aria-label="Expedition rover, rotating 3D model">
+          <RoverStage scanCue={scanCue} onReady={() => setReady(true)} onError={() => setFailed(true)} />
         </div>
       ) : null}
-      <div className="pointer-events-none absolute left-3 top-3 max-w-[230px] rounded-[12px] rounded-bl-[3px] border border-copper/40 bg-bg/85 px-3 py-2 text-[14px] leading-snug text-ink/90 backdrop-blur" aria-live="polite">
-        <span className="block text-[12px] font-semibold uppercase tracking-[0.14em] text-copper-light">PAX</span>
-        {line}
+      <div className="pointer-events-none absolute left-3 top-3 w-[min(250px,60%)] rounded-[10px] border border-hairline bg-bg/80 px-3 py-2 backdrop-blur" aria-live="polite">
+        <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-copper-light">
+          <span className="h-1.5 w-1.5 rounded-full bg-copper motion-safe:animate-pulse" aria-hidden="true" /> Expedition status · {status.label}
+        </p>
+        <p className="mt-1 text-[13px] leading-snug text-ink/90">{status.text}</p>
       </div>
-      <figcaption className="pointer-events-none absolute bottom-1 right-2 text-[12px] text-muted">Expedition rover · character, not to scale</figcaption>
+      <figcaption className="pointer-events-none absolute bottom-1.5 right-2 text-right text-[11px] leading-tight text-muted">
+        Visualization rover · 3D model NASA/JPL-Caltech (insignia removed)
+        <br />
+        Not affiliated with or endorsed by NASA
+      </figcaption>
     </figure>
   );
 }
@@ -375,6 +380,7 @@ export function SelectView({
   onExplore,
   onOpenAbout,
   busy = false,
+  defer3D = false,
 }: {
   locator: Loadable<Locator>;
   sources: Loadable<SourceRecord[]>;
@@ -383,15 +389,17 @@ export function SelectView({
   onOpenAbout: () => void;
   /** True while real loading has started but the loading screen is not shown yet. */
   busy?: boolean;
+  /** Hold the 3D rover preview until the welcome intro has finished. */
+  defer3D?: boolean;
 }) {
   const reduced = useReducedMotion();
   const [hover, setHover] = useState<string | null>(null);
   const [choice, setChoice] = useState<SceneChoice>("hirise");
-  const [cue, setCue] = useState<PaxCue | null>(null);
+  const [scanCue, setScanCue] = useState(0);
   const [arriving, setArriving] = useState(false);
-  const [line, setLine] = useState("Pick a real Mars scene and I’ll take you down to the surface.");
+  const [status, setStatus] = useState({ label: "Standby", text: "Select a supported Mars scene. Two real stereo terrain models are available in this region." });
 
-  const fire = useCallback((name: PaxCueName) => setCue((c) => ({ name, n: (c?.n ?? 0) + 1 })), []);
+  const scan = useCallback(() => setScanCue((n) => n + 1), []);
 
   const zooming = arriving && busy; // the arrival zoom only runs while the real load is in flight
 
@@ -399,16 +407,20 @@ export function SelectView({
     if (busy) return;
     setChoice(s);
     sfx("select");
-    fire(s === "hirise" ? "turn" : "tilt");
-    setLine(s === "hirise" ? "HiRISE scarps: 1 m stereo terrain. I can drive a demo loop there." : "CTX yardangs: the exact area we matched against 1,915 Earth windows.");
+    scan();
+    setStatus(
+      s === "hirise"
+        ? { label: "Target locked", text: "HiRISE scarps · 1 m stereo terrain. Rover demonstration loop available." }
+        : { label: "Target locked", text: "CTX yardang field · the exact area compared against 1,915 Earth windows." },
+    );
   };
 
   const go = (demo = false) => {
     if (busy) return;
-    fire("wave");
+    scan();
     sfx("startup");
     window.setTimeout(() => sfx("whoosh"), 350);
-    setLine(demo ? "Starting the guided demo — sit back." : "Descending to Medusae Fossae…");
+    setStatus({ label: demo ? "Guided demo" : "Descent", text: demo ? "Starting the 30-second guided demonstration." : "Loading the measured terrain for Medusae Fossae…" });
     if (!reduced) setArriving(true);
     onExplore(demo ? "hirise" : choice, { demo }); // real loading starts now; the zoom covers it
   };
@@ -418,7 +430,7 @@ export function SelectView({
   return (
     <div className="relative flex min-h-screen flex-col bg-bg fade-in lg:h-screen lg:min-h-0 lg:overflow-hidden">
       <header className="z-20 flex h-[68px] shrink-0 items-center gap-4 border-b border-hairline bg-bg/95 px-4 xl:px-6">
-        <Wordmark height={30} />
+        <BrandLogo height={30} />
         <ol className="mx-auto hidden items-center gap-1 lg:flex" aria-label="Mission flow">
           {STEPS.map((s, i) => (
             <li key={s} className="flex items-center gap-1">
@@ -445,7 +457,7 @@ export function SelectView({
 
         <aside className="order-1 flex min-h-0 flex-col gap-3 lg:order-2 lg:overflow-y-auto">
           <div className="relative hidden min-h-[150px] flex-1 overflow-hidden rounded-[14px] border border-hairline bg-surface/40 lg:block">
-            <PaxShowcase cue={cue} line={line} />
+            <RoverShowcase scanCue={scanCue} status={status} defer3D={defer3D} />
           </div>
           <div className="rounded-[14px] border border-hairline bg-surface p-4">
             <div className="flex items-baseline justify-between gap-3">
@@ -459,7 +471,7 @@ export function SelectView({
                 onClick={() => pick("hirise")}
                 thumb="/data/thumbs/mars_hirise_hero_lg.webp"
                 title="HiRISE Scarp Explorer"
-                tag="Fine-scale 3D showcase · PAX drive"
+                tag="Fine-scale 3D showcase · rover drive"
                 rows={[
                   ["Source", heroMeta?.source_id ?? "HiRISE DTM"],
                   ["Posting", heroMeta?.source_posting_m ? `${formatPosting(heroMeta.source_posting_m)} (shown at ${formatPosting(heroMeta.posting_m)})` : "—"],

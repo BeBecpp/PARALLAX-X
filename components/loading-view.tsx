@@ -1,6 +1,6 @@
 "use client";
 
-import { Wordmark } from "./wordmark";
+import { BrandLogo } from "./brand";
 
 export interface LoadStep {
   id: string;
@@ -10,7 +10,7 @@ export interface LoadStep {
   progress?: number | null; // 0..1 when known
 }
 
-const POSTER = "/models/pax-rover-poster.webp";
+const POSTER = "/models/expedition-rover-poster.webp";
 
 /** Activity label for the step that is actually running. Never claims work that is not happening. */
 const ACTIVITY: Record<string, string> = {
@@ -63,7 +63,7 @@ export function LoadingView({
   return (
     <div className="flex min-h-screen flex-col fade-in">
       <header className="mx-auto flex h-[64px] w-full max-w-[1360px] items-center px-6 md:h-[72px] md:px-10">
-        <Wordmark height={28} />
+        <BrandLogo height={28} />
       </header>
       <div className="mx-auto w-full max-w-[1360px] px-6 md:px-10">
         <div className="h-px w-full bg-hairline" />
@@ -79,7 +79,7 @@ export function LoadingView({
               alt=""
               width={128}
               height={96}
-              className={`h-[96px] w-[128px] shrink-0 object-contain ${error ? "opacity-60 grayscale" : "pax-tilt"}`}
+              className={`h-[96px] w-[128px] shrink-0 object-contain ${error ? "opacity-60 grayscale" : "rover-idle"}`}
               style={{
                 WebkitMaskImage: "radial-gradient(ellipse 50% 50% at 50% 50%, #000 60%, transparent 100%)",
                 maskImage: "radial-gradient(ellipse 50% 50% at 50% 50%, #000 60%, transparent 100%)",

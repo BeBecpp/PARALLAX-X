@@ -143,15 +143,13 @@ body {
     repeating-linear-gradient(45deg, #4a4744 0 2px, #f2ebe3 2px 6px);
 }
 
-/* Select/Loading stage motion (PAX poster tilt, step pulse). Reduced motion disables via the rule below. */
-.pax-tilt {
-  animation: pax-tilt 3.2s ease-in-out infinite;
-  transform-origin: 50% 85%;
+/* Loading stage motion (rover poster idle drift, step pulse). Reduced motion disables via the rule below. */
+.rover-idle {
+  animation: rover-idle 4.8s ease-in-out infinite;
 }
-@keyframes pax-tilt {
-  0%, 100% { transform: rotate(0deg); }
-  40% { transform: rotate(-3deg); }
-  60% { transform: rotate(-3deg); }
+@keyframes rover-idle {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
 }
 .pulse-soft {
   animation: pulse-soft 1.4s ease-in-out infinite;
@@ -171,7 +169,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pax-tilt,
+  .rover-idle,
   .pulse-soft {
     animation: none !important;
   }
@@ -194,4 +192,92 @@ body {
   .slide-in-right {
     animation: none;
   }
+}
+
+/* ---------------------------------------------------------------- */
+/* Brand + welcome intro (all end states are the resting design;     */
+/* prefers-reduced-motion collapses every duration to 1 ms above)    */
+/* ---------------------------------------------------------------- */
+.brand-orbit-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: brand-orbit-draw 1.5s cubic-bezier(0.65, 0, 0.25, 1) 0.15s both;
+}
+@keyframes brand-orbit-draw {
+  to { stroke-dashoffset: 0; }
+}
+.brand-dot-in {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: brand-dot-in 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.3) 1.45s both;
+}
+@keyframes brand-dot-in {
+  from { opacity: 0; transform: scale(0.2); }
+  to { opacity: 1; transform: scale(1); }
+}
+.brand-x-in {
+  animation: brand-x-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+}
+@keyframes brand-x-in {
+  from { opacity: 0; transform: translate(10px, -6px); }
+  to { opacity: 1; transform: none; }
+}
+.brand-glyph-in {
+  animation: brand-glyph-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes brand-glyph-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: none; }
+}
+.intro-ambient {
+  background:
+    radial-gradient(ellipse 45% 38% at var(--ix, 30%) 42%, rgba(201, 121, 81, 0.16), transparent 70%),
+    radial-gradient(ellipse 40% 34% at 78% 70%, rgba(106, 155, 173, 0.08), transparent 70%),
+    linear-gradient(180deg, #0b1016, #06080b);
+  animation: intro-ambient 10s ease-in-out both;
+}
+@property --ix {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 22%;
+}
+@keyframes intro-ambient {
+  from { --ix: 18%; }
+  to { --ix: 70%; }
+}
+.intro-grain {
+  opacity: 0.05;
+  background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.5) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+}
+.intro-terrain {
+  background-size: cover;
+  background-position: center;
+  filter: saturate(0.85) brightness(0.62) contrast(1.1);
+  transform-origin: 50% 70%;
+  animation: intro-terrain 7s cubic-bezier(0.33, 0, 0.2, 1) both;
+}
+@keyframes intro-terrain {
+  from { transform: perspective(900px) rotateX(38deg) scale(1.35) translateY(4%); }
+  to { transform: perspective(900px) rotateX(52deg) scale(1.15) translateY(0); }
+}
+.intro-logo {
+  filter: drop-shadow(0 0 28px rgba(255, 139, 61, 0.12));
+}
+.intro-progress {
+  transform-origin: 0 50%;
+  animation-name: intro-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+@keyframes intro-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+/* if scripts never run, the pre-rendered intro cover must not hide the page */
+.intro-failsafe {
+  animation: intro-failsafe 0.4s ease 6s both;
+}
+@keyframes intro-failsafe {
+  to { opacity: 0; visibility: hidden; }
 }

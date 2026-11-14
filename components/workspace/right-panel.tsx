@@ -644,7 +644,7 @@ function HiriseSummary({ results }: { results: Results }) {
         At a 4 m slope baseline, <span className="num text-copper-light">{fracToPercent(h.frac_area_slope_gt15_baseline_4m)}</span> of the HiRISE scene is steeper than 15°; at the 180 m fingerprint baseline only <span className="num text-ink">{fracToPercent(h.frac_area_slope_gt15_baseline_180m)}</span> is (&gt;30°:{" "}
         <span className="num">{fracToPercent(h.frac_area_slope_gt30_baseline_4m)}</span> vs <span className="num">{fracToPercent(h.frac_area_slope_gt30_baseline_180m)}</span>).
       </p>
-      <p>Most steep scarp faces PAX drives across are shorter than the 180 m baseline and are smoothed out at that scale. The Earth search therefore used the fingerprint of the separate CTX yardang area, not this HiRISE scene.</p>
+      <p>Most steep scarp faces the rover drives across are shorter than the 180 m baseline and are smoothed out at that scale. The Earth search therefore used the fingerprint of the separate CTX yardang area, not this HiRISE scene.</p>
       <p className="border-l-2 border-copper/50 pl-3 text-[13px] text-muted">{h.note}</p>
     </>
   );

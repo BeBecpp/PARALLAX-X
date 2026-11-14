@@ -89,7 +89,7 @@ export function LeftPanel({
   onExaggeration,
   res,
   onRes,
-  paxStatus,
+  roverStatus,
   onCompare,
   onExplore,
   onSimulate,
@@ -107,7 +107,7 @@ export function LeftPanel({
   onExaggeration: (e: number) => void;
   res: "native" | "30m";
   onRes: (r: "native" | "30m") => void;
-  paxStatus: "idle" | "loading" | "ready" | "error";
+  roverStatus: "idle" | "loading" | "ready" | "error";
   onCompare: () => void;
   onExplore: () => void;
   onSimulate: () => void;
@@ -118,16 +118,16 @@ export function LeftPanel({
   const p = results?.run.parameters ?? {};
   const inCompare = mode === "compare";
   const regionThumb = (mars as { thumb?: string } | undefined)?.thumb;
-  const paxMsg =
+  const statusMsg =
     mode === "compare"
-      ? "Pick a candidate on the right. Remember: shape alone failed the pre-registered test."
+      ? { label: "Comparison", text: "Pick a candidate on the right. Shape alone failed the pre-registered test." }
       : mode === "simulate"
-        ? "Press play below. I follow the real HiRISE surface — a visualization, not rover physics."
-        : "Ready! Explore the scarps, then compare Earth candidates.";
+        ? { label: "Demonstration", text: "Press play below. The rover follows the real HiRISE surface height — a visualization, not mobility physics." }
+        : { label: "On station", text: "Explore the scarps, then compare Earth candidates." };
 
   return (
     <aside className="flex h-full min-h-0 flex-col gap-5 overflow-y-auto rounded-[12px] border border-hairline bg-surface/90 p-5 shadow-[0_18px_50px_rgba(0,0,0,0.35)]" aria-label="Mission controls">
-      <SectionTitle icon="target" title="Mission setup" sub="Target region, PAX and analysis parameters" />
+      <SectionTitle icon="target" title="Mission setup" sub="Target region, rover and analysis parameters" />
 
       <div>
         <MicroLabel>Target region</MicroLabel>
@@ -144,14 +144,14 @@ export function LeftPanel({
       </div>
 
       <div>
-        <MicroLabel>PAX rover</MicroLabel>
+        <MicroLabel>Expedition rover</MicroLabel>
         <div className={`flex items-center gap-3 rounded-[10px] border p-2 transition-all duration-300 ${mode === "simulate" ? "border-copper bg-copper/10 shadow-[0_0_18px_rgba(198,106,75,0.22)]" : "border-hairline bg-bg/50"}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/models/pax-rover-poster.webp" alt="PAX rover (render of the 3D model)" className="h-[58px] w-[76px] rounded-[7px] bg-bg object-contain" />
+          <img src="/models/expedition-rover-poster.webp" alt="Expedition rover (render of the 3D model)" className="h-[58px] w-[76px] rounded-[7px] bg-bg object-contain" />
           <div className="min-w-0 flex-1">
-            <p className="text-[15px] font-medium leading-tight">PAX</p>
-            <p className="mt-[2px] text-[13px] text-muted">Expedition guide · real 3D model</p>
-            <p className="mt-[2px] text-[12px] text-muted">{paxStatus === "ready" ? "Loaded in terrain scene" : paxStatus === "loading" ? "Loading 4.6 MB model…" : paxStatus === "error" ? "Model unavailable" : "Not loaded"}</p>
+            <p className="text-[15px] font-medium leading-tight">Six-wheel rover</p>
+            <p className="mt-[2px] text-[13px] text-muted">3D model NASA/JPL-Caltech · visual only</p>
+            <p className="mt-[2px] text-[12px] text-muted">{roverStatus === "ready" ? "Loaded in terrain scene" : roverStatus === "loading" ? "Loading 4.8 MB model…" : roverStatus === "error" ? "Model unavailable" : "Not loaded"}</p>
           </div>
         </div>
         <div className="mt-2 grid grid-cols-2 gap-2">
@@ -249,13 +249,11 @@ export function LeftPanel({
             Back to Mars terrain
           </button>
         ) : null}
-        <div className="flex items-end gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/models/pax-rover-poster.webp" alt="" aria-hidden="true" className="h-[86px] w-[86px] shrink-0 object-contain" />
-          <div className="relative mb-2 rounded-[10px] border border-hairline bg-bg/70 p-3">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-copper">PAX</p>
-            <p className="mt-1 text-[13px] leading-snug text-ink/90">{paxMsg}</p>
-          </div>
+        <div className="rounded-[10px] border border-hairline bg-bg/60 p-3" aria-live="polite">
+          <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-copper-light">
+            <span className="h-1.5 w-1.5 rounded-full bg-copper" aria-hidden="true" /> Expedition status · {statusMsg.label}
+          </p>
+          <p className="mt-1 text-[13px] leading-snug text-ink/90">{statusMsg.text}</p>
         </div>
       </div>
     </aside>

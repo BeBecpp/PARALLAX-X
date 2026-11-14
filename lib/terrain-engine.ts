@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { loadRover, type RoverRig } from "./rover-rig";
 import { sampleBilinear } from "./heightfield";
 import type { Heightfield } from "./types";
 import {
@@ -41,14 +41,15 @@ export { SLOPE_BASELINE_M };
 
 /** Named, data-derived camera viewpoints for the guided tour. */
 export type Viewpoint = "overview" | "focus" | "grazing";
-export interface PaxInfo {
-  clips: string[];
+export interface RoverInfo {
+  heightM: number;
+  lengthM: number;
 }
 export type CameraMode = "orbit" | "follow" | "closeup";
 /** "cinematic" = terrain fills the frame and dissolves into an illustrative haze at the far edge;
  *  "survey" = whole measured footprint in view with its exact boundary outlined (science view). */
 export type Framing = "cinematic" | "survey";
-export type PaxScale = "true" | "cinematic";
+export type RoverScale = "true" | "cinematic";
 export interface DriveState {
   playing: boolean;
   started: boolean;
@@ -57,10 +58,10 @@ export interface DriveState {
   /** path length along the measured surface (horizontal, metres) */
   pathLengthM: number;
   camera: CameraMode;
-  scale: PaxScale;
-  /** enlargement factor of the displayed PAX relative to its ~0.5 m model height */
+  scale: RoverScale;
+  /** enlargement factor of the displayed rover relative to its true model size */
   enlargement: number;
-  /** index (1..3) of the point of interest PAX is pausing at, or null */
+  /** index (1..3) of the point of interest the rover is pausing at, or null */
   poi: number | null;
   /** playback-speed multiplier (time-lapse; not a physical speed) */
   speed: number;
@@ -126,21 +127,24 @@ export class TerrainEngine {
   private readonly reducedMotion: boolean;
   private userInteracting = false;
   private backdrop: THREE.Texture;
-  private pax: { root: THREE.Group; mixer: THREE.AnimationMixer; actions: Map<string, THREE.AnimationAction>; current: THREE.AnimationAction | null; unit: number } | null = null;
-  private paxLoading: Promise<PaxInfo | null> | null = null;
-  private paxVisible = false;
+  private rover: RoverRig | null = null;
+  private roverLoading: Promise<RoverInfo | null> | null = null;
+  private roverVisible = false;
+  /** last placed rover position — wheel spin is driven by the distance actually travelled */
+  private roverLast: THREE.Vector3 | null = null;
   private clock = new THREE.Clock();
   /** gap between split viewports in CSS px (the UI draws panel frames over it) */
   viewGap = 2;
   private quality = 2; // 2 = full, 1 = DPR 1, 0 = DPR 1 + no shadows
   private lastShadow = 0;
-  private drive = { started: false, playing: false, t: 0, periodS: 48, speed: 1, lastEmit: 0, dwellUntil: 0, poi: null as number | null };
+  /** vel: eased 0..1 throttle so the rover accelerates and brakes smoothly (illustrative, not dynamics) */
+  private drive = { started: false, playing: false, t: 0, periodS: 48, speed: 1, vel: 0, lastEmit: 0, dwellUntil: 0, poi: null as number | null };
   private framing: Framing = "cinematic";
   private snapCam = false;
   private lowPower = false;
   private backdrops: Record<string, THREE.Texture> = {};
   private camMode: CameraMode = "orbit";
-  private paxScaleMode: PaxScale = "cinematic";
+  private roverScaleMode: RoverScale = "cinematic";
   private path: THREE.CatmullRomCurve3 | null = null;
   private pathLine: THREE.Line | null = null;
   private pathLengthM = 0;
@@ -194,7 +198,7 @@ export class TerrainEngine {
       this.tween = null;
       if (this.camMode !== "orbit") {
         this.camMode = "orbit";
-        this.camera.near = Math.max(this.paxScaleMode === "true" ? 0.03 : 0.5, 0.03);
+        this.camera.near = Math.max(this.roverScaleMode === "true" ? 0.03 : 0.5, 0.03);
         this.camera.updateProjectionMatrix();
         this.emitDrive(true);
       }
@@ -390,7 +394,7 @@ export class TerrainEngine {
       this.framedKey = `${key}#${extentKey}`;
     }
     this.updateFog();
-    if (this.pax) this.showPax(this.paxVisible);
+    if (this.rover) this.showRover(this.roverVisible);
     this.renderer.shadowMap.needsUpdate = true;
     this.dirty = true;
   }
@@ -467,7 +471,7 @@ export class TerrainEngine {
     if (e === this.exaggeration) return;
     this.exaggeration = e;
     for (const entry of this.meshes.values()) entry.group.scale.y = e;
-    if (this.pax) this.showPax(this.paxVisible);
+    if (this.rover) this.showRover(this.roverVisible);
     this.renderer.shadowMap.needsUpdate = true;
     this.dirty = true;
   }
@@ -629,48 +633,50 @@ export class TerrainEngine {
     return y * this.exaggeration;
   }
 
-  /** Load the real PAX glTF (once) into the terrain scene. Resolves with its clip names. */
-  loadPax(url: string): Promise<PaxInfo | null> {
-    if (this.paxLoading) return this.paxLoading;
-    this.paxLoading = new Promise((resolve) => {
-      new GLTFLoader().load(
-        url,
-        (gltf) => {
-          if (this.disposed) return resolve(null);
-          const model = gltf.scene;
-          const box = new THREE.Box3().setFromObject(model);
-          const size = box.getSize(new THREE.Vector3());
-          const center = box.getCenter(new THREE.Vector3());
-          model.position.sub(new THREE.Vector3(center.x, box.min.y, center.z));
-          model.traverse((o) => {
-            const m = o as THREE.Mesh;
-            if (m.isMesh) m.castShadow = true;
+  /** Load the expedition rover glTF (once) into the terrain scene. */
+  loadRover(): Promise<RoverInfo | null> {
+    if (this.roverLoading) return this.roverLoading;
+    this.roverLoading = loadRover(this.renderer)
+      .then((rig) => {
+        if (this.disposed) {
+          rig.dispose();
+          return null;
+        }
+        this.rover = rig;
+        return this.renderer
+          .compileAsync(rig.root, this.camera, this.scenes[0])
+          .catch(() => undefined)
+          .then(() => {
+            if (this.roverVisible) this.showRover(true);
+            return { heightM: rig.heightM, lengthM: rig.lengthM };
           });
-          const root = new THREE.Group();
-          root.add(model);
-          const mixer = new THREE.AnimationMixer(model);
-          const actions = new Map<string, THREE.AnimationAction>();
-          for (const clip of gltf.animations) actions.set(clip.name, mixer.clipAction(clip));
-          this.pax = { root, mixer, actions, current: null, unit: Math.max(1e-6, size.y) };
-          this.playPax("Idle");
-          if (this.paxVisible) this.showPax(true);
-          resolve({ clips: gltf.animations.map((a) => a.name) });
-        },
-        undefined,
-        () => resolve(null),
-      );
-    });
-    return this.paxLoading;
+      })
+      .catch((err) => {
+        console.warn("[PARALLAX X] rover model failed to load", err);
+        return null;
+      });
+    return this.roverLoading;
   }
 
-  /** Place PAX on the measured surface beside the focal relief, facing the camera, at an ILLUSTRATIVE size.
-   *  Returns the enlargement factor relative to the model's own height (for the on-screen disclosure). */
-  showPax(on: boolean): number | null {
-    this.paxVisible = on;
+  /** Rover gestures. "wake" stows then raises the mast (the source model's rigged clip); "scan" sweeps the mast head. */
+  roverAction(a: "wake" | "scan") {
+    if (!this.rover || this.reducedMotion) return;
+    if (a === "wake") {
+      this.rover.setMast(false, false);
+      window.setTimeout(() => this.rover?.setMast(true), 500);
+      window.setTimeout(() => this.rover?.scan(), 3400);
+    } else this.rover.scan();
+    this.dirty = true;
+  }
+
+  /** Place the rover on the measured surface beside the focal relief at an ILLUSTRATIVE (enlarged) size.
+   *  Returns the enlargement factor relative to the model's true size (for the on-screen disclosure). */
+  showRover(on: boolean): number | null {
+    this.roverVisible = on;
     const scene = this.scenes[0];
-    if (!this.pax) return null;
+    if (!this.rover) return null;
     if (!on || this.specs.length !== 1) {
-      scene.remove(this.pax.root);
+      scene.remove(this.rover.root);
       this.dirty = true;
       return null;
     }
@@ -678,32 +684,39 @@ export class TerrainEngine {
     const entry = this.meshes.get(spec.hf.meta.id);
     const E = this.extent();
     const [fx, fz] = entry ? entry.focus : [0, 0];
-    // park PAX just in front of the composed view centre (lower third of the frame), on the measured surface
+    // park the rover just in front of the composed view centre (lower third of the frame), on the measured surface
     const tgt = this.composedPose().target;
     const x = (this.framing === "cinematic" ? tgt.x : fx) + Math.sin(AZIMUTH) * E * (this.framing === "cinematic" ? 0.05 : 0.07);
     const z = (this.framing === "cinematic" ? tgt.z : fz) + Math.cos(AZIMUTH) * E * (this.framing === "cinematic" ? 0.05 : 0.07);
-    const heightM = this.paxScaleMode === "cinematic" ? E * 0.022 : this.pax.unit; // true scale: glTF metres
-    this.pax.root.scale.setScalar(heightM / this.pax.unit);
+    const k = this.roverScale();
+    this.rover.root.scale.setScalar(k);
+    this.roverLast = null;
     if (this.drive.started) this.placeRover();
     else {
-      this.pax.root.position.set(x, this.heightAt(spec, x, z), z);
-      this.pax.root.rotation.set(0, AZIMUTH, 0);
+      this.rover.root.position.set(x, this.heightAt(spec, x, z), z);
+      // three-quarter pose toward the camera so the mast and wheels read
+      this.rover.root.rotation.set(0, AZIMUTH + Math.PI * 0.78, 0);
     }
-    scene.add(this.pax.root);
+    scene.add(this.rover.root);
     this.ensurePath();
     this.renderer.shadowMap.needsUpdate = true;
     this.dirty = true;
-    return Math.round(heightM / this.pax.unit);
+    return Math.round(k);
+  }
+
+  /** Display scale of the rover: cinematic = body length about 3.2 % of the terrain extent; true = 1. */
+  private roverScale(): number {
+    if (!this.rover) return 1;
+    return this.roverScaleMode === "cinematic" ? (this.extent() * 0.032) / this.rover.lengthM : 1;
   }
 
   private enlargement(): number {
-    if (!this.pax) return 1;
-    return this.paxScaleMode === "cinematic" ? Math.round((this.extent() * 0.022) / this.pax.unit) : 1;
+    return Math.round(this.roverScale());
   }
 
-  setPaxScale(mode: PaxScale) {
-    this.paxScaleMode = mode;
-    if (this.pax) this.showPax(this.paxVisible);
+  setRoverScale(mode: RoverScale) {
+    this.roverScaleMode = mode;
+    if (this.rover) this.showRover(this.roverVisible);
     this.emitDrive(true);
   }
 
@@ -748,18 +761,21 @@ export class TerrainEngine {
     this.pathLine.visible = this.drive.started;
   }
 
-  /** Put PAX on the loop at the current progress, oriented along the path and tilted to the surface. */
-  private placeRover() {
+  /** Put the rover on the loop at the current progress, oriented along the path and tilted to the surface.
+   *  Returns the horizontal distance moved since the last placement (world units), for the wheel spin. */
+  private placeRover(): number {
     const spec = this.specs[0];
-    if (!spec || !this.pax || !this.path) return;
+    if (!spec || !this.rover || !this.path) return 0;
     const t = this.drive.t % 1;
     const p = this.path.getPointAt(t);
     const tan = this.path.getTangentAt(t);
     const y = this.heightAt(spec, p.x, p.z);
-    this.pax.root.position.set(p.x, y, p.z);
+    const moved = this.roverLast ? Math.hypot(p.x - this.roverLast.x, p.z - this.roverLast.z) : 0;
+    this.roverLast = (this.roverLast ?? new THREE.Vector3()).set(p.x, y, p.z);
+    this.rover.root.position.set(p.x, y, p.z);
     this.roverYaw = Math.atan2(tan.x, tan.z);
-    // surface tilt sampled across the rover footprint (displayed, exaggerated surface)
-    const L = Math.max(0.4, (this.extent() * 0.022 * (this.paxScaleMode === "cinematic" ? 1 : 0)) * 0.6 || 0.5);
+    // surface tilt sampled across the displayed wheelbase (rendered, exaggerated surface)
+    const L = Math.max(0.4, this.rover.lengthM * this.roverScale() * 0.45);
     const fwd = new THREE.Vector2(tan.x, tan.z).normalize();
     const side = new THREE.Vector2(-fwd.y, fwd.x);
     const hF = this.heightAt(spec, p.x + fwd.x * L, p.z + fwd.y * L);
@@ -768,11 +784,15 @@ export class TerrainEngine {
     const hL = this.heightAt(spec, p.x - side.x * L, p.z - side.y * L);
     const pitch = Math.atan2(hF - hB, 2 * L);
     const roll = Math.atan2(hR - hL, 2 * L);
+    // sit on the plane through the four wheel-contact samples (never below the centre sample), so the enlarged
+    // body neither floats over a crest nor sinks into a hollow
+    this.rover.root.position.y = Math.max(y, (hF + hB + hR + hL) / 4) - L * 0.02;
     // smooth the tilt so the model doesn't jitter on facet edges
     this.roverTilt.x += (-pitch - this.roverTilt.x) * 0.25;
     this.roverTilt.z += (roll - this.roverTilt.z) * 0.25;
-    this.pax.root.rotation.set(this.roverTilt.x, this.roverYaw, this.roverTilt.z, "YXZ");
+    this.rover.root.rotation.set(this.roverTilt.x, this.roverYaw, this.roverTilt.z, "YXZ");
     if (this.pathLine) this.pathLine.visible = true;
+    return moved > this.extent() * 0.05 ? 0 : moved; // a seek/jump is not travel
   }
 
   private emitDrive(force = false) {
@@ -785,7 +805,7 @@ export class TerrainEngine {
       progress: this.drive.t % 1,
       pathLengthM: this.pathLengthM,
       camera: this.camMode,
-      scale: this.paxScaleMode,
+      scale: this.roverScaleMode,
       enlargement: this.enlargement(),
       poi: this.drive.poi,
       speed: this.drive.speed,
@@ -810,25 +830,26 @@ export class TerrainEngine {
 
   /** Start (or restart) the terrain-following demonstration from the beginning of the loop. */
   startDrive() {
-    if (!this.pax) return;
-    if (!this.paxVisible) this.showPax(true);
+    if (!this.rover) return;
+    if (!this.roverVisible) this.showRover(true);
     this.ensurePath();
     this.drive.started = true;
     this.drive.playing = true;
     this.drive.t = 0;
     this.drive.dwellUntil = 0;
     this.drive.poi = null;
-    this.playPax("WheelSpin");
+    this.drive.vel = 0;
+    this.rover.setMast(true);
     if (this.camMode === "orbit") this.setCameraMode("follow");
     this.placeRover();
     this.emitDrive(true);
   }
 
-  /** Jump PAX to a position (0..1) along the pre-authored loop; keeps the current play/pause state. */
+  /** Jump the rover to a position (0..1) along the pre-authored loop; keeps the current play/pause state. */
   seekDrive(frac: number) {
-    if (!this.pax) return;
+    if (!this.rover) return;
     if (!this.drive.started) {
-      if (!this.paxVisible) this.showPax(true);
+      if (!this.roverVisible) this.showRover(true);
       this.ensurePath();
       this.drive.started = true;
       this.drive.playing = false;
@@ -864,14 +885,12 @@ export class TerrainEngine {
 
   pauseDrive() {
     this.drive.playing = false;
-    this.playPax("Idle");
     this.emitDrive(true);
   }
 
   resumeDrive() {
     if (!this.drive.started) return this.startDrive();
     this.drive.playing = true;
-    this.playPax("WheelSpin");
     this.emitDrive(true);
   }
 
@@ -886,9 +905,9 @@ export class TerrainEngine {
     this.drive.dwellUntil = 0;
     this.drive.poi = null;
     if (this.pathLine) this.pathLine.visible = false;
-    this.playPax("Idle");
+    this.drive.vel = 0;
     this.setCameraMode("orbit");
-    if (this.pax) this.showPax(this.paxVisible);
+    if (this.rover) this.showRover(this.roverVisible);
     this.emitDrive(true);
   }
 
@@ -896,18 +915,18 @@ export class TerrainEngine {
     this.camMode = m;
     this.tween = null;
     // true-scale close views need a much nearer clip plane
-    this.camera.near = m === "orbit" ? Math.max(0.5, this.extent() / 4000) : this.paxScaleMode === "true" ? 0.03 : Math.max(0.2, this.extent() / 20000);
+    this.camera.near = m === "orbit" ? Math.max(0.5, this.extent() / 4000) : this.roverScaleMode === "true" ? 0.03 : Math.max(0.2, this.extent() / 20000);
     this.camera.updateProjectionMatrix();
     if (m === "orbit") this.frame("smooth");
     this.emitDrive(true);
     this.dirty = true;
   }
 
-  /** Chase / close-up camera that tracks PAX smoothly. */
+  /** Chase / close-up camera that tracks the rover smoothly. */
   private trackCamera(dt = 1 / 60) {
-    if (!this.pax || this.camMode === "orbit" || !this.pax.root.parent) return;
-    const size = this.paxScaleMode === "cinematic" ? this.extent() * 0.022 : this.pax.unit;
-    const p = this.pax.root.position;
+    if (!this.rover || this.camMode === "orbit" || !this.rover.root.parent) return;
+    const size = this.rover.heightM * this.roverScale();
+    const p = this.rover.root.position;
     const yaw = this.roverYaw;
     let back: number;
     let up: number;
@@ -936,30 +955,6 @@ export class TerrainEngine {
     this.controls.target.lerp(look, k);
     this.camera.lookAt(this.controls.target);
     this.dirty = true;
-  }
-
-  /** Play a named PAX clip; one-shot clips return to Idle when finished. */
-  playPax(name: string) {
-    const p = this.pax;
-    if (!p) return;
-    const next = p.actions.get(name) ?? p.actions.get("Idle");
-    if (!next) return;
-    const once = !["Idle", "SleepMode", "WheelSpin", "DriveForward"].includes(name);
-    if (next === p.current && !once) return;
-    next.reset();
-    next.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat, Infinity);
-    next.clampWhenFinished = once;
-    if (p.current && p.current !== next) next.crossFadeFrom(p.current, 0.35, false);
-    next.play();
-    p.current = next;
-    if (once) {
-      const onDone = (e: { action: THREE.AnimationAction }) => {
-        if (e.action !== next) return;
-        p.mixer.removeEventListener("finished", onDone);
-        if (p.current === next) this.playPax(this.drive.started && this.drive.playing && performance.now() >= this.drive.dwellUntil ? "WheelSpin" : "Idle");
-      };
-      p.mixer.addEventListener("finished", onDone);
-    }
   }
 
   /** Restore the composed view (animated unless reduced motion). */
@@ -1090,32 +1085,38 @@ export class TerrainEngine {
     if (this.disposed) return;
     this.raf = requestAnimationFrame(this.loop);
     const dt = Math.min(0.05, this.clock.getDelta());
-    if (this.pax && this.paxVisible && this.pax.root.parent) {
-      this.pax.mixer.update(this.reducedMotion ? 0 : dt);
+    if (this.rover && this.roverVisible && this.rover.root.parent) {
+      let travelled = 0;
       if (this.drive.started) {
         if (this.drive.playing) {
-          if (this.drive.dwellUntil > now) {
-            // pausing at a point of interest: PAX looks around (HeadTurn), wheels still
-          } else {
-            if (this.drive.poi !== null) {
-              this.drive.poi = null;
-              this.playPax("WheelSpin");
-              this.emitDrive(true);
-            }
+          const dwelling = this.drive.dwellUntil > now;
+          if (!dwelling && this.drive.poi !== null) {
+            this.drive.poi = null;
+            this.emitDrive(true);
+          }
+          // eased throttle: brake into each point of interest, pull away gently after it
+          const t = this.drive.t % 1;
+          const ahead = POIS.map((q) => (q - t + 1) % 1).filter((d) => d > 1e-4);
+          const toNext = ahead.length ? Math.min(...ahead) : 1;
+          const want = dwelling ? 0 : this.reducedMotion ? 1 : Math.max(0.18, Math.min(1, toNext / 0.03));
+          const kv = 1 - Math.exp(-dt * (want < this.drive.vel ? 6 : 1.6));
+          this.drive.vel += (want - this.drive.vel) * kv;
+          if (!dwelling) {
             const prev = this.drive.t;
-            const next = prev + (dt * this.drive.speed) / this.drive.periodS;
-            const hit = POIS.findIndex((p) => prev < p && next >= p);
+            const next = prev + (dt * this.drive.speed * Math.max(0.05, this.drive.vel)) / this.drive.periodS;
+            const hit = POIS.findIndex((q) => prev < q && next >= q);
             this.drive.t = next % 1;
             if (hit >= 0 && !this.reducedMotion) {
               this.drive.t = POIS[hit];
               this.drive.poi = hit + 1;
-              this.drive.dwellUntil = now + 2200 / this.drive.speed;
-              this.playPax("HeadTurn");
+              this.drive.vel = 0;
+              this.drive.dwellUntil = now + 2600 / this.drive.speed;
+              this.rover.scan(); // pausing at a point of interest: the mast head surveys, wheels still
               this.emitDrive(true);
             }
           }
-        }
-        this.placeRover();
+        } else this.drive.vel = 0;
+        travelled = this.placeRover();
         this.trackCamera(dt);
         this.emitDrive();
         if (now - this.lastShadow > 140) {
@@ -1123,6 +1124,7 @@ export class TerrainEngine {
           this.renderer.shadowMap.needsUpdate = true;
         }
       }
+      this.rover.update(this.reducedMotion ? 0 : dt, travelled / Math.max(1e-6, this.roverScale()));
       this.dirty = true;
     }
     this.stepTween(now);
@@ -1187,19 +1189,8 @@ export class TerrainEngine {
       this.pathLine.geometry.dispose();
       (this.pathLine.material as THREE.Material).dispose();
     }
-    if (this.pax) {
-      this.pax.mixer.stopAllAction();
-      this.pax.root.traverse((o) => {
-        const m = o as THREE.Mesh;
-        if (!m.isMesh) return;
-        m.geometry.dispose();
-        const mats = Array.isArray(m.material) ? m.material : [m.material];
-        for (const mat of mats) {
-          for (const v of Object.values(mat)) if (v instanceof THREE.Texture) v.dispose();
-          mat.dispose();
-        }
-      });
-    }
+    this.rover?.dispose();
+    this.rover = null;
     this.renderer.dispose();
     this.renderer.forceContextLoss();
     this.renderer.domElement.remove();

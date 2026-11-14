@@ -1,0 +1,30 @@
+{
+  "id": "mars_hirise_hero",
+  "file": "/data/terrain/mars_hirise_hero.bin",
+  "width": 989,
+  "height": 989,
+  "posting_m": 4.0433483121996,
+  "extent_m": [
+    3998.8714807654046,
+    3998.8714807654046
+  ],
+  "z_min_m": -1977.3993530273438,
+  "z_max_m": -1815.187484741211,
+  "encoding": "uint16 LE row-major (north row first); 0 = no data; z = z_min_m + (v-1)/65534*(z_max_m-z_min_m)",
+  "valid_fraction": 0.999738273690065,
+  "sha256": "9e44e58c469cf2b9e933ac28e194d1204bc79c925907bc147743ecde93a5113d",
+  "planet": "Mars",
+  "source_id": "DTEEC_009609_1675_010453_1675_A01",
+  "source_url": "https://hirise-pds.lpl.arizona.edu/PDS/DTM/PSP/ORB_009600_009699/PSP_009609_1675_PSP_010453_1675/DTEEC_009609_1675_010453_1675_A01.IMG",
+  "provider": "NASA Planetary Data System (HiRISE, MRO; University of Arizona)",
+  "crs": "Equirectangular, Mars local sphere R=3395582 m, standard parallel -10, central meridian 178.08 (from PDS label)",
+  "crop_origin_projected_m": [
+    -1129.1050161818396,
+    -748318.6455320491
+  ],
+  "vertical_datum": "Mars 2000 areoid (PDS label); heights stored relative to crop minimum",
+  "terrain_description": "Wind-eroded layered Medusae Fossae Formation deposits (HiRISE stereo DTM)",
+  "display_note": "1.01 m DTM posts area-averaged x4 for display",
+  "source_posting_m": 1.0108370780499,
+  "vertical_exaggeration_default": 2.0
+}

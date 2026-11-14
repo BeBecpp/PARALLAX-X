@@ -1,0 +1,82 @@
+{
+  "image": "/data/mola_locator.png",
+  "lon_min": 120.0,
+  "lon_max": 240.0,
+  "lat_min": -40.0,
+  "lat_max": 25.0,
+  "width": 960,
+  "height": 520,
+  "footprints": [
+    {
+      "id": "ctx",
+      "label": "CTX DTM scene (USGS)",
+      "kind": "ctx",
+      "polygon": [
+        [
+          177.7246,
+          -12.3121
+        ],
+        [
+          178.2342,
+          -12.3121
+        ],
+        [
+          178.2342,
+          -12.9283
+        ],
+        [
+          177.7246,
+          -12.9283
+        ]
+      ]
+    },
+    {
+      "id": "fingerprint",
+      "label": "Yardang fingerprint area",
+      "kind": "fingerprint",
+      "polygon": [
+        [
+          177.742,
+          -12.3671
+        ],
+        [
+          178.1952,
+          -12.3432
+        ],
+        [
+          178.1952,
+          -12.4761
+        ],
+        [
+          177.742,
+          -12.4829
+        ]
+      ]
+    },
+    {
+      "id": "hirise",
+      "label": "HiRISE DTM (NASA PDS)",
+      "kind": "hirise",
+      "polygon": [
+        [
+          178.02631384,
+          -12.480606186804
+        ],
+        [
+          178.13736988,
+          -12.480606186804
+        ],
+        [
+          178.13736988,
+          -12.70574135688
+        ],
+        [
+          178.02631384,
+          -12.70574135688
+        ]
+      ]
+    }
+  ],
+  "source": "MGS MOLA global DEM 463 m (NASA/GSFC; USGS Astrogeology mosaic), every 16th sample, shaded for display only",
+  "source_url": "https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif"
+}

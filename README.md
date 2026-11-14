@@ -1,10 +1,49 @@
-# PARALLAX X — Where on Earth does this Mars terrain live?
+<p align="center">
+  <img src="public/brand/parallax-x-wordmark.svg" alt="PARALLAX X" width="420" />
+</p>
 
-**NASA Space Apps Challenge 2026 · Ulaanbaatar · Challenge: "Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars"**
+<p align="center"><strong>An evidence-first Mars–Earth analog explorer that turns terrain measurements into transparent field-test questions.</strong></p>
 
-**Live app:** https://parallax-x-lyart.vercel.app · **Source:** https://github.com/BeBecpp/PARALLAX-X
+<p align="center">
+  NASA Space Apps Challenge 2026 · Ulaanbaatar · Challenge: “Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars”
+</p>
 
-PARALLAX X is a reproducible, evidence-first search for **Earth terrain that resembles a specific Martian landform**: the wind-carved yardangs of the Medusae Fossae Formation (MFF). You pick the Mars site, explore real NASA HiRISE elevation data in 3D, and compare it with Earth terrain at the same physical scale. Then you see **how far the evidence goes, and where it stops**.
+<p align="center">
+  <a href="https://parallax-x-lyart.vercel.app"><strong>▶ Open the live application</strong></a> ·
+  <a href="#expedition-lab">Explore Expedition Lab</a> ·
+  <a href="docs/METHOD.md">Method</a> ·
+  <a href="docs/LIMITATIONS.md">Limitations</a>
+</p>
+
+---
+
+<p align="center">
+  <a href="https://github.com/V01D-404/All-demo-and-loading/blob/main/sp-MA0PXF2Ej67IDvi0kpA.mp4">
+    <img src="public/media/films/brand-film-05-poster.jpg" alt="PARALLAX X brand film poster: the logo with the line 'Find the right Earth experiment for Mars'" width="720" />
+  </a>
+  <br />
+  <a href="https://github.com/V01D-404/All-demo-and-loading/blob/main/sp-MA0PXF2Ej67IDvi0kpA.mp4"><strong>Watch the brand film (22 s)</strong></a>
+  <br />
+  <sub>AI-generated concept brand film by team member Khuslen (V01D-404). It is not live app footage or a scientific simulation. The other four concept films are listed under <a href="#motion--concept-films">Motion &amp; concept films</a>.</sub>
+</p>
+
+## What is PARALLAX X?
+
+PARALLAX X asks three questions about one specific Martian landscape, the wind-carved yardangs of the **Medusae Fossae Formation**.
+
+| | Question | What the app does |
+|---|---|---|
+| **Where?** | Which Earth places resemble it? | A pre-registered fingerprint of five terrain-shape features from the **CTX yardang study area** is compared (Wasserstein-1) with **1,915 declared Earth windows**. The result is five **exploratory** candidate clusters in Mongolia's Gobi, G-1…G-5. |
+| **Why?** | What supports the resemblance, and where does it break down? | Matched-scale 3D (same 10 km, same 30 m grid), per-feature distances, the reference sites, and a pre-registered validation that **failed**. |
+| **What next?** | What would a rover field test have to measure? | **Expedition Lab** turns a candidate's evidence into a deterministic field-test protocol and marks every property that satellite data cannot provide as *not measured*. |
+
+<table>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/02-explore-rover-1920x1080.jpg" alt="HiRISE Mars terrain in 3D with the expedition rover" /><br /><sub><b>Mars, HiRISE scarp scene.</b> Measured stereo elevation in 3D. The rover is an illustrative visualization.</sub></td>
+    <td width="33%"><img src="docs/screenshots/05-compare-1920x1080.jpg" alt="Mars CTX yardang study area beside Gobi candidate G-1 at the same scale" /><br /><sub><b>Matched-scale comparison.</b> Mars CTX study area beside Gobi G-1: 10 km, 30 m grid, ×4 on both.</sub></td>
+    <td width="33%"><img src="docs/screenshots/15-expedition-lab-wheel-mobility-1920x1080.jpg" alt="Expedition Lab wheel-mobility protocol for candidate G-1" /><br /><sub><b>Expedition Lab.</b> A wheel-mobility protocol for G-1, with evidence classes and the unmeasured properties listed.</sub></td>
+  </tr>
+</table>
 
 ## The result, stated plainly
 
@@ -14,118 +53,128 @@ The study design, including the pass/fail rule, was **pre-registered and committ
 
 | Test (pre-registered) | Outcome |
 |---|---|
-| ≥ 2 of 3 published Earth yardang fields rank ≥ 90th percentile | **0 of 3**: Lut Kaluts 64.6, Qaidam 17.4, Puna 85.7 (median window percentile) |
-| Full 5-feature fingerprint beats a slope-only baseline | **No**: 55.9 vs 63.0 |
+| ≥ 2 of 3 published Earth yardang fields rank at or above the 90th percentile | **0 of 3**: Lut Kaluts 64.6, Qaidam 17.4, Puna 85.7 (median window percentile) |
+| The full 5-feature fingerprint beats a slope-only baseline | **No**: 55.9 vs 63.0 |
 | Yardang fields rank above process-different look-alikes | **No**: Namib linear dunes 85.1 rank higher; Kalpin thrust ridges 45.4 |
 
-- **Sensitivity:** the result is the same with 6 km windows (FAIL). An independent-DEM rerun with Copernicus GLO-30 is reported in the app's evidence drawer.
-- **What it means:** at the scale where 30 m public Earth elevation data can be compared fairly with Mars (slope baselines ≥ 150 m), this terrain-geometry fingerprint **cannot reliably separate yardangs from other terrain**, and it confuses them with linear dunes.
-- **A measured diagnostic, post-hoc and not used to change anything:** the MFF yardang ridges in the CTX DTM repeat every ~250–480 m. At the pre-registered 180 m baseline, a 250 m ridge keeps only ~26% of its slope signal.
-- **Scale effect on Mars itself:** on the 1 m HiRISE crop, **13.9%** of the area is steeper than 15° at a ~4 m baseline, but only **1.6%** at the 180 m baseline. Fine terrain disappears at 30 m.
+- **What it means.** At the scale where public 30 m Earth elevation can be compared fairly with Mars, this terrain-geometry fingerprint cannot reliably separate yardangs from other terrain.
+- **Sensitivity.** 6 km windows give the same result (FAIL). An independent-DEM check (Copernicus GLO-30) is reported in the app.
+- **The resolution paradox.** On the separate 1 m HiRISE crop, **13.9 %** of the area is steeper than 15° at a ~4 m baseline, but only **1.6 %** at 180 m. A place can look similar at one scale and behave very differently at another.
+- **Gobi candidates.** G-1…G-5 are **exploratory morphometric candidates**, not confirmed analogs. They need imagery, geology and field checks.
 
-**Gobi output.** The search still ranked windows in the Trans-Altai Gobi (Mongolia). The top five clusters (e.g. G-1 near 44.27°N, 97.59°E) are shown as **exploratory morphometric candidates**. Because validation failed, they carry **no** analog claim. They need imagery, geology and field checks.
+Our contribution: we built an analog-search method, tested it, showed where it fails, and turned the remaining uncertainty into explicit field-test questions.
 
-We think an honest failure is a useful contribution. It shows which questions public 30 m data **can** and **cannot** answer about Mars analogs, and what data would be needed: higher-resolution Earth DEMs and process-aware evidence.
+## Expedition Lab
 
-## Expedition Lab: from planetary evidence to field experiments
+In **Compare**, select a Gobi candidate, then press **Plan a field experiment**. In **Evidence → 3 · Where on Earth?**, press **Design a field test**.
 
-**Product thesis.** PARALLAX X is an evidence-first Mars–Earth analog explorer that turns terrain measurements into
-transparent field-test questions.
+- **The layout.**
+  - Left: the candidate and an experiment selector.
+  - Centre: the matched-scale 3D comparison stays on screen.
+  - Right: the protocol.
+- **The three experiments.**
+  - **Wheel mobility** (primary). It shows the candidate's measured slope, relief, roughness and land cover. It lists what is **not measured**: traction, soil bearing and shear strength, sinkage, wheel-scale rocks and mobility safety. It also gives the slip ratio *s = 1 − v/(r·ω)*, energy per metre and sinkage, instruments, a controlled procedure, repeated trials, data-quality checks and Earth→Mars limitations. Acceptance thresholds are **TO BE DEFINED** from real mission requirements.
+  - **Rock sampling & drilling**, and **Thermal & energy**. These are concise protocols. They do not infer drillability from topography and do not predict battery endurance.
+- **Evidence classes.** Every value is labelled one of:
+  - *Measured*
+  - *Derived*
+  - *Contextual*
+  - *Not measured*
+  - *Field verification required*
+- **Export.** Any plan can be copied or downloaded as Markdown. The protocols are proposals: **no field test has been performed**.
+- **The rover.** The traverse button shows the rover on the **separate HiRISE Mars scene**, labelled "Illustrative terrain-following visualization · not a validated mobility simulation". It never drives on a Gobi candidate.
+- **How plans are built.** Protocols come from [`lib/expedition.ts`](lib/expedition.ts) (deterministic, unit-tested) using [`public/data/results.json`](public/data/results.json) and [`public/data/fieldtest.json`](public/data/fieldtest.json).
 
-### The three questions
-- **Where?** The CTX yardang study area in Medusae Fossae drives the search. Its pre-registered fingerprint (F1–F5,
-  Wasserstein-1) ranks 1,915 declared Earth windows. The result is five *exploratory* Gobi candidates; none is a
-  confirmed analog.
-- **Why?** For each candidate, *Why investigate this location?* shows:
-  - which terrain-shape features are closest to Mars (measured);
-  - post-hoc roughness (derived) and land cover (contextual);
-  - everything that is still unknown.
-- **What next?** **Plan a field experiment** opens Expedition Lab with the candidate preserved. It generates a
-  deterministic protocol (`lib/expedition.ts`, unit-tested) for one of three experiments:
-  - **Wheel mobility** (the primary experiment);
-  - **Rock sampling & drilling**;
-  - **Thermal & energy**.
+## Science and data
 
-  Every value comes from `results.json` / `fieldtest.json`. Traction, sinkage, soil strength, rock type, drillability
-  and battery behaviour are shown as **Not measured** or **Field verification required**, and acceptance thresholds
-  are **TO BE DEFINED** from real mission requirements. A plan can be copied or downloaded as Markdown.
+- **Search region.** The CTX stereo DTM of the Medusae Fossae yardangs is the only Mars input to the ranking.
+- **Separate HiRISE scene.** The 1 m HiRISE scarp scene, about 10 km away, is a separate fine-scale demonstration: 3D exploration, the rover visualization and the resolution paradox. It did not produce the Earth matches.
+- **Pipeline.** Offline Python (rasterio, NumPy, SciPy):
+  1. NoData masking;
+  2. reprojection to a local 30 m metric grid;
+  3. identical smoothing on both planets;
+  4. five features: relief, slope at 180 m and 600 m, TPI, ridge elongation;
+  5. ECDF normalisation against the declared null;
+  6. 1-D Wasserstein distances;
+  7. percentiles among the 1,915 null windows.
 
-### Evidence classes
-Every value carries one of these labels:
-- **Measured:** computed from documented source data.
-- **Derived:** an explicit calculation based on measured inputs.
-- **Contextual:** from an external source, with its scale and limitations.
-- **Not measured:** no sufficient evidence.
-- **Field verification required:** an open scientific or engineering question.
+  No machine-learning model was trained.
+- **Post-hoc, descriptive only.** These two layers are logged in [`science/DEVIATIONS.md`](science/DEVIATIONS.md). Neither enters F1–F5, the ranking or the verdict.
+  - Local detrended RMS roughness: 330 m and 990 m cells on the same 30 m grid.
+  - ESA WorldCover 2021 v200 land-cover fractions inside the exact candidate footprints.
+- **Data sources.**
+  - NASA PDS HiRISE DTM `DTEEC_009609_1675_010453_1675_A01`
+  - USGS CTX DTM `P16_007460_…_13S182W`
+  - NASA NASADEM (LP DAAC)
+  - Copernicus GLO-30
+  - ESA WorldCover 2021 v200
+  - MGS MOLA
+  - Natural Earth
 
-### What is measured, and what is not
-The protocols are *proposals*. **No field test has been performed.** The rover traverse shown from the lab runs on the
-separate HiRISE Mars scene. It is labelled "Illustrative terrain-following visualization · not a validated mobility
-simulation", and it never drives on a Gobi candidate.
+  Full list and licences: [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
 
-### Post-hoc descriptive layers
-These come from `science/pipeline/fieldtest_posthoc.py` (logged in `science/DEVIATIONS.md`, Python tests in
-`science/tests/`):
-- **Local detrended RMS roughness:** the RMS of plane-fit residuals in 330 m and 990 m cells on the common 30 m grid.
-- **ESA WorldCover 2021 v200 land-cover fractions:** computed inside the exact candidate footprints.
+Details: [`docs/METHOD.md`](docs/METHOD.md) · [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md) · [`science/prereg.md`](science/prereg.md).
 
-Neither layer enters F1–F5, the ranking or the FAILED decision.
+## In the app
 
-### The Resolution Paradox and the judge demo
-- **The Resolution Paradox** (Explore → left panel) shows the same HiRISE crop at its native posting and on the 30 m
-  grid: 13.9 % of the area is steeper than 15° at a 4 m baseline, against 1.6 % at 180 m.
-- **The judge demo** (Demo button or **J**) runs five acts in about 30 s: question → search → matched-scale evidence →
-  Expedition Lab → FAILED validation. It ends on "Similarity is not proof. Evidence comes first."
+- **Welcome intro.** Skippable, once per session, reduced-motion safe. It offers an optional **Watch the brand film** button.
+- **Select.** The real MOLA locator, true-size data footprints and coverage legend, with two real scenes.
+- **Explore and Simulate.** HiRISE terrain in 3D, the illustrative rover on a hand-drawn loop with a linked terrain profile, and the Resolution Paradox.
+- **Compare.** Mars and Earth at matched scale, with live transects, the ranking and **Plan a field experiment**.
+- **Evidence.** The animated W1 math, the falsification reveal (FAIL), and a candidate dossier.
+- **Research analyst.** Rule-based templates over `results.json`. It is not an AI model.
+- **Judge demo.** Press the **Demo** button or **J**. It runs five acts in about 30 s, and Esc skips it.
+- **Films & concepts.** The team's AI-generated concept films. Nothing autoplays, and video is streamed only when you press play.
 
-## What you can do in the app
-0. **Welcome intro:** a skippable branded opening. The orbital-X logo assembles, then a welcome line, then the rover over the real HiRISE hillshade, then the destination selector. It plays once per session and respects reduced motion. Every logo instance is generated from one vector source, `lib/brand.ts`.
-1. **Select:** a Mars region navigator on the real MOLA map. The exact data footprints are drawn at true size; click anywhere to check coverage ("Not yet available" outside the published study area). Choose one of two real scenes: **HiRISE Scarp Explorer** (fine-scale 3D showcase) or **CTX Yardang Study** (the area used in the Mars–Earth ranking).
-2. **Arrive:** a camera descent from the locator onto the terrain.
-3. **Explore:** HiRISE (NASA PDS) terrain in interactive 3D under a low sun, with the expedition rover parked on the measured surface. It raises its mast using the source model's own rigged clip. Toggle between a cinematic view (illustrative haze, labelled) and a survey view with the exact data-footprint outline. A HI/LO performance mode covers integrated GPUs.
-4. **Simulate:** a realistic six-wheel rover follows a hand-drawn loop over the HiRISE mesh. The 3D model is NASA/JPL-Caltech's Perseverance, with the insignia removed; see [docs/ROVER_MODEL.md](docs/ROVER_MODEL.md). Each wheel spins from the distance travelled, the throttle eases into points of interest, and the mast camera surveys at each stop. Controls: play, pause, replay, stop, skip to point of interest, scrub the timeline (the linked terrain profile follows), 0.5×/1×/2× time-lapse, follow / close-up / orbit cameras. It is a visualization, not mobility physics.
-5. **Compare:** Mars and Earth at the same 10 km extent, the same 30 m grid, identical processing and the same declared vertical exaggeration. Includes Gobi candidates, published yardang controls and process-different controls, with live transects and a ranking from `results.json`.
-6. **Evidence:** a question-led journey (what we measured → how we compared fairly → where on Earth → does it work → sources and next steps). It includes **Watch the math**, an animated chart of the exact ECDF-normalised quantile curves behind each W1 (re-computed and checked equal to the stored run).
-7. **Research analyst:** rule-based answers built from `results.json` with the fields cited. Not an AI model.
-8. **Guided demo:** one click runs a deterministic 30-second walkthrough (Select → rover → Compare → FAILED validation → takeaway). Esc skips it.
-9. **Sound:** synthesized in the browser, off until you enable it (M toggles). See [`docs/AUDIO_CREDITS.md`](docs/AUDIO_CREDITS.md).
+Screenshots of the production site at 1920×1080, 1440×900, 1366×768 and 390×844 are in [`docs/screenshots/`](docs/screenshots/).
 
-Every number is read from [`public/data/results.json`](public/data/results.json).
+## Motion & concept films
 
-**Screenshots** (real production captures at 1920×1080, 1440×900, 1366×768 and 390×844): [`docs/screenshots/`](docs/screenshots/).
-**Recordings** (real-time browser screencasts of the production site, animated WebP; the frame rate is limited by the capture machine's integrated GPU): [guided demo](docs/demo/parallax-x-guided-demo.webp), [welcome intro](docs/demo/welcome-intro.webp), [rover simulation](docs/demo/rover-simulation.webp).
+These are five AI-generated concept films by **Khuslen (V01D-404)**. The originals are in [V01D-404/All-demo-and-loading](https://github.com/V01D-404/All-demo-and-loading). They are creative media, not product footage and not scientific simulation. Full credits and rights status: [`docs/VISUAL_ASSETS.md`](docs/VISUAL_ASSETS.md).
 
-## How it works (no AI training)
-Offline Python (GDAL/rasterio, NumPy, SciPy) runs the full chain:
-- masks NoData and reprojects each DEM to a local metric grid (30 m);
-- applies an identical smoothing to both planets;
-- computes five terrain features (relief, slope at 180 m and 600 m, topographic position, ridge elongation);
-- measures the 1-D Wasserstein distance to the Mars fingerprint and ranks against a declared null.
-
-The web app is a static Next.js site with three.js rendering in the browser. No server, no database, no live AI calls. Details: [`docs/METHOD.md`](docs/METHOD.md).
-
-## Data
-- **NASA PDS** HiRISE DTM `DTEEC_009609_1675_010453_1675_A01` (NASA Resources-tab source).
-- **USGS** CTX DTM `P16_007460_…_13S182W`.
-- **NASA NASADEM** (LP DAAC product, retrieved from the Microsoft Planetary Computer mirror).
-- **Copernicus GLO-30** (ESA).
-- **MOLA** (context map).
-- **Natural Earth**.
-
-Full list with licences: [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
-
-## Honesty notes
-- [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md): geometry ≠ geology; percentiles are not probabilities; no rover trafficability.
-- [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md): related 2026 projects. We are not the first to match Earth and Mars terrain.
-- [`docs/AI_USAGE.md`](docs/AI_USAGE.md): AI (Claude) assisted research, simulated critique and code. No AI model was trained, and no AI-generated imagery is used in the app.
-- [`science/DEVIATIONS.md`](science/DEVIATIONS.md): protocol changes, each logged before results were viewed.
-
-Not affiliated with or endorsed by NASA.
+| Film | Role | Length | Where it is used |
+|---|---|---|---|
+| [05 · Brand film](https://github.com/V01D-404/All-demo-and-loading/blob/main/sp-MA0PXF2Ej67IDvi0kpA.mp4) | Brand identity | 22 s | Top of this README; *Watch the brand film* in the intro, the Select header and the About dialog |
+| [01 · Mission concept](https://github.com/V01D-404/All-demo-and-loading/blob/main/9pI2U-Trq3OJg750Em2SOA.mp4) | AI storyboard (video and voice) | 29 s | Films & concepts gallery |
+| [02 · Boot sequence concept](https://github.com/V01D-404/All-demo-and-loading/blob/main/BhQdikMpZvAtfHuSe7zAGA.mp4) | Motion reference | 17 s | Films & concepts gallery. It is not used as a loading screen. |
+| [04 · Expedition Lab interface concept](https://github.com/V01D-404/All-demo-and-loading/blob/main/XMBeQxLFT_O4OuPIsVrD5w.mp4) | Early interface concept | 28 s | Films & concepts gallery. It is labelled as not the implemented workflow (it shows Jezero, C1–C3 and rover slope limits). |
+| [03 · Character study](https://github.com/V01D-404/All-demo-and-loading/blob/main/QxKAs5cM7ujcN5VVWQ8ycg.mp4) | Early motion exploration | 12.5 s | Films & concepts gallery |
 
 ## Run locally
+
 ```bash
 npm install
-npm run dev          # http://localhost:3000
-npm run build        # static export to out/
-science/.venv/Scripts/python -m pytest science/tests -q   # science tests (needs downloaded data for 3 of them)
+npm run dev            # http://localhost:3000
+npm run typecheck && npm run lint && npm test
+npm run build          # static export to out/
+science/.venv/Scripts/python -m pytest science/tests -q   # needs the downloaded science data
 ```
-Reproducing the science: see [`docs/METHOD.md`](docs/METHOD.md#reproduce).
+
+Reproducing the science: [`docs/METHOD.md`](docs/METHOD.md#reproduce).
+
+## Verification
+
+These checks were run for the current release:
+- the TypeScript typecheck;
+- ESLint;
+- the Vitest suite. It covers the brand-file integrity, the Expedition Lab dossiers (no fabricated values, exact source values) and the pre-registered invariants: 1,915 windows and FAIL with 64.6 / 17.4 / 85.7 / 85.1 / 45.4 and 55.9 vs 63.0;
+- the Python science tests, including numerical tests of the roughness calculation;
+- the production build.
+
+Browser checks were done on the deployed site. Known limitations are listed in [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md).
+
+## Credits, AI use and licences
+
+- **Team.** PARALLAX X, NASA Space Apps 2026, Ulaanbaatar.
+  - Repository owner: BeBecpp.
+  - Concept films: Khuslen (V01D-404).
+- **AI assistance** ([`docs/AI_USAGE.md`](docs/AI_USAGE.md)):
+  - **Claude Code** (Anthropic) generated most of the code, the pipeline, tests and documentation under the team's direction.
+  - **ChatGPT** (OpenAI) was used to a smaller extent for research discussion and concept refinement.
+  - The concept films are AI-generated.
+  - **The deployed site makes no AI or LLM API calls.**
+- **Rover model.** NASA/JPL-Caltech *Mars 2020 Perseverance* (NASA 3D Resources), with the insignia removed. See [`docs/ROVER_MODEL.md`](docs/ROVER_MODEL.md).
+- **Third-party data, assets and dependencies.** See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). Audio credits: [`docs/AUDIO_CREDITS.md`](docs/AUDIO_CREDITS.md). Prior art: [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md).
+- **Licence.** The open-source licence for the team's original code is **pending team approval**, so no `LICENSE` file is included yet. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md#licence-status). Data, the rover model and the concept films keep their own terms.
+
+Not affiliated with or endorsed by NASA.

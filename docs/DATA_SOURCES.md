@@ -9,6 +9,7 @@ All data are public. The machine-readable manifest is in [`public/data/sources.j
 | **NASADEM** | NASADEM_HGT v001, 43 1° tiles (doi:10.5067/MEaSUREs/NASADEM/NASADEM_HGT.001) | NASA JPL / LP DAAC. **Retrieved from the Microsoft Planetary Computer mirror** (`nasadem` collection), not via an Earthdata login | 1″ (~30 m) | All Earth windows (primary run) | NASADEM is an LP DAAC product discoverable in **Earthdata Search**; this copy came from a mirror |
 | **Copernicus GLO-30** | Same 43 tiles | ESA Copernicus DEM, AWS open data `copernicus-dem-30m` (© DLR e.V. 2010–2014 and © Airbus Defence and Space GmbH 2014–2018, provided under COPERNICUS by the EU and ESA) | 1″ (~30 m) | Independent-DEM sensitivity check | ESA Copernicus (partner resource) |
 | **MOLA** | `Mars_MGS_MOLA_DEM_mosaic_global_463m` ([USGS](https://planetarymaps.usgs.gov/mosaic/Mars_MGS_MOLA_DEM_mosaic_global_463m.tif)) | MGS MOLA (NASA/GSFC), USGS Astrogeology mosaic | 463 m | Location-selection map only | MOLA data are archived in PDS |
+| **ESA WorldCover 2021 v200** | 10 m land-cover map, tiles N42E096 / N42E099 / N45E096 (COG, `esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/`) | ESA WorldCover consortium, Zanaga et al. 2022, doi:10.5281/zenodo.7254221; **CC BY 4.0**; © ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) | 10 m | **Post-hoc context only:** land-cover fractions inside the candidate footprints (`public/data/fieldtest.json`). Global overall accuracy 76.7 % ± 0.5. Not soil or rock type | ESA (partner resource) |
 | **Natural Earth** | `ne_50m_admin_0_countries` | Natural Earth (public domain) | — | Clip the Gobi search box to Mongolia | — |
 
 ## Literature used to place reference areas
@@ -21,3 +22,10 @@ All data are public. The machine-readable manifest is in [`public/data/sources.j
 - Kirk, R. L. et al. (2021). *Remote Sensing* 13(17):3511. Effective resolution of stereo DTMs.
 - Kreslavsky, M. A. & Head, J. W. (2000). *JGR* 105(E11):26695. doi:10.1029/2000JE001259.
 - NASA Mars Fact Sheet: https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html
+
+## Other assets (not data)
+- **Rover 3D model.** NASA/JPL-Caltech "Mars 2020 Perseverance Rover" from NASA 3D Resources, modified (insignia
+  removed). See [`ROVER_MODEL.md`](ROVER_MODEL.md).
+- **Concept films.** By Khuslen (V01D-404). See [`VISUAL_ASSETS.md`](VISUAL_ASSETS.md). They are AI-generated
+  creative media, not data.
+

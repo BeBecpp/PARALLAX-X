@@ -391,6 +391,7 @@ export function SelectView({
   onOpenAbout,
   busy = false,
   defer3D = false,
+  onOpenFilms,
 }: {
   locator: Loadable<Locator>;
   sources: Loadable<SourceRecord[]>;
@@ -401,6 +402,8 @@ export function SelectView({
   busy?: boolean;
   /** Hold the 3D rover preview until the welcome intro has finished. */
   defer3D?: boolean;
+  /** open the Films & concepts gallery (brand film first) */
+  onOpenFilms?: () => void;
 }) {
   const reduced = useReducedMotion();
   const [hover, setHover] = useState<string | null>(null);
@@ -454,6 +457,13 @@ export function SelectView({
         </ol>
         <div className="ml-auto flex items-center gap-2 lg:ml-0">
           <SoundControl />
+          {onOpenFilms ? (
+            <button type="button" onClick={onOpenFilms} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-[10px] border border-hairline px-3 text-[13px] font-semibold text-ink/90 hover:border-copper" title="AI-generated concept films by the team (optional)">
+              <svg viewBox="0 0 24 24" className="h-4 w-4 text-copper-light" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8a1 1 0 001.52.85l10.2-6.4a1 1 0 000-1.7L9.52 4.75A1 1 0 008 5.6z" /></svg>
+              <span className="hidden sm:inline">Brand film</span>
+              <span className="sm:hidden">Films</span>
+            </button>
+          ) : null}
           <button type="button" onClick={onOpenAbout} className="min-h-[40px] px-2 text-[13px] text-muted hover:text-ink">
             Methods
           </button>

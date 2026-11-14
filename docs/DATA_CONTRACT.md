@@ -68,3 +68,19 @@ A real MOLA shaded-relief crop in equirectangular projection. `locator.json` giv
   footprints: { id: string; label: string; kind: "fingerprint" | "hirise" | "ctx"; polygon: [number, number][] }[];
   source: string }
 ```
+
+## `public/data/fieldtest.json` (post-hoc, descriptive)
+- **Producer.** `science/pipeline/fieldtest_posthoc.py`. The run is logged in `science/DEVIATIONS.md`.
+- **What it never feeds.** Any rank or the decision.
+- **Fields:**
+  - `status`: always declares "POST-HOC DESCRIPTIVE".
+  - `roughness`:
+    - the definition, units (m), grid (30 m), neighbourhoods (330 / 990 m), edge handling and limitations;
+    - `scenes[compare_scene_id]` and `candidate_clusters[G-n]`, each `{ "330m" | "990m": { n, median_m, p90_m } }`.
+  - `worldcover`:
+    - the product, year, licence, attribution, citation, accuracy, legend, method and caveat;
+    - `candidates[G-n] = { compare_scene_id, footprint { n_windows, area_km2, bbox, windows[] }, cluster { tiles, fractions, nodata_fraction }, best_window { id, tiles, fractions, nodata_fraction } }`.
+
+Consumers: the Expedition Lab (`lib/expedition.ts`) and the "Why investigate this location?" dossier. If the file is
+missing, the lab still works and simply omits the derived and contextual rows.
+

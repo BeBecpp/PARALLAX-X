@@ -34,3 +34,11 @@ The rover motor loop is not a recording of any real rover.
 - Mixkit / Freesound packs: not needed, so no third-party license applies.
 - NASA Perseverance SuperCam Mars audio: not included. If it is ever added, it must be labelled as archival audio recorded by
   Perseverance in Jezero crater, not at Medusae Fossae, with NASA media-usage credit.
+
+## Concept films
+- **Their audio.** The team's AI-generated concept films (see `VISUAL_ASSETS.md`) carry their own audio, including an
+  AI voice in Film 01.
+- **How it plays.** That audio plays only when a visitor presses play in the Films & concepts gallery. It is streamed
+  from the creator's repository and not stored here.
+- **Rights.** Its sources and licences are still to be confirmed.
+

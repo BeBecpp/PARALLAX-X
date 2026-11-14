@@ -45,7 +45,7 @@ export function useIntroGate(): [IntroState, () => void] {
   return [state, finish];
 }
 
-export function WelcomeIntro({ state, onDone }: { state: IntroState; onDone: () => void }) {
+export function WelcomeIntro({ state, onDone, onBrandFilm }: { state: IntroState; onDone: () => void; onBrandFilm?: () => void }) {
   const [phase, setPhase] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const [roverReady, setRoverReady] = useState(false);
@@ -160,6 +160,19 @@ export function WelcomeIntro({ state, onDone }: { state: IntroState; onDone: () 
           >
             Skip intro <kbd className="num rounded border border-hairline px-1.5 text-[11px] text-muted">Esc</kbd>
           </button>
+          {onBrandFilm ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                finish();
+                onBrandFilm();
+              }}
+              className="absolute right-5 top-[64px] z-10 inline-flex min-h-[36px] items-center gap-2 rounded-[10px] border border-hairline bg-bg/50 px-3 text-[12px] font-semibold text-ink/80 backdrop-blur hover:border-copper hover:text-ink"
+            >
+              Watch the brand film <span className="text-[11px] font-normal text-muted">AI concept · 22 s</span>
+            </button>
+          ) : null}
           <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[2px] bg-hairline/40">
             <div className="intro-progress h-full bg-copper/80" style={{ animationDuration: `${TIMELINE[3]}ms` }} />
           </div>

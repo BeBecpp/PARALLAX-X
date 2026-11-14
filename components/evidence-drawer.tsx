@@ -16,8 +16,8 @@ const TABS: { id: EvidenceTab; label: string }[] = [
   { id: "ai", label: "AI use" },
 ];
 
-export const AI_USE_TEXT =
-  "AI assistance (Anthropic Claude) was used for research synthesis, simulated advisory critique, and code generation; all rankings are deterministic computations on public elevation data; no AI model was trained; no AI-generated imagery is used in the app.";
+import { AI_USE_TEXT } from "@/lib/ai-disclosure";
+export { AI_USE_TEXT };
 
 const PIPELINE = [
   ["Source", "Public terrain models: HiRISE / CTX stereo DTMs (Mars), NASADEM (Earth)."],

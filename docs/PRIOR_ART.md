@@ -13,6 +13,18 @@ These are public projects and resources we inspected on 2026-11-14 for the same 
 | Kreslavsky & Head 2000, *JGR* 105(E11):26695, doi:10.1029/2000JE001259 | Kilometre-scale roughness and differential slope on Mars | The concept behind our baseline-explicit slopes. Our F2/F3 are central-difference gradient magnitudes, **not** their exact estimator |
 | Foucher et al. 2021, *PSS* 197:105162, doi:10.1016/j.pss.2021.105162 | "Functional analogs": suitability depends on the objective | Basis for our scale lens |
 
+### Other 2026 projects reviewed for positioning
+We reviewed these only for positioning. No code, data contracts, branding or scoring methods were reused.
+
+| Project | Note |
+|---|---|
+| **Nazeer** (omarmohamed456), https://github.com/omarmohamed456/Nazeer | Broad geology-class matching |
+| **Analog Atlas** (itsak7m), https://github.com/itsak7m/analog-atlas | Listed above |
+| **AnalogAtlas** (FionaL7), https://github.com/FionaL7/AnalogAtlas | Reviewed for positioning |
+| **terra-nova** (Yakiyo), https://github.com/Yakiyo/terra-nova | Reviewed for positioning |
+
+We do not claim to be the first team to match planetary analogs, use 3D terrain or suggest field experiments.
+
 ## What we think is distinctive
 
 This is a combination, not a single new invention:
@@ -22,3 +34,5 @@ This is a combination, not a single new invention:
 4. Mars and Earth 3D shown at the same scale and resolution, and an explicit **scale-evaluability** lens.
 
 Among the public 2026 repositories we inspected, none combined all four. That is a statement about what we inspected, not a novelty claim.
+
+The newer addition, deterministic field-test protocols with explicit "not measured" states (Expedition Lab), is also a combination of known practices, not an invention claim.

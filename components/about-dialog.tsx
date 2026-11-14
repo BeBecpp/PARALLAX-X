@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { AboutText, Credits, REPO_URL } from "./site-footer";
 import { AI_USE_TEXT } from "./evidence-drawer";
 
-export function AboutDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function AboutDialog({ open, onClose, onOpenFilms }: { open: boolean; onClose: () => void; onOpenFilms?: () => void }) {
   const ref = useRef<HTMLButtonElement>(null);
   const closeRef = useRef(onClose);
   useEffect(() => {
@@ -51,6 +51,11 @@ export function AboutDialog({ open, onClose }: { open: boolean; onClose: () => v
         </div>
         <h3 className="mt-6 text-[15px] font-medium">AI use</h3>
         <p className="mt-2 text-[14px] text-muted">{AI_USE_TEXT}</p>
+        {onOpenFilms ? (
+          <button type="button" onClick={onOpenFilms} className="mt-3 min-h-[40px] rounded-[8px] border border-hairline px-3 text-[14px] text-ink hover:border-copper">
+            Films &amp; concepts (AI-generated, by Khuslen) →
+          </button>
+        ) : null}
         <p className="mt-6 text-[14px] text-muted">
           Code:{" "}
           <a className="text-ink underline decoration-hairline underline-offset-4 hover:decoration-copper" href={REPO_URL} target="_blank" rel="noreferrer">

@@ -44,6 +44,28 @@ Where on Earth, within declared search areas, does terrain *geometry* most resem
 
 Run them with: `science/.venv/Scripts/python -m pytest science/tests -q`.
 
+## Post-hoc field-test context (descriptive; not part of the pre-registered study)
+- **Roughness.** On the same 30 m grid with the same σ = 1 px low-pass:
+  - local detrended RMS roughness = sqrt(mean((z − z_plane)²)), where z_plane is a least-squares plane fitted in each
+    non-overlapping 11×11 (330 m) or 33×33 (990 m) cell neighbourhood;
+  - only complete neighbourhoods with ≥ 90 % valid cells are used;
+  - the window statistic is the median and the 90th percentile.
+- **Land cover.** ESA WorldCover 2021 v200 fractions:
+  - area-weighted (cos latitude) over pixels whose centres fall inside the union of each candidate cluster's 10 km
+    windows;
+  - the clusters are rebuilt from `science/out/search_primary.json`, and the script asserts they equal G-1…G-5.
+- **Where it runs.** Script: `science/pipeline/fieldtest_posthoc.py`. Tests: `science/tests/test_roughness.py`.
+- **What it cannot change.** These layers cannot change F1–F5, the null set, the percentiles, the ranking or the FAIL
+  decision.
+
+## Expedition Lab (field-test planning)
+- **How plans are built.** `lib/expedition.ts` builds deterministic protocols (wheel mobility, sampling & drilling,
+  thermal & energy) from `results.json` and `fieldtest.json`.
+- **Evidence classes.** Measured, derived, contextual, not measured, and field verification required.
+- **Thresholds.** Acceptance thresholds are "TO BE DEFINED" until real mission requirements exist.
+- **Tests.** `tests/expedition.test.ts`.
+- **Status.** These are proposals; no field test has been performed.
+
 ## Reproduce
 ```
 python -m venv science/.venv && science/.venv/Scripts/pip install numpy scipy rasterio pyproj shapely pillow requests pytest
@@ -54,4 +76,6 @@ science/.venv/Scripts/python science/pipeline/search.py --window-px 333 --tag pr
 science/.venv/Scripts/python science/pipeline/search.py --window-px 200 --tag sens6km
 science/.venv/Scripts/python science/pipeline/locator.py
 science/.venv/Scripts/python science/pipeline/export_results.py
+science/.venv/Scripts/python science/pipeline/export_w1_curves.py   # post-hoc visualisation data
+science/.venv/Scripts/python science/pipeline/fieldtest_posthoc.py  # post-hoc roughness + WorldCover (network: ESA COG)
 ```

@@ -1,7 +1,7 @@
 # Expedition rover model: source, licence, modifications
 
 PARALLAX X shows one realistic six-wheel rover in the Select stage, the intro and the terrain demonstration. It
-replaces the earlier cartoon mascot (PAX).
+replaces the earlier cartoon mascot (PAX), which now appears only in the team's AI-generated concept films (see `VISUAL_ASSETS.md`).
 
 ## Source
 

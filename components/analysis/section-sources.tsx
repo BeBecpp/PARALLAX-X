@@ -3,8 +3,8 @@
 import type { SourceRecord } from "@/lib/types";
 import { Card, ExtLink, SectionHeader, SubHeader } from "./primitives";
 
-export const AI_USE_STATEMENT =
-  "AI assistance (Anthropic Claude) was used for research synthesis, simulated advisory critique, and code generation; rankings are deterministic computations on public elevation data; no AI model was trained; no AI-generated imagery is used in the app.";
+import { AI_USE_TEXT as AI_USE_STATEMENT_ } from "@/lib/ai-disclosure";
+export const AI_USE_STATEMENT = AI_USE_STATEMENT_;
 
 export function SourcesSection({ sources }: { sources: SourceRecord[] | null }) {
   return (

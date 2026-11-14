@@ -1,0 +1,3 @@
+/** Single source for the in-app AI disclosure (kept consistent with docs/AI_USAGE.md). */
+export const AI_USE_TEXT =
+  "Built with AI assistance: Claude Code (Anthropic) generated most of the code, science pipeline, tests and documentation under the team's direction; ChatGPT (OpenAI) was used to a smaller extent for research discussion and concept refinement. The live site makes no AI or LLM API calls: rankings are deterministic computations on cited NASA/USGS data, no model was trained, and the Expedition Lab and research analyst are fixed templates. The optional Films & concepts gallery holds AI-generated concept films by team member Khuslen (V01D-404), labelled as such; every terrain view is rendered from real elevation data.";

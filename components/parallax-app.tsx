@@ -14,6 +14,7 @@ import { AboutDialog } from "./about-dialog";
 import { BrandLogo } from "./brand";
 import { SiteFooter } from "./site-footer";
 import { WelcomeIntro, useIntroGate } from "./welcome-intro";
+import { FilmGallery } from "./film-gallery";
 
 const HERO_ID = "mars_hirise_hero";
 type Stage = "select" | "loading" | "explore" | "static";
@@ -38,6 +39,7 @@ export function ParallaxApp() {
   const run = useRef(0);
   const [entry, setEntry] = useState<{ scene: SceneChoice; demo: boolean; n: number }>({ scene: "hirise", demo: false, n: 0 });
   const [intro, finishIntro] = useIntroGate();
+  const [films, setFilms] = useState<string | null>(null);
 
   useEffect(() => {
     loadLocator().then(setLocator);
@@ -141,6 +143,7 @@ export function ParallaxApp() {
           onOpenAbout={() => setAboutOpen(true)}
           busy={stage === "loading"}
           defer3D={intro !== "done"}
+          onOpenFilms={() => setFilms("brand")}
         />
       ) : null}
       {stage === "loading" && (showSteps || loadError || retrying) ? (
@@ -193,8 +196,9 @@ export function ParallaxApp() {
           <SiteFooter onOpenAbout={() => setAboutOpen(true)} />
         </div>
       ) : null}
-      <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />
-      <WelcomeIntro state={intro} onDone={finishIntro} />
+      <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} onOpenFilms={() => { setAboutOpen(false); setFilms("brand"); }} />
+      <WelcomeIntro state={intro} onDone={finishIntro} onBrandFilm={() => setFilms("brand")} />
+      <FilmGallery open={films !== null} initial={films ?? "brand"} onClose={() => setFilms(null)} />
     </>
   );
 }

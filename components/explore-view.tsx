@@ -192,6 +192,7 @@ export function ExploreView({
   const fieldtest = fieldtestL.status === "ready" ? fieldtestL.data : null;
   const demoTimers = useRef<number[]>([]);
   const runDemoRef = useRef<() => void>(() => {});
+  const demoEpoch = useRef(0);
   const engine = useRef<TerrainEngine | null>(null);
   const getEngine = useCallback(() => engine.current, []);
 
@@ -412,6 +413,7 @@ export function ExploreView({
   const stopDemo = useCallback(() => {
     demoTimers.current.forEach((t) => window.clearTimeout(t));
     demoTimers.current = [];
+    demoEpoch.current++; // invalidates pending rover-ready callbacks of a stopped demo
     setCaption(null);
   }, []);
 
@@ -507,7 +509,9 @@ export function ExploreView({
     const topScene = top ? r.compare_scenes.find((s) => s.id === top.compare_scene_id) : undefined;
     const closest = topScene?.per_feature_w1 ? Object.entries(topScene.per_feature_w1).sort((a, b) => a[1] - b[1]).slice(0, 2).map(([k]) => r.features.find((f) => f.id === k)?.name.toLowerCase()) : [];
     setLab(null);
-    void ensureRover(); // decode the rover now so it is ready for act 4
+    const epoch = demoEpoch.current;
+    const t0 = performance.now();
+    const roverReady = ensureRover(); // decode the rover now so it is ready for act 4
     cap(1, "Where on Earth should we test ideas inspired by Martian terrain?", "Mars · Medusae Fossae Formation: wind-carved terrain. Shown here: the HiRISE scarp scene, measured stereo elevation.");
     if (mode !== "explore") goExplore();
     engine.current?.descend();
@@ -521,7 +525,15 @@ export function ExploreView({
     T(starts[3], () => {
       cap(4, "The experiment · Expedition Lab", "A wheel-mobility field-test plan: traction, sinkage and soil strength are NOT MEASURED — the test exists to measure them. Rover: illustrative only.");
       if (top) void openLab(top.id, "mobility");
-      T(3200, () => void labRover());
+      // drive only once the model has really loaded, and only while act 4 is still on screen; otherwise the lab
+      // protocol stays in view and the caption already states the rover is illustrative
+      void roverReady.then((ok) => {
+        if (!ok || demoEpoch.current !== epoch) return;
+        const wait = Math.max(0, starts[3] + 2500 - (performance.now() - t0));
+        T(wait, () => {
+          if (demoEpoch.current === epoch && performance.now() - t0 < starts[4] - 1500) void labRover();
+        });
+      });
     });
     T(starts[4], () => {
       cap(5, `The result: pre-registered validation ${r.decision.pass ? "PASSED" : "FAILED"}`, `Known yardang sites ranked ${pos.map((x) => x.median_pct_full?.toFixed(1)).join(", ")} (bar ${thr}); full fingerprint ${(r.decision.mean_pos_full ?? NaN).toFixed(1)} vs slope-only ${(r.decision.mean_pos_b0 ?? NaN).toFixed(1)}. Steep area 13.9% at 4 m → 1.6% at 180 m.`);
@@ -659,7 +671,7 @@ export function ExploreView({
       </header>
 
       {/* ===== three-column workspace ===== */}
-      <div className="grid min-h-0 flex-1 gap-3 overflow-y-auto p-3 lg:grid-cols-[minmax(250px,19%)_minmax(0,1fr)_minmax(300px,24%)] lg:overflow-hidden">
+      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] gap-3 overflow-y-auto p-3 lg:grid-cols-[minmax(250px,19%)_minmax(0,1fr)_minmax(300px,24%)] lg:overflow-hidden">
         <div className="order-2 min-h-0 lg:order-1">
           {lab && r ? (
             <LabMissionPanel results={r} candidateId={lab.cand} experiment={lab.exp} onCandidate={labCandidate} onExperiment={(exp) => setLab((l) => (l ? { ...l, exp } : l))} onBack={() => { setLab(null); void goCompare(); }} />

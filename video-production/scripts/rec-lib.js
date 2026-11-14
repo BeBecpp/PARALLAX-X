@@ -3,9 +3,10 @@ const fs = require('fs'); const path = require('path');
 const INJECT = fs.readFileSync(path.join(__dirname, 'vt-inject.js'), 'utf8');
 const FPS = 30, DT = 1000 / FPS;
 class Rec {
-  async init() {
+  async init(o = {}) {
+    this.o = Object.assign({ w: 1920, h: 1080, dpr: 1 }, o);
     this.b = await chromium.launch({ args: ['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist','--disable-background-timer-throttling','--disable-renderer-backgrounding','--disable-smooth-scrolling'] });
-    this.ctx = await this.b.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
+    this.ctx = await this.b.newContext({ viewport: { width: this.o.w, height: this.o.h }, deviceScaleFactor: this.o.dpr });
     await this.ctx.addInitScript(() => { try { sessionStorage.setItem('parallax-x-intro-seen','1'); } catch(e){} });
     await this.ctx.addInitScript(INJECT);
     this.p = await this.ctx.newPage();
@@ -20,7 +21,8 @@ class Rec {
   async adv(ms = DT) { return this.p.evaluate((ms) => window.__vt.advance(ms), ms); }
   async frame() {
     await this.adv(DT);
-    const { data } = await this.cdp.send('Page.captureScreenshot', { format: 'jpeg', quality: 95, optimizeForSpeed: true });
+    const prm = { format: 'jpeg', quality: 95, optimizeForSpeed: true }; if (this.clip) prm.clip = Object.assign({ scale: this.o.dpr }, this.clip);
+    const { data } = await this.cdp.send('Page.captureScreenshot', prm);
     fs.writeFileSync(path.join(this.dir, String(this.n++).padStart(5, '0') + '.jpg'), Buffer.from(data, 'base64'));
   }
   async rec(n, each) { for (let i = 0; i < n; i++) { if (each) await each(i, n); await this.frame(); } }

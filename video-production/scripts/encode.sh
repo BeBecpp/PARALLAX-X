@@ -1,10 +1,10 @@
 #!/bin/bash
 set -eo pipefail
 cd "$(dirname "$0")/.."
-OUT=out/PARALLAX_X_SPACE_APPS_2026_DEMO_FINAL.mp4
-python3 scripts/compose.py timeline.json pipe | ffmpeg -v error -y \
+TLF=${1:-timeline.json}; OUT=${2:-out/PARALLAX_X_SPACE_APPS_2026_DEMO_FINAL.mp4}; AUD=${3:-out/PARALLAX_X_DEMO_AUDIO_MIX.wav}
+python3 scripts/compose.py "$TLF" pipe | ffmpeg -v error -y \
   -f rawvideo -pix_fmt rgb24 -s 1920x1080 -r 30 -i - \
-  -i out/PARALLAX_X_DEMO_AUDIO_MIX.wav \
+  -i "$AUD" \
   -map 0:v -map 1:a \
   -c:v libx264 -preset slow -crf 15 -profile:v high -level 4.1 -pix_fmt yuv420p -tune film \
   -x264-params "keyint=60:min-keyint=30" -r 30 \

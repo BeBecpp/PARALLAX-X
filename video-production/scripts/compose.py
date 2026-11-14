@@ -41,6 +41,11 @@ def seg_frame(seg, t):
     elif seg['type'] == 'card':
         im = endcard_bg()
     cx, cy, s = interp_kf(seg.get('zoom'), rel)
+    if seg.get('src_box'):
+        bx, by, bw, bh = seg['src_box']  # source-pixel 16:9 region that maps to the 1920x1080 frame
+        k = bw / W; cw, ch = W / s, H / s
+        x0 = min(max(0, cx - cw / 2), W - cw); y0 = min(max(0, cy - ch / 2), H - ch)
+        return im.resize((W, H), Image.LANCZOS, box=(bx + x0 * k, by + y0 * k, bx + (x0 + cw) * k, by + (y0 + ch) * k))
     if abs(s - 1) > 1e-4 or cx != 960 or cy != 540:
         cw, ch = W / s, H / s
         x0 = min(max(0, cx - cw / 2), W - cw); y0 = min(max(0, cy - ch / 2), H - ch)
@@ -93,6 +98,7 @@ def headline(base, ov, t):
     bw = max(tw, sw) + padx * 2 + 14; bh = pady * 2 + ov.get('size', 64) * 1.0 + (lh if t2 else 0) + (ov.get('subsize', 25) + 16 if ov.get('sub') else 0)
     x, y = ov['x'], ov['y']
     if ov.get('align') == 'center': x = x - bw / 2
+    elif ov.get('align') == 'right': x = x - bw
     dy = (1 - fi) * 14
     y = y + dy
     glass(layer, (x, y, x + bw, y + bh), alpha=ov.get('alpha', 0.58))

@@ -2,7 +2,31 @@
 
 This folder is separate from the web app. Nothing in the app was changed.
 
-## Deliverables (`out/`)
+## V2: rover-first revision (current)
+
+| File | What it is |
+|---|---|
+| `PARALLAX_X_SPACE_APPS_2026_DEMO_V2_ROVER.mp4` | **V2 video**: 29.300 s, 1920×1080, 30 fps, H.264 + AAC, faststart. Rover-first, with 7.8 s of real-app rover footage. |
+| `PARALLAX_X_DEMO_V2_CAPTIONS.srt` | V2 English captions (also burned in) |
+| `PARALLAX_X_DEMO_V2_NARRATION_KOKORO.wav` | V2 raw Kokoro narration (`af_heart`), 24 kHz, unprocessed |
+| `PARALLAX_X_DEMO_V2_AUDIO_MIX.wav` | V2 master: 48 kHz / 24-bit, −14.6 LUFS, ≤ −1.3 dBTP after AAC |
+| `PARALLAX_X_DEMO_V2_EDIT_NOTES.md` | V2 shot list, rover capture method, audio, rebuild steps |
+| `PARALLAX_X_DEMO_V2_CREDITS_AND_AI_DISCLOSURE.md` | V2 credits, AI disclosure, science notes, suggested description |
+| `PARALLAX_X_DEMO_V2_FRAME_MONTAGE.jpg` | V2 frames, one per second |
+| `PARALLAX_X_DEMO_V1_vs_V2_MONTAGE.jpg` | V1 vs V2, every 2 s, side by side |
+
+To rebuild V2:
+
+```bash
+python3 scripts/make_timeline_v2.py
+.venv-tts/bin/python scripts/music_v2.py timeline_v2.json
+.venv-tts/bin/python scripts/mix_v2.py timeline_v2.json
+./scripts/encode_v2.sh
+```
+
+The rover footage is captured with `scripts/capture_rover.js`.
+
+## V1 deliverables (`out/`, kept for comparison)
 
 | File | What it is |
 |---|---|

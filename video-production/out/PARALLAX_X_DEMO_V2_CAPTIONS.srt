@@ -1,0 +1,40 @@
+1
+00:00:00,172 --> 00:00:02,076
+Where on Earth should we prepare for Mars?
+
+2
+00:00:02,116 --> 00:00:04,751
+PARALLAX X compares real Martian terrain
+
+3
+00:00:04,791 --> 00:00:07,155
+with 1,915 Earth windows,
+
+4
+00:00:07,195 --> 00:00:10,741
+highlighting five exploratory candidates in Mongolia's Gobi.
+
+5
+00:00:10,781 --> 00:00:12,133
+Now, meet the rover.
+
+6
+00:00:12,938 --> 00:00:15,163
+Explore high-resolution Martian terrain,
+
+7
+00:00:18,662 --> 00:00:22,310
+then open Expedition Lab to plan wheel-mobility field tests,
+
+8
+00:00:22,350 --> 00:00:24,468
+showing what scientists still need to measure.
+
+9
+00:00:25,221 --> 00:00:26,456
+PARALLAX X.
+
+10
+00:00:26,496 --> 00:00:28,713
+From Mars data, to real research.
+

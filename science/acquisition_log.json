@@ -1,0 +1,400 @@
+{
+  "source": "Microsoft Planetary Computer nasadem collection (mirror of NASA LP DAAC NASADEM_HGT v001); Natural Earth 1:50m admin-0",
+  "records": [
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n42e095.tif",
+      "file": "nasadem/nasadem_hgt_n42e095.tif",
+      "status": "downloaded",
+      "bytes": 10019545,
+      "sha256": "d75e774e0dd847e81e920d18927929fda3de41156f0e21d9f743deec4d23d2fd",
+      "retrieved_utc": "2026-11-14T03:17:19+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n42e096.tif",
+      "file": "nasadem/nasadem_hgt_n42e096.tif",
+      "status": "downloaded",
+      "bytes": 9546969,
+      "sha256": "0b54b8be3160f07fa6a39bb010f50494caf7372cb5d54849d75d9781a06d020c",
+      "retrieved_utc": "2026-11-14T03:17:17+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n42e097.tif",
+      "file": "nasadem/nasadem_hgt_n42e097.tif",
+      "status": "downloaded",
+      "bytes": 8761521,
+      "sha256": "97e6d497c2510f761a74ed8721c60c6b83c4dc9cd71f0d3a38986619f2659853",
+      "retrieved_utc": "2026-11-14T03:17:21+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n42e098.tif",
+      "file": "nasadem/nasadem_hgt_n42e098.tif",
+      "status": "downloaded",
+      "bytes": 9288282,
+      "sha256": "9fc03087e2cb37c3292b9f89c11500fd2e3f28b67064a9ba508583ccf64639e6",
+      "retrieved_utc": "2026-11-14T03:17:17+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n42e099.tif",
+      "file": "nasadem/nasadem_hgt_n42e099.tif",
+      "status": "downloaded",
+      "bytes": 9253201,
+      "sha256": "f224afee09bf2473afb9230f91133207b276942c678fd818b3d0a8deda34cecc",
+      "retrieved_utc": "2026-11-14T03:17:18+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n42e100.tif",
+      "file": "nasadem/nasadem_hgt_n42e100.tif",
+      "status": "downloaded",
+      "bytes": 6973435,
+      "sha256": "9aaef3b5642064def547d82dc4fc8db888f1981a1e9b03dba3fedad945291e99",
+      "retrieved_utc": "2026-11-14T03:17:26+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n43e095.tif",
+      "file": "nasadem/nasadem_hgt_n43e095.tif",
+      "status": "downloaded",
+      "bytes": 9463228,
+      "sha256": "cdd955887a4d99cfaff595aead709802806aef502404bfde3ebb0989eafd5cf4",
+      "retrieved_utc": "2026-11-14T03:17:25+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n43e096.tif",
+      "file": "nasadem/nasadem_hgt_n43e096.tif",
+      "status": "downloaded",
+      "bytes": 10059476,
+      "sha256": "c6c03a31bafe2ca2a2d8df5d2b0e75b274fe81c89434faa6175f8e66da488fcd",
+      "retrieved_utc": "2026-11-14T03:17:25+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n43e097.tif",
+      "file": "nasadem/nasadem_hgt_n43e097.tif",
+      "status": "downloaded",
+      "bytes": 9212171,
+      "sha256": "fce28f0c372387d6ccaad403c5e34dd01d40f026a4e2debacc00df2738ae74d4",
+      "retrieved_utc": "2026-11-14T03:17:26+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n43e098.tif",
+      "file": "nasadem/nasadem_hgt_n43e098.tif",
+      "status": "downloaded",
+      "bytes": 9699726,
+      "sha256": "b43725b2b7d8f54109a4a47b25495fe1ad1167e3fba6f2ab85c8a5232c5ec2c0",
+      "retrieved_utc": "2026-11-14T03:17:30+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n43e099.tif",
+      "file": "nasadem/nasadem_hgt_n43e099.tif",
+      "status": "downloaded",
+      "bytes": 8770958,
+      "sha256": "424d184ce99b3ec56086178c5b7beae986679024405563445297babfe892496f",
+      "retrieved_utc": "2026-11-14T03:17:29+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n43e100.tif",
+      "file": "nasadem/nasadem_hgt_n43e100.tif",
+      "status": "downloaded",
+      "bytes": 10372859,
+      "sha256": "8215e9d90396df4e25e3cb261c1afccb9cda0d77c3d1773c817424550d578c53",
+      "retrieved_utc": "2026-11-14T03:17:36+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n44e095.tif",
+      "file": "nasadem/nasadem_hgt_n44e095.tif",
+      "status": "downloaded",
+      "bytes": 11342859,
+      "sha256": "9883f8ea5aa9bc36a1f16e8e714b752042b7a01d59ce45b7ebf4bb8bea3bbf97",
+      "retrieved_utc": "2026-11-14T03:17:37+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n44e096.tif",
+      "file": "nasadem/nasadem_hgt_n44e096.tif",
+      "status": "downloaded",
+      "bytes": 9348101,
+      "sha256": "b06537ee7eb80d31ddf4ddf9cea4a9afc78fe0ab619fe9fe472506dcc7514bea",
+      "retrieved_utc": "2026-11-14T03:17:37+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n44e097.tif",
+      "file": "nasadem/nasadem_hgt_n44e097.tif",
+      "status": "downloaded",
+      "bytes": 10562303,
+      "sha256": "cd890bfe5409be820171eb85dfd0fc2fb15d1462d613752fdd77c7c83296e8cd",
+      "retrieved_utc": "2026-11-14T03:17:39+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n44e098.tif",
+      "file": "nasadem/nasadem_hgt_n44e098.tif",
+      "status": "downloaded",
+      "bytes": 10190258,
+      "sha256": "9ce55e4baf5958af5829bff3560e9bed617b1213e7297acd1ccd251dc15d64cd",
+      "retrieved_utc": "2026-11-14T03:17:41+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n44e099.tif",
+      "file": "nasadem/nasadem_hgt_n44e099.tif",
+      "status": "downloaded",
+      "bytes": 9613979,
+      "sha256": "b9b75744986b98033cb8c9537a48357e6e40f521dc7a293fc38c0924b3395a1c",
+      "retrieved_utc": "2026-11-14T03:17:41+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n44e100.tif",
+      "file": "nasadem/nasadem_hgt_n44e100.tif",
+      "status": "downloaded",
+      "bytes": 10638197,
+      "sha256": "058a9bad8e8f7f5c28b3a7d871c8a8511b6bc0ce4a256a630325dbb5f4464c64",
+      "retrieved_utc": "2026-11-14T03:17:52+00:00",
+      "group": "D1_gobi"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n29e057.tif",
+      "file": "nasadem/nasadem_hgt_n29e057.tif",
+      "status": "downloaded",
+      "bytes": 17500319,
+      "sha256": "b87504f4b9d04dad90dfe4ddf0c956fa7265699369e2af60b1208d0daa4a4dfc",
+      "retrieved_utc": "2026-11-14T03:17:58+00:00",
+      "group": "D2_lut"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n29e058.tif",
+      "file": "nasadem/nasadem_hgt_n29e058.tif",
+      "status": "downloaded",
+      "bytes": 11655312,
+      "sha256": "dbfcc3356b4e3e83712da6f7c488f03a1333d0b79b6cac198aa74df1228dd210",
+      "retrieved_utc": "2026-11-14T03:17:49+00:00",
+      "group": "D2_lut"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n29e059.tif",
+      "file": "nasadem/nasadem_hgt_n29e059.tif",
+      "status": "downloaded",
+      "bytes": 12984810,
+      "sha256": "7d5b4c5605957dc92a1c8262ae1ffe57454f87244b0db54ca3e0b3c9879fde90",
+      "retrieved_utc": "2026-11-14T03:17:57+00:00",
+      "group": "D2_lut"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n30e057.tif",
+      "file": "nasadem/nasadem_hgt_n30e057.tif",
+      "status": "downloaded",
+      "bytes": 15964373,
+      "sha256": "efab2c7bca1ddafc354d54d53d2286d595e5cc78f3eabe64b8db63d3bdd359a5",
+      "retrieved_utc": "2026-11-14T03:17:57+00:00",
+      "group": "D2_lut"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n30e058.tif",
+      "file": "nasadem/nasadem_hgt_n30e058.tif",
+      "status": "downloaded",
+      "bytes": 12195317,
+      "sha256": "cce0c2645d4df3ef21de259c47d034da779a4be997f53c451cca834d7e24e2a0",
+      "retrieved_utc": "2026-11-14T03:17:58+00:00",
+      "group": "D2_lut"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n30e059.tif",
+      "file": "nasadem/nasadem_hgt_n30e059.tif",
+      "status": "downloaded",
+      "bytes": 15190183,
+      "sha256": "f2da2aa81bd1fc8181254a958992602027c1ff4e63a211b76d77683a4733eb76",
+      "retrieved_utc": "2026-11-14T03:18:05+00:00",
+      "group": "D2_lut"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n31e057.tif",
+      "file": "nasadem/nasadem_hgt_n31e057.tif",
+      "status": "downloaded",
+      "bytes": 10683862,
+      "sha256": "a965a2f0fc544feeb633346389ad6022c3583bcad1ab1cfba3f23660da3b11ed",
+      "retrieved_utc": "2026-11-14T03:18:02+00:00",
+      "group": "D2_lut"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n31e058.tif",
+      "file": "nasadem/nasadem_hgt_n31e058.tif",
+      "status": "downloaded",
+      "bytes": 10168999,
+      "sha256": "2dd7ad96e8a65ca30a80d62e05812737c910dfa0960ca02ed98328433528c140",
+      "retrieved_utc": "2026-11-14T03:18:05+00:00",
+      "group": "D2_lut"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n31e059.tif",
+      "file": "nasadem/nasadem_hgt_n31e059.tif",
+      "status": "downloaded",
+      "bytes": 12604415,
+      "sha256": "e7bd28d24245db913ba0b299f38b1e88462f8f049e401011da6447dc0e8f9abb",
+      "retrieved_utc": "2026-11-14T03:18:12+00:00",
+      "group": "D2_lut"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n37e091.tif",
+      "file": "nasadem/nasadem_hgt_n37e091.tif",
+      "status": "downloaded",
+      "bytes": 14749731,
+      "sha256": "1ebb4f988344c875a6001f748dd8d4726f03e3436b23d01931b4c797bfa94f10",
+      "retrieved_utc": "2026-11-14T03:18:10+00:00",
+      "group": "P2_qaidam"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n37e092.tif",
+      "file": "nasadem/nasadem_hgt_n37e092.tif",
+      "status": "downloaded",
+      "bytes": 9389860,
+      "sha256": "c9e94e4a9f6a881f9888723d695b7ddbe9f0a7838923d1adbc03c56fea50044a",
+      "retrieved_utc": "2026-11-14T03:18:15+00:00",
+      "group": "P2_qaidam"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n37e093.tif",
+      "file": "nasadem/nasadem_hgt_n37e093.tif",
+      "status": "downloaded",
+      "bytes": 7279138,
+      "sha256": "ea969ecb7ae9f4abf0cec1c3847a94fd8edc0f77696ffc0181e63f9f2369b674",
+      "retrieved_utc": "2026-11-14T03:18:09+00:00",
+      "group": "P2_qaidam"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n38e091.tif",
+      "file": "nasadem/nasadem_hgt_n38e091.tif",
+      "status": "downloaded",
+      "bytes": 12159368,
+      "sha256": "08cd33b5a000aa9617991dfe8417a909ca989a0e309c22b6126ccc72481b1066",
+      "retrieved_utc": "2026-11-14T03:18:16+00:00",
+      "group": "P2_qaidam"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n38e092.tif",
+      "file": "nasadem/nasadem_hgt_n38e092.tif",
+      "status": "downloaded",
+      "bytes": 9028244,
+      "sha256": "75995bd30678a87c942b582ac9e95c011a7b20477ed911dc314f60b2442ecf75",
+      "retrieved_utc": "2026-11-14T03:18:31+00:00",
+      "group": "P2_qaidam"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n38e093.tif",
+      "file": "nasadem/nasadem_hgt_n38e093.tif",
+      "status": "downloaded",
+      "bytes": 9337417,
+      "sha256": "7cac2367ff6d189db9493f7208981b7a709dd62db6aeb3556f6cf4daf29f1bb4",
+      "retrieved_utc": "2026-11-14T03:18:26+00:00",
+      "group": "P2_qaidam"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_s26w067.tif",
+      "file": "nasadem/nasadem_hgt_s26w067.tif",
+      "status": "downloaded",
+      "bytes": 19473802,
+      "sha256": "b8f246ef6e30343a97344f95d14b7ec7a71eb8f43cfbdc75df32a5b18924075e",
+      "retrieved_utc": "2026-11-14T03:18:26+00:00",
+      "group": "P3_puna"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_s26w068.tif",
+      "file": "nasadem/nasadem_hgt_s26w068.tif",
+      "status": "downloaded",
+      "bytes": 17002279,
+      "sha256": "24285c068e7d044637c3fb90d6abd3cec9b3879d39593453ca0cf058c3693a0e",
+      "retrieved_utc": "2026-11-14T03:18:31+00:00",
+      "group": "P3_puna"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_s27w067.tif",
+      "file": "nasadem/nasadem_hgt_s27w067.tif",
+      "status": "downloaded",
+      "bytes": 19017373,
+      "sha256": "ffcde0c89cb0e630de0e0daaf09455a1b68930cfcc104ee27482f17873feef14",
+      "retrieved_utc": "2026-11-14T03:18:34+00:00",
+      "group": "P3_puna"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_s27w068.tif",
+      "file": "nasadem/nasadem_hgt_s27w068.tif",
+      "status": "downloaded",
+      "bytes": 17690437,
+      "sha256": "8a3efb303b33e96d4d2951666cb3e44b4a9f8cf554ae626a59cd5277c0c1c112",
+      "retrieved_utc": "2026-11-14T03:18:35+00:00",
+      "group": "P3_puna"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_s25e015.tif",
+      "file": "nasadem/nasadem_hgt_s25e015.tif",
+      "status": "downloaded",
+      "bytes": 15827720,
+      "sha256": "bd74801d8079bbeac808dbe58bf3870585cf5d652c274f6c5024bc1797adbd96",
+      "retrieved_utc": "2026-11-14T03:18:41+00:00",
+      "group": "N1_namib"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_s26e015.tif",
+      "file": "nasadem/nasadem_hgt_s26e015.tif",
+      "status": "downloaded",
+      "bytes": 15698571,
+      "sha256": "67df2393f3eb10e8d69382ae152b22dabbbd77a62370c447f80bcdc691476d00",
+      "retrieved_utc": "2026-11-14T03:18:43+00:00",
+      "group": "N1_namib"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n39e078.tif",
+      "file": "nasadem/nasadem_hgt_n39e078.tif",
+      "status": "downloaded",
+      "bytes": 8333703,
+      "sha256": "1500391ff519a2ee3f366b25e167d3ed0bd45eacdb834410943a180fa1c2f5f9",
+      "retrieved_utc": "2026-11-14T03:18:45+00:00",
+      "group": "N2_kalpin"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n39e079.tif",
+      "file": "nasadem/nasadem_hgt_n39e079.tif",
+      "status": "downloaded",
+      "bytes": 8731934,
+      "sha256": "8ec2b5afd2a5ace162acf7ce201acb5a1f3bce4cd5a930072e3c25778b78183b",
+      "retrieved_utc": "2026-11-14T03:18:41+00:00",
+      "group": "N2_kalpin"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n40e078.tif",
+      "file": "nasadem/nasadem_hgt_n40e078.tif",
+      "status": "downloaded",
+      "bytes": 15294691,
+      "sha256": "121ba1b4261a4597f363eb4113332a7107312613f90e7ffd15da355cbbd5fc98",
+      "retrieved_utc": "2026-11-14T03:18:47+00:00",
+      "group": "N2_kalpin"
+    },
+    {
+      "url": "https://nasademeuwest.blob.core.windows.net/nasadem-cog/v001/NASADEM_HGT_n40e079.tif",
+      "file": "nasadem/nasadem_hgt_n40e079.tif",
+      "status": "downloaded",
+      "bytes": 10346471,
+      "sha256": "a46aef80ec208014bff7c3f2f6d705c32a741ce6a4889bdd5be1bd2365bf4d71",
+      "retrieved_utc": "2026-11-14T03:18:55+00:00",
+      "group": "N2_kalpin"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson",
+      "file": "ne_50m_admin_0_countries.geojson",
+      "status": "cached",
+      "bytes": 3083490,
+      "sha256": "3e458fc036ad0a66411f2c1e6cac49c5d7bfb81cb1123bc513b22511a2b7fdeb",
+      "retrieved_utc": "2026-11-14T03:18:56+00:00"
+    }
+  ]
+}

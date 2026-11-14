@@ -1,0 +1,21 @@
+# python / science
+science/.venv/
+science/data/raw/
+science/data/work/
+__pycache__/
+*.pyc
+.pytest_cache/
+# node / next
+node_modules/
+.next/
+out/
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+# env / secrets
+.env
+.env.*
+!.env.example
+# os
+.DS_Store
+Thumbs.db

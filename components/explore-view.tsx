@@ -554,14 +554,14 @@ export function ExploreView({
         <span className="shrink-0">
           <Wordmark onClick={onHome} height={30} />
         </span>
-        <nav className="mx-auto flex min-w-0 items-center gap-2 overflow-x-auto [scrollbar-width:none]" aria-label="Workspace">
+        <nav className="mx-auto flex min-w-0 items-center gap-2 overflow-x-auto no-scrollbar" aria-label="Workspace">
           <NavPill label="Explore" icon={ICONS.globe} active={mode === "explore" && !analysis} onClick={goExplore} />
           <NavPill label="Compare" icon={ICONS.layers} active={mode === "compare" && !analysis} onClick={() => void goCompare()} />
           <NavPill label="Simulate" icon={ICONS.route} active={mode === "simulate" && !analysis} onClick={() => void goSimulate()} />
           <NavPill label="Evidence" icon={ICONS.chart} active={!!analysis} onClick={() => openEvidence("overview")} />
         </nav>
         <div className="flex shrink-0 items-center gap-2">
-          <button type="button" onClick={() => openEvidence("sources")} className="hidden min-h-[40px] items-center gap-2 rounded-[10px] border border-hairline bg-surface/60 px-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink/90 hover:border-copper lg:flex">
+          <button type="button" onClick={() => openEvidence("sources")} className="hidden min-h-[40px] items-center gap-2 rounded-[10px] border border-hairline bg-surface/60 px-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink/90 hover:border-copper 2xl:flex">
             <Svg d={ICONS.db} className="h-[16px] w-[16px]" /> Data sources
           </button>
           <button
@@ -641,7 +641,11 @@ export function ExploreView({
               const hd = headerFor(spec, planet);
               return (
                 <div key={`${planet}-${i}`} className="pointer-events-none absolute inset-y-0" style={frameStyle(i)}>
-                  <div className="absolute inset-0 rounded-[12px] border border-hairline shadow-[inset_0_0_80px_rgba(0,0,0,0.35)]" />
+                  <div
+                    className={`absolute inset-0 rounded-[12px] border shadow-[inset_0_0_80px_rgba(0,0,0,0.35)] ${
+                      nFrames > 1 ? (planet === "Mars" ? "border-[#C97951]/35" : "border-[#6A9BAD]/35") : "border-hairline"
+                    }`}
+                  />
                   <div className="pointer-events-auto absolute inset-x-0 top-0 flex items-start justify-between gap-3 rounded-t-[12px] border-b border-hairline/80 bg-surface/88 px-4 py-3 backdrop-blur">
                     <div className="flex min-w-0 items-center gap-3">
                       <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full border ${planet === "Mars" ? "border-copper/60 bg-copper/15 text-copper" : "border-earth/60 bg-earth/15 text-earth"}`}>
@@ -685,7 +689,7 @@ export function ExploreView({
                         aria-pressed={framing === "survey"}
                         title={framing === "cinematic" ? "Survey view: whole footprint, exact data boundary, no haze" : "Back to cinematic view"}
                         aria-label="Toggle survey view with the exact data footprint"
-                        className={`grid h-[38px] w-[38px] place-items-center rounded-[8px] border backdrop-blur ${framing === "survey" ? "border-ink/70 bg-ink/15 text-ink" : "border-hairline bg-bg/75 text-ink/90 hover:border-copper"}`}
+                        className={`grid h-[38px] w-[38px] place-items-center rounded-[8px] border backdrop-blur ${framing === "survey" ? "border-[#A4B0BC]/60 bg-[#A4B0BC]/15 text-ink" : "border-hairline bg-bg/75 text-ink/90 hover:border-copper"}`}
                       >
                         <Svg d="M4 4h16v16H4z M8 4v2M12 4v2M16 4v2M4 8h2M4 12h2M4 16h2" className="h-[18px] w-[18px]" />
                       </button>
@@ -737,8 +741,11 @@ export function ExploreView({
               );
             })}
 
+            {nFrames > 1 ? (
+              <div aria-hidden="true" className="viewport-divider pointer-events-none absolute inset-y-6 left-1/2 z-[1] w-[2px] -translate-x-1/2 rounded-full" />
+            ) : null}
             {roverCompare ? (
-              <div className="absolute inset-y-0 right-0 flex items-center justify-center rounded-[12px] border border-hairline bg-surface/70 p-8" style={{ width: `calc(50% - ${VIEW_GAP / 2}px)` }}>
+              <div className="absolute inset-y-0 right-0 flex items-center justify-center rounded-[12px] border border-[#6A9BAD]/35 bg-surface/70 p-8" style={{ width: `calc(50% - ${VIEW_GAP / 2}px)` }}>
                 <div className="max-w-[420px]">
                   <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-earth">Earth · {selScene?.label.split(" — ")[0] ?? "candidate"}</p>
                   <p className="mt-4 font-display text-[30px] font-semibold leading-tight">Not evaluable at this scale.</p>

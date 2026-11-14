@@ -40,7 +40,7 @@ export function ValidationBanner({ results, compact = false, onDetails }: { resu
   return (
     <div
       role="status"
-      className={`border-l-2 ${r.decision.pass ? "border-copper" : "border-ink"} bg-surface/95 ${compact ? "px-4 py-2" : "px-5 py-4"} text-ink`}
+      className={`border-l-2 ${r.decision.pass ? "border-[#6A9BAD]" : "border-[#C97951]"} bg-surface/95 ${compact ? "px-4 py-2" : "px-5 py-4"} text-ink`}
     >
       <p className={compact ? "text-[14px] leading-snug" : "text-[15px] leading-relaxed"}>
         <span className="font-semibold tracking-wide">Pre-registered validation: {verdict}.</span>{" "}

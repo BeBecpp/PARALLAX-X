@@ -59,7 +59,7 @@ export function RightPanel({ results, mode, selectedSceneId, onSelectScene, onOp
   return (
     <aside
       aria-label="Explainable analysis"
-      className="flex h-full min-h-0 w-full flex-col overflow-y-auto overscroll-contain border-l border-hairline bg-surface [scrollbar-color:#2b343e_transparent] [scrollbar-width:thin]"
+      className="flex h-full min-h-0 w-full flex-col overflow-y-auto overscroll-contain border-l border-hairline bg-surface"
     >
       <div className="border-b border-hairline px-5 pb-4 pt-5">
         <PanelTitle icon="bars" title="Explainable analysis" sub="Terrain fingerprint comparison · computed values" />
@@ -356,7 +356,7 @@ function ValidationCard({ results, onOpenEvidence }: { results: Results; onOpenE
           {hasThreshold ? (
             <span
               aria-hidden
-              className="absolute -bottom-1 -top-1 border-l border-dashed border-ink/60"
+              className="absolute -bottom-1 -top-1 border-l border-dashed border-[#A4B0BC]/50"
               style={{ left: `${threshold}%` }}
             />
           ) : null}

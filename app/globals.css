@@ -26,6 +26,66 @@ body {
   color: var(--color-ink);
 }
 
+html {
+  color-scheme: dark; /* native controls (and any unstyled scrollbar parts) render dark */
+}
+
+/* ---------- Mission Control scrollbars (global) ----------
+   Chromium / Edge / Safari: ::-webkit-scrollbar (supports the copper hover).
+   Firefox: standard scrollbar-width / scrollbar-color (no hover state available).
+   Scrolling behaviour, touch, wheel and keyboard are untouched — this is paint only. */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #101820;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb {
+  background: #354452;
+  border-radius: 999px;
+  border: 1px solid #101820;
+  min-height: 32px;
+}
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  background: #c97951;
+}
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-button {
+  background: transparent;
+  width: 0;
+  height: 0;
+}
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #354452 #101820;
+  }
+}
+/* opt-out for horizontal pill rails that scroll without a visible bar */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* programmatic focus on section headings (evidence navigation) should not draw a box */
+h2[tabindex="-1"]:focus,
+h2[tabindex="-1"]:focus-visible {
+  outline: none;
+}
+
+/* Mars | Earth viewport divider: copper -> graphite -> blue, hairline with a soft glow */
+.viewport-divider {
+  background: linear-gradient(180deg, rgba(201, 121, 81, 0.9) 0%, #25313d 50%, rgba(106, 155, 173, 0.9) 100%);
+  box-shadow:
+    0 0 6px rgba(201, 121, 81, 0.18),
+    0 0 6px rgba(106, 155, 173, 0.12);
+}
+
 body {
   font-family: var(--font-sans);
   font-size: 15px;

@@ -22,3 +22,24 @@
 - It recomputes every per-feature W1 and refuses to export unless they equal the stored primary-run values.
   Result: max |recomputed − stored| = 0.0. The Mars raw quantiles were also checked against the stored fingerprint.
 - Purpose: the animated "Watch the math" chart in the Evidence view. No decision, rank or percentile is affected.
+
+## 2026-11-14 21:00 UTC+8 — Field-test context layers (post-hoc, descriptive; cannot change any result)
+- `science/pipeline/fieldtest_posthoc.py` adds two descriptive layers. Both are written to
+  `public/data/fieldtest.json`, and neither enters F1–F5, W1, the null distribution, the percentiles, the
+  candidate ranking or the decision.
+  1. **Local detrended RMS roughness.** On the same 30 m common grid with the same σ = 1 px low-pass:
+     - the RMS of least-squares plane residuals is computed in non-overlapping 11×11 (330 m) and 33×33 (990 m)
+       cell neighbourhoods;
+     - only complete neighbourhoods are used, and each needs ≥ 90 % valid cells;
+     - the summary is the median and the 90th percentile per window.
+  2. **ESA WorldCover 2021 v200 (10 m) land-cover fractions.**
+     - Footprint: the exact candidate footprints, i.e. the union of each cluster's 10 km windows.
+     - Clusters are rebuilt from `search_primary.json` with the original rule; the script asserts they equal the
+       published G-1…G-5.
+     - Fractions are area-weighted (cos latitude). The data are read by HTTP range requests from the official ESA
+       COG bucket.
+- Results (median roughness, 330 m cells):
+  - Mars CTX study area: 2.63 m;
+  - G-1…G-5 clusters: 1.54–3.35 m.
+- WorldCover: "Bare / sparse vegetation" covers 88.7–99.3 % of the candidate footprints, with no nodata.
+- Land cover is not material type. Roughness at 30 m says nothing about rover-scale hazards, traction or drilling.

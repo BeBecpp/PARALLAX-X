@@ -23,6 +23,58 @@ async function fetchJson<T>(url: string): Promise<Loadable<T>> {
 export const loadResults = () => fetchJson<Results>("/data/results.json");
 export const loadSources = () => fetchJson<SourceRecord[]>("/data/sources.json");
 export const loadLocator = () => fetchJson<Locator>("/data/locator.json");
+export const loadFieldTest = () => fetchJson<FieldTest>("/data/fieldtest.json");
+
+/** Post-hoc descriptive field-test context (science/pipeline/fieldtest_posthoc.py). Never feeds any rank. */
+export interface RoughStat {
+  n: number;
+  median_m: number | null;
+  p90_m: number | null;
+}
+export interface WorldCoverPart {
+  tiles: string[];
+  fractions: Record<string, number>;
+  nodata_fraction: number | null;
+}
+export interface FieldTest {
+  status: string;
+  generated_utc: string;
+  roughness: {
+    name: string;
+    units: string;
+    grid_m: number;
+    preprocessing: string;
+    neighbourhoods_m: number[];
+    definition: string;
+    edge_handling: string;
+    limitations: string;
+    scenes: Record<string, { window: string; "330m": RoughStat; "990m": RoughStat }>;
+    candidate_clusters: Record<string, { "330m": RoughStat; "990m": RoughStat }>;
+  };
+  worldcover: {
+    product: string;
+    year: number;
+    resolution_m: number;
+    source_url: string;
+    data_access: string;
+    license: string;
+    attribution: string;
+    citation: string;
+    accuracy: string;
+    legend: Record<string, string>;
+    method: string;
+    caveat: string;
+    candidates: Record<
+      string,
+      {
+        compare_scene_id: string;
+        footprint: { n_windows: number; area_km2: number; bbox: number[]; windows: string[] };
+        cluster: WorldCoverPart;
+        best_window: WorldCoverPart & { id: string };
+      }
+    >;
+  };
+}
 
 export function dataOf<T>(l: Loadable<T>): T | null {
   return l.status === "ready" ? l.data : null;

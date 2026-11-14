@@ -1,0 +1,484 @@
+{
+ "status": "POST-HOC DESCRIPTIVE — not part of the pre-registered fingerprint, ranking or decision",
+ "generated_utc": "2026-11-14T12:31:26Z",
+ "roughness": {
+  "name": "local detrended RMS roughness",
+  "units": "m",
+  "grid_m": 30.0,
+  "preprocessing": "same as the fingerprint: average-resampled to 30 m, masked Gaussian sigma = 1.0 px on Mars and Earth",
+  "neighbourhoods_m": [
+   330,
+   990
+  ],
+  "definition": "RMS of least-squares plane-fit residuals within non-overlapping N x N cell neighbourhoods; window statistic = median and 90th percentile over neighbourhoods",
+  "edge_handling": "only complete neighbourhoods wholly inside the 10 km window; partial edge strips discarded; >= 90 % valid cells required (Mars: inside the CTX study polygon)",
+  "limitations": "describes relief between ~30 m and the neighbourhood size; it cannot see rover-scale (cm–m) roughness, rocks or soil; Mars CTX and Earth NASADEM have different native resolution and noise before the common 30 m resampling",
+  "scenes": {
+   "cmp_mars": {
+    "window": "CTX yardang study polygon (Mars)",
+    "330m": {
+     "n": 1627,
+     "median_m": 2.628,
+     "p90_m": 5.562
+    },
+    "990m": {
+     "n": 170,
+     "median_m": 5.908,
+     "p90_m": 11.529
+    }
+   },
+   "cmp_g1": {
+    "window": "NASADEM_HGT_n44e097_8_6",
+    "330m": {
+     "n": 900,
+     "median_m": 2.296,
+     "p90_m": 4.731
+    },
+    "990m": {
+     "n": 100,
+     "median_m": 5.834,
+     "p90_m": 9.94
+    }
+   },
+   "cmp_g2": {
+    "window": "NASADEM_HGT_n44e098_7_3",
+    "330m": {
+     "n": 900,
+     "median_m": 1.953,
+     "p90_m": 5.018
+    },
+    "990m": {
+     "n": 100,
+     "median_m": 6.096,
+     "p90_m": 10.923
+    }
+   },
+   "cmp_g3": {
+    "window": "NASADEM_HGT_n44e100_8_0",
+    "330m": {
+     "n": 870,
+     "median_m": 3.353,
+     "p90_m": 6.648
+    },
+    "990m": {
+     "n": 90,
+     "median_m": 7.529,
+     "p90_m": 12.603
+    }
+   },
+   "cmp_g4": {
+    "window": "NASADEM_HGT_n44e098_2_6",
+    "330m": {
+     "n": 900,
+     "median_m": 2.482,
+     "p90_m": 5.535
+    },
+    "990m": {
+     "n": 100,
+     "median_m": 6.927,
+     "p90_m": 15.697
+    }
+   },
+   "cmp_g5": {
+    "window": "NASADEM_HGT_n43e097_8_1",
+    "330m": {
+     "n": 900,
+     "median_m": 2.54,
+     "p90_m": 5.12
+    },
+    "990m": {
+     "n": 100,
+     "median_m": 6.03,
+     "p90_m": 10.407
+    }
+   },
+   "cmp_p1": {
+    "window": "NASADEM_HGT_n30e058_10_6",
+    "330m": {
+     "n": 900,
+     "median_m": 3.916,
+     "p90_m": 6.502
+    },
+    "990m": {
+     "n": 100,
+     "median_m": 9.645,
+     "p90_m": 15.512
+    }
+   },
+   "cmp_p2": {
+    "window": "NASADEM_HGT_n38e092_10_0",
+    "330m": {
+     "n": 900,
+     "median_m": 0.666,
+     "p90_m": 1.063
+    },
+    "990m": {
+     "n": 100,
+     "median_m": 1.271,
+     "p90_m": 1.917
+    }
+   },
+   "cmp_p3": {
+    "window": "NASADEM_HGT_s27w068_6_5",
+    "330m": {
+     "n": 900,
+     "median_m": 1.315,
+     "p90_m": 6.057
+    },
+    "990m": {
+     "n": 100,
+     "median_m": 4.301,
+     "p90_m": 17.018
+    }
+   },
+   "cmp_n1": {
+    "window": "NASADEM_HGT_s25e015_7_0",
+    "330m": {
+     "n": 870,
+     "median_m": 4.774,
+     "p90_m": 7.175
+    },
+    "990m": {
+     "n": 90,
+     "median_m": 11.277,
+     "p90_m": 14.968
+    }
+   },
+   "cmp_n2": {
+    "window": "NASADEM_HGT_n40e078_6_7",
+    "330m": {
+     "n": 900,
+     "median_m": 0.826,
+     "p90_m": 2.359
+    },
+    "990m": {
+     "n": 100,
+     "median_m": 1.534,
+     "p90_m": 3.108
+    }
+   }
+  },
+  "candidate_clusters": {
+   "G-1": {
+    "330m": {
+     "n": 4500,
+     "median_m": 2.512,
+     "p90_m": 6.568
+    },
+    "990m": {
+     "n": 500,
+     "median_m": 6.411,
+     "p90_m": 14.505
+    }
+   },
+   "G-2": {
+    "330m": {
+     "n": 3600,
+     "median_m": 1.544,
+     "p90_m": 4.487
+    },
+    "990m": {
+     "n": 400,
+     "median_m": 4.859,
+     "p90_m": 10.775
+    }
+   },
+   "G-3": {
+    "330m": {
+     "n": 870,
+     "median_m": 3.353,
+     "p90_m": 6.648
+    },
+    "990m": {
+     "n": 90,
+     "median_m": 7.529,
+     "p90_m": 12.603
+    }
+   },
+   "G-4": {
+    "330m": {
+     "n": 6276,
+     "median_m": 2.261,
+     "p90_m": 5.696
+    },
+    "990m": {
+     "n": 700,
+     "median_m": 6.056,
+     "p90_m": 15.244
+    }
+   },
+   "G-5": {
+    "330m": {
+     "n": 2670,
+     "median_m": 2.141,
+     "p90_m": 5.362
+    },
+    "990m": {
+     "n": 290,
+     "median_m": 5.18,
+     "p90_m": 11.874
+    }
+   }
+  }
+ },
+ "worldcover": {
+  "product": "ESA WorldCover 10 m 2021 v200",
+  "year": 2021,
+  "resolution_m": 10,
+  "source_url": "https://esa-worldcover.org",
+  "data_access": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ (COG tiles, read by HTTP range requests)",
+  "license": "CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/",
+  "attribution": "ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium",
+  "citation": "Zanaga, D. et al. (2022). ESA WorldCover 10 m 2021 v200. doi:10.5281/zenodo.7254221",
+  "accuracy": "global overall accuracy 76.7 % ± 0.5 (ESA WorldCover Product Validation Report v2.0); class- and region-specific accuracy not assessed here",
+  "legend": {
+   "10": "Tree cover",
+   "20": "Shrubland",
+   "30": "Grassland",
+   "40": "Cropland",
+   "50": "Built-up",
+   "60": "Bare / sparse vegetation",
+   "70": "Snow and ice",
+   "80": "Permanent water bodies",
+   "90": "Herbaceous wetland",
+   "95": "Mangroves",
+   "100": "Moss and lichen"
+  },
+  "method": "area-weighted (cos latitude) fractions of pixels whose centres fall inside the union of the candidate's 10 km analysis windows",
+  "caveat": "surface-cover classes only; 'Bare / sparse vegetation' does not indicate sand, gravel, rock, crust or soil strength",
+  "candidates": {
+   "G-1": {
+    "compare_scene_id": "cmp_g1",
+    "footprint": {
+     "n_windows": 5,
+     "area_km2": 499.0005,
+     "bbox": [
+      97.3725,
+      44.102,
+      97.8735,
+      44.4618
+     ],
+     "windows": [
+      "NASADEM_HGT_n44e097_8_6",
+      "NASADEM_HGT_n44e097_9_5",
+      "NASADEM_HGT_n44e097_8_4",
+      "NASADEM_HGT_n44e097_7_3",
+      "NASADEM_HGT_n44e097_6_3"
+     ]
+    },
+    "cluster": {
+     "tiles": [
+      "N42E096"
+     ],
+     "fractions": {
+      "Bare / sparse vegetation": 0.9708,
+      "Grassland": 0.0273,
+      "Tree cover": 0.0019,
+      "Shrubland": 0.0,
+      "Permanent water bodies": 0.0
+     },
+     "nodata_fraction": 0.0
+    },
+    "best_window": {
+     "id": "NASADEM_HGT_n44e097_8_6",
+     "tiles": [
+      "N42E096"
+     ],
+     "fractions": {
+      "Bare / sparse vegetation": 0.979,
+      "Grassland": 0.0205,
+      "Tree cover": 0.0005,
+      "Shrubland": 0.0,
+      "Permanent water bodies": 0.0
+     },
+     "nodata_fraction": 0.0
+    }
+   },
+   "G-2": {
+    "compare_scene_id": "cmp_g2",
+    "footprint": {
+     "n_windows": 4,
+     "area_km2": 399.2004,
+     "bbox": [
+      98.1215,
+      44.1921,
+      98.6232,
+      44.4616
+     ],
+     "windows": [
+      "NASADEM_HGT_n44e098_7_3",
+      "NASADEM_HGT_n44e098_7_2",
+      "NASADEM_HGT_n44e098_8_4",
+      "NASADEM_HGT_n44e098_6_1"
+     ]
+    },
+    "cluster": {
+     "tiles": [
+      "N42E096"
+     ],
+     "fractions": {
+      "Bare / sparse vegetation": 0.9925,
+      "Grassland": 0.0072,
+      "Shrubland": 0.0003,
+      "Tree cover": 0.0,
+      "Permanent water bodies": 0.0
+     },
+     "nodata_fraction": 0.0
+    },
+    "best_window": {
+     "id": "NASADEM_HGT_n44e098_7_3",
+     "tiles": [
+      "N42E096"
+     ],
+     "fractions": {
+      "Bare / sparse vegetation": 0.9866,
+      "Grassland": 0.0133,
+      "Shrubland": 0.0001,
+      "Tree cover": 0.0
+     },
+     "nodata_fraction": 0.0
+    }
+   },
+   "G-3": {
+    "compare_scene_id": "cmp_g3",
+    "footprint": {
+     "n_windows": 1,
+     "area_km2": 99.8001,
+     "bbox": [
+      99.9975,
+      44.191,
+      100.1232,
+      44.2814
+     ],
+     "windows": [
+      "NASADEM_HGT_n44e100_8_0"
+     ]
+    },
+    "cluster": {
+     "tiles": [
+      "N42E099"
+     ],
+     "fractions": {
+      "Bare / sparse vegetation": 0.9814,
+      "Grassland": 0.0182,
+      "Tree cover": 0.0003,
+      "Shrubland": 0.0001,
+      "Permanent water bodies": 0.0
+     },
+     "nodata_fraction": 0.0
+    },
+    "best_window": {
+     "id": "NASADEM_HGT_n44e100_8_0",
+     "tiles": [
+      "N42E099"
+     ],
+     "fractions": {
+      "Bare / sparse vegetation": 0.9814,
+      "Grassland": 0.0182,
+      "Tree cover": 0.0003,
+      "Shrubland": 0.0001,
+      "Permanent water bodies": 0.0
+     },
+     "nodata_fraction": 0.0
+    }
+   },
+   "G-4": {
+    "compare_scene_id": "cmp_g4",
+    "footprint": {
+     "n_windows": 7,
+     "area_km2": 698.6007,
+     "bbox": [
+      98.3717,
+      44.641,
+      98.8781,
+      45.001
+     ],
+     "windows": [
+      "NASADEM_HGT_n44e098_2_6",
+      "NASADEM_HGT_n44e098_1_5",
+      "NASADEM_HGT_n44e098_2_5",
+      "NASADEM_HGT_n44e098_3_6",
+      "NASADEM_HGT_n44e098_0_6",
+      "NASADEM_HGT_n44e098_1_4",
+      "NASADEM_HGT_n44e098_2_3"
+     ]
+    },
+    "cluster": {
+     "tiles": [
+      "N42E096",
+      "N45E096"
+     ],
+     "fractions": {
+      "Bare / sparse vegetation": 0.8865,
+      "Grassland": 0.1134,
+      "Built-up": 0.0001,
+      "Shrubland": 0.0,
+      "Permanent water bodies": 0.0,
+      "Tree cover": 0.0,
+      "Moss and lichen": 0.0
+     },
+     "nodata_fraction": 0.0
+    },
+    "best_window": {
+     "id": "NASADEM_HGT_n44e098_2_6",
+     "tiles": [
+      "N42E096"
+     ],
+     "fractions": {
+      "Bare / sparse vegetation": 0.7958,
+      "Grassland": 0.204,
+      "Shrubland": 0.0002,
+      "Permanent water bodies": 0.0001,
+      "Tree cover": 0.0
+     },
+     "nodata_fraction": 0.0
+    }
+   },
+   "G-5": {
+    "compare_scene_id": "cmp_g5",
+    "footprint": {
+     "n_windows": 3,
+     "area_km2": 299.4003,
+     "bbox": [
+      96.9976,
+      43.1909,
+      97.367,
+      43.2818
+     ],
+     "windows": [
+      "NASADEM_HGT_n43e097_8_1",
+      "NASADEM_HGT_n43e097_8_0",
+      "NASADEM_HGT_n43e097_8_2"
+     ]
+    },
+    "cluster": {
+     "tiles": [
+      "N42E096"
+     ],
+     "fractions": {
+      "Bare / sparse vegetation": 0.9815,
+      "Grassland": 0.0169,
+      "Tree cover": 0.0014,
+      "Shrubland": 0.0003,
+      "Permanent water bodies": 0.0
+     },
+     "nodata_fraction": 0.0
+    },
+    "best_window": {
+     "id": "NASADEM_HGT_n43e097_8_1",
+     "tiles": [
+      "N42E096"
+     ],
+     "fractions": {
+      "Bare / sparse vegetation": 0.9871,
+      "Grassland": 0.0125,
+      "Shrubland": 0.0003,
+      "Tree cover": 0.0002
+     },
+     "nodata_fraction": 0.0
+    }
+   }
+  }
+ },
+ "runtime_s": 122.0
+}
